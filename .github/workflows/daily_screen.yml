@@ -36,16 +36,16 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           EMAIL_RECIPIENTS: ${{ secrets.EMAIL_RECIPIENTS }}
-          # Replace OWNER with your GitHub username after forking
           GITHUB_RAW_BASE: https://raw.githubusercontent.com/${{ github.repository }}/main
-          DASHBOARD_URL: https://stock-screener.pages.dev
+          DASHBOARD_URL: https://stock-screener-7gb.pages.dev
         run: python -m screener.main
 
       - name: Commit results
+        if: always()
         run: |
           git config user.name  "GitHub Actions"
           git config user.email "actions@github.com"
-          git add results/latest.json results/charts/ results/history/
+          git add results/latest.json results/charts/ results/history/ || true
           # Only commit if there are staged changes
           git diff --staged --quiet || git commit -m "Screener results: $(date +%Y-%m-%d)"
-          git push
+          git push || true

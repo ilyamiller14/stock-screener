@@ -124,4 +124,4 @@ GITHUB_RAW_BASE = os.environ.get(
     "GITHUB_RAW_BASE",
     "https://raw.githubusercontent.com/OWNER/stock-screener/main"
 )
-DASHBOARD_URL = os.environ.get("DASHBOARD_URL", "https://stock-screener.pages.dev")
+DASHBOARD_URL = os.environ.get("DASHBOARD_URL", "https://stock-screener-7gb.pages.dev")

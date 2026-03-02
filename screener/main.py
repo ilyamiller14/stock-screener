@@ -208,11 +208,14 @@ def main(dry_run: bool = False) -> int:
     results = _build_results_json(top_picks, stats, run_date)
     write_results(results, run_date)
 
-    # 7. Send email (skip on dry run)
+    # 7. Send email (skip on dry run; never crash the run)
     if dry_run:
         logger.info("Dry run — email skipped")
     else:
-        send_email(top_picks, run_date, stats)
+        try:
+            send_email(top_picks, run_date, stats)
+        except Exception:
+            logger.exception("Email send failed (results still committed)")
 
     logger.info("=== Run complete: %d picks ===", len(top_picks))
     return 0
