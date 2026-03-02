@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import './App.css'
 
 const Dashboard  = lazy(() => import('./pages/Dashboard'))
@@ -13,16 +13,25 @@ function LoadingFallback() {
   )
 }
 
+function NotFound() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px', color: '#8b949e', gap: 16 }}>
+      <p style={{ fontSize: 18 }}>Page not found</p>
+      <Link to="/" style={{ color: '#58a6ff', fontSize: 14 }}>Back to Dashboard</Link>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <div className="app">
         <header className="app-header">
           <div className="app-header__inner">
-            <div className="app-header__brand">
+            <Link to="/" className="app-header__brand">
               <span className="app-header__logo">▲</span>
               <span className="app-header__name">Russell 2000 Screen</span>
-            </div>
+            </Link>
             <div className="app-header__subtitle">Daily technical picks · 3+ month outlook</div>
           </div>
         </header>
@@ -32,6 +41,7 @@ export default function App() {
             <Routes>
               <Route path="/"               element={<Dashboard />} />
               <Route path="/stock/:ticker"  element={<StockDetail />} />
+              <Route path="*"               element={<NotFound />} />
             </Routes>
           </Suspense>
         </main>

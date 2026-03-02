@@ -7,9 +7,10 @@ interface Props {
 }
 
 function ScoreBar({ score, color }: { score: number; color: string }) {
+  const clamped = Math.max(0, Math.min(100, score))
   return (
     <div className="score-bar">
-      <div className="score-bar__fill" style={{ width: `${score}%`, background: color }} />
+      <div className="score-bar__fill" style={{ width: `${clamped}%`, background: color }} />
     </div>
   )
 }
@@ -83,7 +84,7 @@ export function StockCard({ pick }: Props) {
         </div>
         <div className="metric">
           <div className="metric__label">OBV</div>
-          <div className="metric__value">{indicators.obv_trend}</div>
+          <div className="metric__value">{indicators.obv_trend.charAt(0).toUpperCase() + indicators.obv_trend.slice(1)}</div>
         </div>
         <div className="metric">
           <div className="metric__label">vs 52W Hi</div>

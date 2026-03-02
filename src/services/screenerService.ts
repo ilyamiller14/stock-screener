@@ -33,13 +33,23 @@ function writeCache(data: ScreenerResults): void {
   }
 }
 
-export async function fetchScreenerResults(): Promise<ScreenerResults> {
+export async function fetchScreenerResults(): Promise<ScreenerResults | null> {
   const cached = readCache()
   if (cached) return cached
 
   const url = RESULTS_URL ?? '/results/latest.json'
   const resp = await fetch(url, { cache: 'no-cache' })
-  if (!resp.ok) throw new Error(`Failed to fetch results: ${resp.status} ${resp.statusText}`)
+
+  if (resp.status === 404) return null
+
+  if (!resp.ok) throw new Error(`Failed to fetch results (${resp.status})`)
+
+  const contentType = resp.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    // Server returned HTML (e.g. SPA fallback) instead of JSON
+    return null
+  }
+
   const data: ScreenerResults = await resp.json()
   writeCache(data)
   return data

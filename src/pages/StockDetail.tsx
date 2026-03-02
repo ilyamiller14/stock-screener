@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ScoreBreakdown } from '../components/ScoreBreakdown'
 import { useScreenerData } from '../hooks/useScreenerData'
@@ -6,20 +7,37 @@ import './StockDetail.css'
 export default function StockDetail() {
   const { ticker } = useParams<{ ticker: string }>()
   const navigate = useNavigate()
-  const { data, isLoading, error } = useScreenerData()
+  const { data, isLoading, error, noData, refetch } = useScreenerData()
+  const [chartFailed, setChartFailed] = useState(false)
 
   if (isLoading) {
     return <div className="detail-loading"><div className="spinner" /> Loading…</div>
   }
   if (error) {
-    return <div className="detail-error">{error}</div>
+    return (
+      <div className="detail-error">
+        <p>{error}</p>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={refetch} className="btn btn--primary">Retry</button>
+          <button onClick={() => navigate('/')} className="btn btn--primary">Back to Dashboard</button>
+        </div>
+      </div>
+    )
+  }
+  if (noData || !data) {
+    return (
+      <div className="detail-error">
+        <p>No screening results available yet.</p>
+        <button onClick={() => navigate('/')} className="btn btn--primary">Back to Dashboard</button>
+      </div>
+    )
   }
 
-  const pick = data?.top_picks.find((p) => p.ticker === ticker)
+  const pick = data.top_picks.find((p) => p.ticker === ticker)
   if (!pick) {
     return (
       <div className="detail-error">
-        <p>Ticker {ticker} not found in latest results.</p>
+        <p>Ticker {ticker} not found in today's top picks.</p>
         <button onClick={() => navigate('/')} className="btn btn--primary">Back to Dashboard</button>
       </div>
     )
@@ -33,6 +51,13 @@ export default function StockDetail() {
     if (score >= 75) return '#26a641'
     if (score >= 60) return '#e3b341'
     return '#6e7681'
+  }
+
+  const dist = pick.dist_from_52w_high_pct
+  const distLabel = dist <= 0 ? 'At high' : `${dist.toFixed(1)}% below`
+
+  function capitalize(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1)
   }
 
   return (
@@ -60,14 +85,20 @@ export default function StockDetail() {
       </div>
 
       {/* Chart */}
-      <div className="detail__chart">
-        <img
-          src={pick.chart_url}
-          alt={`${pick.ticker} technical chart`}
-          className="detail__chart-img"
-          onError={(e) => { e.currentTarget.style.display = 'none' }}
-        />
-      </div>
+      {!chartFailed ? (
+        <div className="detail__chart">
+          <img
+            src={pick.chart_url}
+            alt={`${pick.ticker} technical chart`}
+            className="detail__chart-img"
+            onError={() => setChartFailed(true)}
+          />
+        </div>
+      ) : (
+        <div className="detail__chart" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6e7681', fontSize: 13 }}>
+          Chart not available
+        </div>
+      )}
 
       {/* Score breakdown */}
       <div className="detail__section">
@@ -85,7 +116,7 @@ export default function StockDetail() {
             <div className="ind-row"><span>EMA 150</span><span>${indicators.ema_150.toFixed(2)}</span></div>
             <div className="ind-row"><span>EMA 200</span><span>${indicators.ema_200.toFixed(2)}</span></div>
             <div className="ind-row"><span>EMA Aligned</span><span style={{ color: indicators.ema_aligned ? '#26a641' : '#da3633' }}>{indicators.ema_aligned ? 'Yes' : 'No'}</span></div>
-            <div className="ind-row"><span>EMA 200 Slope</span><span>{(indicators.ema_200_slope_pct * 100).toFixed(4)}%/d</span></div>
+            <div className="ind-row"><span>EMA 200 Slope</span><span>{indicators.ema_200_slope_pct.toFixed(4)}%/d</span></div>
             <div className="ind-row"><span>ADX (14)</span><span style={{ color: indicators.adx_14 > 25 ? '#26a641' : '#c9d1d9' }}>{indicators.adx_14.toFixed(1)}</span></div>
             <div className="ind-row"><span>ADX Trending</span><span style={{ color: indicators.adx_trending ? '#26a641' : '#6e7681' }}>{indicators.adx_trending ? 'Yes' : 'No'}</span></div>
           </div>
@@ -96,13 +127,13 @@ export default function StockDetail() {
             <div className="ind-row"><span>MACD</span><span>{indicators.macd.toFixed(4)}</span></div>
             <div className="ind-row"><span>MACD Signal</span><span>{indicators.macd_signal.toFixed(4)}</span></div>
             <div className="ind-row"><span>MACD Hist</span><span style={{ color: indicators.macd_hist >= 0 ? '#26a641' : '#da3633' }}>{indicators.macd_hist >= 0 ? '+' : ''}{indicators.macd_hist.toFixed(4)}</span></div>
-            <div className="ind-row"><span>MACD Crossover</span><span style={{ color: indicators.macd_crossover_bullish ? '#26a641' : '#6e7681' }}>{indicators.macd_crossover_bullish ? 'Bullish' : 'None'}</span></div>
+            <div className="ind-row"><span>MACD Crossover</span><span style={{ color: indicators.macd_crossover_bullish ? '#26a641' : '#6e7681' }}>{indicators.macd_crossover_bullish ? 'Bullish' : 'No'}</span></div>
           </div>
 
           <div className="ind-group">
             <div className="ind-group__title">Volume / Accum</div>
-            <div className="ind-row"><span>OBV Trend</span><span style={{ color: indicators.obv_trend === 'rising' ? '#26a641' : indicators.obv_trend === 'falling' ? '#da3633' : '#8b949e' }}>{indicators.obv_trend}</span></div>
-            <div className="ind-row"><span>CMF (20)</span><span style={{ color: indicators.cmf_20 >= 0 ? '#26a641' : '#da3633' }}>{indicators.cmf_20 >= 0 ? '+' : ''}{indicators.cmf_20.toFixed(3)}</span></div>
+            <div className="ind-row"><span>OBV Trend</span><span style={{ color: indicators.obv_trend === 'rising' ? '#26a641' : indicators.obv_trend === 'falling' ? '#da3633' : '#8b949e' }}>{capitalize(indicators.obv_trend)}</span></div>
+            <div className="ind-row"><span>CMF (20)</span><span style={{ color: indicators.cmf_20 >= 0 ? '#26a641' : '#da3633' }}>{indicators.cmf_20 >= 0 ? '+' : ''}{indicators.cmf_20.toFixed(2)}</span></div>
             <div className="ind-row"><span>Volume Ratio</span><span>{indicators.volume_ratio.toFixed(2)}x</span></div>
           </div>
 
@@ -127,7 +158,7 @@ export default function StockDetail() {
             <div className="ind-group__title">52-Week</div>
             <div className="ind-row"><span>52W High</span><span>${pick.high_52w.toFixed(2)}</span></div>
             <div className="ind-row"><span>52W Low</span><span>${pick.low_52w.toFixed(2)}</span></div>
-            <div className="ind-row"><span>vs 52W High</span><span style={{ color: pick.dist_from_52w_high_pct < 10 ? '#26a641' : '#c9d1d9' }}>{pick.dist_from_52w_high_pct.toFixed(1)}% below</span></div>
+            <div className="ind-row"><span>vs 52W High</span><span style={{ color: dist < 10 ? '#26a641' : '#c9d1d9' }}>{distLabel}</span></div>
           </div>
         </div>
       </div>

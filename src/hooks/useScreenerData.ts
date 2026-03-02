@@ -6,6 +6,7 @@ interface ScreenerState {
   data: ScreenerResults | null
   isLoading: boolean
   error: string | null
+  noData: boolean
   refetch: () => void
 }
 
@@ -13,17 +14,23 @@ export function useScreenerData(): ScreenerState {
   const [data, setData] = useState<ScreenerResults | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [noData, setNoData] = useState(false)
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
     let cancelled = false
     setIsLoading(true)
     setError(null)
+    setNoData(false)
 
     fetchScreenerResults()
       .then((results) => {
         if (!cancelled) {
-          setData(results)
+          if (results === null) {
+            setNoData(true)
+          } else {
+            setData(results)
+          }
           setIsLoading(false)
         }
       })
@@ -43,6 +50,7 @@ export function useScreenerData(): ScreenerState {
     data,
     isLoading,
     error,
+    noData,
     refetch: () => setTick((t) => t + 1),
   }
 }

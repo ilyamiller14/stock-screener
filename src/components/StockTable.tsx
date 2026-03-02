@@ -13,9 +13,11 @@ function scoreColor(score: number): string {
   return '#6e7681'
 }
 
-const COLUMNS: { key: SortKey | 'ticker' | 'sector'; label: string; align?: 'right' }[] = [
+const COLUMNS: { key: SortKey | 'ticker' | 'sector' | 'close' | 'change_pct'; label: string; align?: 'right' }[] = [
   { key: 'ticker',            label: 'Ticker' },
   { key: 'sector',            label: 'Sector' },
+  { key: 'close',             label: 'Price',    align: 'right' },
+  { key: 'change_pct',        label: 'Chg%',     align: 'right' },
   { key: 'composite_score',   label: 'Score',    align: 'right' },
   { key: 'ibd_rs_percentile', label: 'IBD RS',   align: 'right' },
   { key: 'trend_score',       label: 'Trend',    align: 'right' },
@@ -28,6 +30,8 @@ const COLUMNS: { key: SortKey | 'ticker' | 'sector'; label: string; align?: 'rig
 function getValue(pick: TopPick, key: string): number | string {
   if (key === 'ticker')  return pick.ticker
   if (key === 'sector')  return pick.sector
+  if (key === 'close')   return pick.close
+  if (key === 'change_pct') return pick.change_pct
   if (key === 'composite_score') return pick.composite_score
   if (key === 'trend_score')     return pick.score_breakdown.trend_score
   if (key === 'rs_score')        return pick.score_breakdown.rs_score
@@ -84,37 +88,45 @@ export function StockTable({ picks }: Props) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((pick) => (
-            <tr
-              key={pick.ticker}
-              className="stock-table__row"
-              onClick={() => navigate(`/stock/${pick.ticker}`)}
-            >
-              <td className="stock-table__td stock-table__td--rank">{pick.rank}</td>
-              <td className="stock-table__td">
-                <span className="stock-table__ticker">{pick.ticker}</span>
-                {pick.stage2 && <span className="badge badge--stage2 badge--sm">S2</span>}
-                {pick.vcp && <span className="badge badge--vcp badge--sm">VCP</span>}
-                {pick.squeeze && <span className="badge badge--squeeze badge--sm">SQ</span>}
-              </td>
-              <td className="stock-table__td stock-table__td--muted">{pick.sector}</td>
-              <td className="stock-table__td stock-table__td--right" style={{ color: scoreColor(pick.composite_score), fontWeight: 700 }}>
-                {pick.composite_score.toFixed(1)}
-              </td>
-              <td className="stock-table__td stock-table__td--right">{pick.indicators.ibd_rs_percentile.toFixed(0)}</td>
-              <td className="stock-table__td stock-table__td--right">{pick.score_breakdown.trend_score.toFixed(0)}</td>
-              <td className="stock-table__td stock-table__td--right" style={{ color: pick.score_breakdown.pattern_score >= 50 ? '#f0883e' : '#8b949e' }}>
-                {pick.score_breakdown.pattern_score.toFixed(0)}
-              </td>
-              <td className="stock-table__td stock-table__td--right">{pick.indicators.adx_14.toFixed(1)}</td>
-              <td className="stock-table__td stock-table__td--right">{pick.indicators.rsi_14.toFixed(1)}</td>
-              <td className="stock-table__td stock-table__td--right">
-                <span style={{ color: pick.indicators.cmf_20 >= 0 ? '#26a641' : '#da3633' }}>
-                  {pick.indicators.cmf_20 >= 0 ? '+' : ''}{pick.indicators.cmf_20.toFixed(2)}
-                </span>
-              </td>
-            </tr>
-          ))}
+          {sorted.map((pick) => {
+            const chgColor = pick.change_pct >= 0 ? '#26a641' : '#da3633'
+            return (
+              <tr
+                key={pick.ticker}
+                className="stock-table__row"
+                onClick={() => navigate(`/stock/${pick.ticker}`)}
+              >
+                <td className="stock-table__td stock-table__td--rank">{pick.rank}</td>
+                <td className="stock-table__td">
+                  <span className="stock-table__ticker">{pick.ticker}</span>
+                  {pick.stage2 && <span className="badge badge--stage2 badge--sm">S2</span>}
+                  {pick.vcp && <span className="badge badge--vcp badge--sm">VCP</span>}
+                  {pick.indicators.squeeze_fired && <span className="badge badge--squeeze-fire badge--sm">SQ!</span>}
+                  {!pick.indicators.squeeze_fired && pick.squeeze && <span className="badge badge--squeeze badge--sm">SQ</span>}
+                </td>
+                <td className="stock-table__td stock-table__td--muted">{pick.sector}</td>
+                <td className="stock-table__td stock-table__td--right">${pick.close.toFixed(2)}</td>
+                <td className="stock-table__td stock-table__td--right" style={{ color: chgColor }}>
+                  {pick.change_pct >= 0 ? '+' : ''}{pick.change_pct.toFixed(2)}%
+                </td>
+                <td className="stock-table__td stock-table__td--right" style={{ color: scoreColor(pick.composite_score), fontWeight: 700 }}>
+                  {pick.composite_score.toFixed(1)}
+                </td>
+                <td className="stock-table__td stock-table__td--right">{pick.indicators.ibd_rs_percentile.toFixed(0)}</td>
+                <td className="stock-table__td stock-table__td--right">{pick.score_breakdown.trend_score.toFixed(0)}</td>
+                <td className="stock-table__td stock-table__td--right" style={{ color: pick.score_breakdown.pattern_score >= 50 ? '#f0883e' : '#8b949e' }}>
+                  {pick.score_breakdown.pattern_score.toFixed(0)}
+                </td>
+                <td className="stock-table__td stock-table__td--right">{pick.indicators.adx_14.toFixed(1)}</td>
+                <td className="stock-table__td stock-table__td--right">{pick.indicators.rsi_14.toFixed(1)}</td>
+                <td className="stock-table__td stock-table__td--right">
+                  <span style={{ color: pick.indicators.cmf_20 >= 0 ? '#26a641' : '#da3633' }}>
+                    {pick.indicators.cmf_20 >= 0 ? '+' : ''}{pick.indicators.cmf_20.toFixed(2)}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

@@ -8,7 +8,7 @@ import './Dashboard.css'
 type ViewMode = 'cards' | 'table'
 
 export default function Dashboard() {
-  const { data, isLoading, error, refetch } = useScreenerData()
+  const { data, isLoading, error, noData, refetch } = useScreenerData()
   const [view, setView] = useState<ViewMode>('cards')
   const [sectorFilter, setSectorFilter] = useState<string>('All')
 
@@ -30,18 +30,30 @@ export default function Dashboard() {
     )
   }
 
-  if (!data) return null
+  if (noData || !data) {
+    return (
+      <div className="dashboard-error">
+        <p style={{ fontSize: 18, color: '#c9d1d9' }}>No screening results yet</p>
+        <p style={{ maxWidth: 400, textAlign: 'center', lineHeight: 1.6 }}>
+          The screener runs daily at 6 AM ET on weekdays. Results will appear here after the first run completes.
+        </p>
+        <button onClick={refetch} className="btn btn--primary">Check Again</button>
+      </div>
+    )
+  }
 
-  const sectors = ['All', ...Array.from(new Set(data.top_picks.map((p) => p.sector))).sort()]
+  const sectors = ['All', ...Array.from(new Set(data.top_picks.map((p) => p.sector).filter(Boolean))).sort()]
   const filtered: TopPick[] =
     sectorFilter === 'All'
       ? data.top_picks
       : data.top_picks.filter((p) => p.sector === sectorFilter)
 
   const runDate = new Date(data.run_timestamp)
-  const dateStr = runDate.toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  })
+  const dateStr = isNaN(runDate.getTime())
+    ? data.run_date
+    : runDate.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      })
 
   return (
     <div className="dashboard">
@@ -107,7 +119,12 @@ export default function Dashboard() {
       </div>
 
       {/* Content */}
-      {view === 'cards' ? (
+      {filtered.length === 0 ? (
+        <div className="dashboard-error" style={{ minHeight: 120 }}>
+          <p>No stocks found in this sector.</p>
+          <button onClick={() => setSectorFilter('All')} className="btn btn--primary">Show All</button>
+        </div>
+      ) : view === 'cards' ? (
         <div className="dashboard__grid">
           {filtered.map((pick) => (
             <StockCard key={pick.ticker} pick={pick} />
