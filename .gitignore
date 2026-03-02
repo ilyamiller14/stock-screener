@@ -1,0 +1,33 @@
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# Vite
+*.local
+
+# Keep results structure but ignore large chart files in dev
+# (GitHub Actions will commit them)
+results/charts/*.png
+!results/charts/.gitkeep
+
+# Logs
+*.log

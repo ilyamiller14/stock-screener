@@ -1,0 +1,144 @@
+import { useNavigate, useParams } from 'react-router-dom'
+import { ScoreBreakdown } from '../components/ScoreBreakdown'
+import { useScreenerData } from '../hooks/useScreenerData'
+import './StockDetail.css'
+
+export default function StockDetail() {
+  const { ticker } = useParams<{ ticker: string }>()
+  const navigate = useNavigate()
+  const { data, isLoading, error } = useScreenerData()
+
+  if (isLoading) {
+    return <div className="detail-loading"><div className="spinner" /> Loading…</div>
+  }
+  if (error) {
+    return <div className="detail-error">{error}</div>
+  }
+
+  const pick = data?.top_picks.find((p) => p.ticker === ticker)
+  if (!pick) {
+    return (
+      <div className="detail-error">
+        <p>Ticker {ticker} not found in latest results.</p>
+        <button onClick={() => navigate('/')} className="btn btn--primary">Back to Dashboard</button>
+      </div>
+    )
+  }
+
+  const { indicators, score_breakdown } = pick
+  const changeColor = pick.change_pct >= 0 ? '#26a641' : '#da3633'
+  const changeArrow = pick.change_pct >= 0 ? '▲' : '▼'
+
+  function scoreColor(score: number): string {
+    if (score >= 75) return '#26a641'
+    if (score >= 60) return '#e3b341'
+    return '#6e7681'
+  }
+
+  return (
+    <div className="detail">
+      <button className="detail__back" onClick={() => navigate('/')}>← Dashboard</button>
+
+      <div className="detail__header">
+        <div className="detail__title-block">
+          <div>
+            <span className="detail__ticker">{pick.ticker}</span>
+            {pick.stage2 && <span className="badge badge--stage2" style={{ marginLeft: 10 }}>Stage 2</span>}
+          </div>
+          <div className="detail__company">{pick.company_name}</div>
+          <div className="detail__sector">{pick.sector} · {pick.industry}</div>
+        </div>
+        <div className="detail__price-block">
+          <div className="detail__price">${pick.close.toFixed(2)}</div>
+          <div style={{ color: changeColor, fontSize: 14 }}>
+            {changeArrow} {Math.abs(pick.change_pct).toFixed(2)}%
+          </div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: scoreColor(pick.composite_score), marginTop: 4 }}>
+            {pick.composite_score.toFixed(1)}<span style={{ fontSize: 12, color: '#6e7681' }}>/100</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div className="detail__chart">
+        <img
+          src={pick.chart_url}
+          alt={`${pick.ticker} technical chart`}
+          className="detail__chart-img"
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+        />
+      </div>
+
+      {/* Score breakdown */}
+      <div className="detail__section">
+        <ScoreBreakdown breakdown={score_breakdown} />
+      </div>
+
+      {/* Indicator table */}
+      <div className="detail__section">
+        <div className="detail__section-title">Technical Indicators</div>
+        <div className="indicator-grid">
+          <div className="ind-group">
+            <div className="ind-group__title">Trend</div>
+            <div className="ind-row"><span>EMA 21</span><span>${indicators.ema_21.toFixed(2)}</span></div>
+            <div className="ind-row"><span>EMA 50</span><span>${indicators.ema_50.toFixed(2)}</span></div>
+            <div className="ind-row"><span>EMA 150</span><span>${indicators.ema_150.toFixed(2)}</span></div>
+            <div className="ind-row"><span>EMA 200</span><span>${indicators.ema_200.toFixed(2)}</span></div>
+            <div className="ind-row"><span>EMA Aligned</span><span style={{ color: indicators.ema_aligned ? '#26a641' : '#da3633' }}>{indicators.ema_aligned ? 'Yes' : 'No'}</span></div>
+            <div className="ind-row"><span>EMA 200 Slope</span><span>{(indicators.ema_200_slope_pct * 100).toFixed(4)}%/d</span></div>
+            <div className="ind-row"><span>ADX (14)</span><span style={{ color: indicators.adx_14 > 25 ? '#26a641' : '#c9d1d9' }}>{indicators.adx_14.toFixed(1)}</span></div>
+            <div className="ind-row"><span>ADX Trending</span><span style={{ color: indicators.adx_trending ? '#26a641' : '#6e7681' }}>{indicators.adx_trending ? 'Yes' : 'No'}</span></div>
+          </div>
+
+          <div className="ind-group">
+            <div className="ind-group__title">Momentum</div>
+            <div className="ind-row"><span>RSI (14)</span><span style={{ color: indicators.rsi_14 > 70 ? '#da3633' : indicators.rsi_14 < 30 ? '#58a6ff' : '#c9d1d9' }}>{indicators.rsi_14.toFixed(1)}</span></div>
+            <div className="ind-row"><span>MACD</span><span>{indicators.macd.toFixed(4)}</span></div>
+            <div className="ind-row"><span>MACD Signal</span><span>{indicators.macd_signal.toFixed(4)}</span></div>
+            <div className="ind-row"><span>MACD Hist</span><span style={{ color: indicators.macd_hist >= 0 ? '#26a641' : '#da3633' }}>{indicators.macd_hist >= 0 ? '+' : ''}{indicators.macd_hist.toFixed(4)}</span></div>
+            <div className="ind-row"><span>MACD Crossover</span><span style={{ color: indicators.macd_crossover_bullish ? '#26a641' : '#6e7681' }}>{indicators.macd_crossover_bullish ? 'Bullish' : 'None'}</span></div>
+          </div>
+
+          <div className="ind-group">
+            <div className="ind-group__title">Volume / Accum</div>
+            <div className="ind-row"><span>OBV Trend</span><span style={{ color: indicators.obv_trend === 'rising' ? '#26a641' : indicators.obv_trend === 'falling' ? '#da3633' : '#8b949e' }}>{indicators.obv_trend}</span></div>
+            <div className="ind-row"><span>CMF (20)</span><span style={{ color: indicators.cmf_20 >= 0 ? '#26a641' : '#da3633' }}>{indicators.cmf_20 >= 0 ? '+' : ''}{indicators.cmf_20.toFixed(3)}</span></div>
+            <div className="ind-row"><span>Volume Ratio</span><span>{indicators.volume_ratio.toFixed(2)}x</span></div>
+          </div>
+
+          <div className="ind-group">
+            <div className="ind-group__title">Relative Strength</div>
+            <div className="ind-row"><span>RS 3M Percentile</span><span style={{ color: indicators.rs_3m_percentile >= 80 ? '#26a641' : '#c9d1d9' }}>{indicators.rs_3m_percentile.toFixed(0)}</span></div>
+            <div className="ind-row"><span>RS 6M Percentile</span><span style={{ color: indicators.rs_6m_percentile >= 80 ? '#26a641' : '#c9d1d9' }}>{indicators.rs_6m_percentile.toFixed(0)}</span></div>
+          </div>
+
+          <div className="ind-group">
+            <div className="ind-group__title">52-Week</div>
+            <div className="ind-row"><span>52W High</span><span>${pick.high_52w.toFixed(2)}</span></div>
+            <div className="ind-row"><span>52W Low</span><span>${pick.low_52w.toFixed(2)}</span></div>
+            <div className="ind-row"><span>vs 52W High</span><span style={{ color: pick.dist_from_52w_high_pct < 10 ? '#26a641' : '#c9d1d9' }}>{pick.dist_from_52w_high_pct.toFixed(1)}% below</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="detail__footer">
+        <a
+          href={`https://finance.yahoo.com/chart/${pick.ticker}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="detail__ext-link"
+        >
+          Open in Yahoo Finance →
+        </a>
+        <a
+          href={`https://www.tradingview.com/chart/?symbol=${pick.ticker}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="detail__ext-link"
+        >
+          Open in TradingView →
+        </a>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,94 @@
+.stock-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.stock-table__th {
+  background: #161b22;
+  color: #8b949e;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 1px solid #30363d;
+  user-select: none;
+}
+
+.stock-table__th:hover {
+  color: #c9d1d9;
+}
+
+.stock-table__th--right {
+  text-align: right;
+}
+
+.stock-table__th--active {
+  color: #58a6ff;
+}
+
+.stock-table__th--rank {
+  width: 36px;
+  text-align: center;
+}
+
+.sort-icon {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.stock-table__row {
+  cursor: pointer;
+  border-bottom: 1px solid #21262d;
+  transition: background 0.1s;
+}
+
+.stock-table__row:hover {
+  background: #1c2128;
+}
+
+.stock-table__row:last-child {
+  border-bottom: none;
+}
+
+.stock-table__td {
+  padding: 10px 12px;
+  color: #c9d1d9;
+  vertical-align: middle;
+}
+
+.stock-table__td--rank {
+  color: #6e7681;
+  font-size: 11px;
+  text-align: center;
+}
+
+.stock-table__td--right {
+  text-align: right;
+}
+
+.stock-table__td--muted {
+  color: #8b949e;
+  font-size: 12px;
+}
+
+.stock-table__ticker {
+  color: #58a6ff;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.badge--sm {
+  font-size: 9px;
+  padding: 1px 5px;
+}
