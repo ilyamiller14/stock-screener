@@ -45,7 +45,7 @@ export async function fetchScreenerResults(): Promise<ScreenerResults | null> {
   if (!resp.ok) throw new Error(`Failed to fetch results (${resp.status})`)
 
   const contentType = resp.headers.get('content-type') ?? ''
-  if (!contentType.includes('application/json')) {
+  if (contentType.includes('text/html')) {
     // Server returned HTML (e.g. SPA fallback) instead of JSON
     return null
   }
