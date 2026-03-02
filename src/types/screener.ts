@@ -3,7 +3,7 @@ export interface ScoreBreakdown {
   rs_score: number
   volume_score: number
   momentum_score: number
-  stage2_score: number
+  pattern_score: number
 }
 
 export interface Indicators {
@@ -24,7 +24,16 @@ export interface Indicators {
   cmf_20: number
   rs_3m_percentile: number
   rs_6m_percentile: number
+  ibd_rs_percentile: number
   volume_ratio: number
+  vcp_detected: boolean
+  vcp_score: number
+  vcp_contractions: number
+  vcp_tightness: number
+  squeeze_on: boolean
+  squeeze_fired: boolean
+  squeeze_bars: number
+  squeeze_score: number
 }
 
 export interface TopPick {
@@ -44,6 +53,8 @@ export interface TopPick {
   score_breakdown: ScoreBreakdown
   indicators: Indicators
   stage2: boolean
+  vcp: boolean
+  squeeze: boolean
   chart_url: string
 }
 
@@ -59,8 +70,9 @@ export type SortKey =
   | 'composite_score'
   | 'rs_score'
   | 'trend_score'
+  | 'pattern_score'
   | 'adx_14'
   | 'rsi_14'
   | 'cmf_20'
-  | 'rs_3m_percentile'
+  | 'ibd_rs_percentile'
   | 'dist_from_52w_high_pct'

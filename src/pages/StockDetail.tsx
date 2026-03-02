@@ -108,8 +108,19 @@ export default function StockDetail() {
 
           <div className="ind-group">
             <div className="ind-group__title">Relative Strength</div>
+            <div className="ind-row"><span>IBD RS Percentile</span><span style={{ color: indicators.ibd_rs_percentile >= 80 ? '#26a641' : '#c9d1d9', fontWeight: 700 }}>{indicators.ibd_rs_percentile.toFixed(0)}</span></div>
             <div className="ind-row"><span>RS 3M Percentile</span><span style={{ color: indicators.rs_3m_percentile >= 80 ? '#26a641' : '#c9d1d9' }}>{indicators.rs_3m_percentile.toFixed(0)}</span></div>
             <div className="ind-row"><span>RS 6M Percentile</span><span style={{ color: indicators.rs_6m_percentile >= 80 ? '#26a641' : '#c9d1d9' }}>{indicators.rs_6m_percentile.toFixed(0)}</span></div>
+          </div>
+
+          <div className="ind-group">
+            <div className="ind-group__title">Pattern (VCP / Squeeze)</div>
+            <div className="ind-row"><span>VCP Detected</span><span style={{ color: indicators.vcp_detected ? '#58a6ff' : '#6e7681', fontWeight: indicators.vcp_detected ? 700 : 400 }}>{indicators.vcp_detected ? 'Yes' : 'No'}</span></div>
+            <div className="ind-row"><span>VCP Score</span><span>{indicators.vcp_score.toFixed(0)}</span></div>
+            <div className="ind-row"><span>Contractions</span><span>{indicators.vcp_contractions}</span></div>
+            <div className="ind-row"><span>Tightness</span><span>{indicators.vcp_tightness.toFixed(2)}x</span></div>
+            <div className="ind-row"><span>Squeeze</span><span style={{ color: indicators.squeeze_fired ? '#f0883e' : indicators.squeeze_on ? '#e3b341' : '#6e7681', fontWeight: indicators.squeeze_fired ? 700 : 400 }}>{indicators.squeeze_fired ? 'Fired' : indicators.squeeze_on ? `On (${indicators.squeeze_bars} bars)` : 'Off'}</span></div>
+            <div className="ind-row"><span>Squeeze Score</span><span>{indicators.squeeze_score.toFixed(0)}</span></div>
           </div>
 
           <div className="ind-group">

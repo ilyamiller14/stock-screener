@@ -291,7 +291,6 @@ def compute_relative_strength(
     benchmark_close = benchmark_df["Close"].squeeze()
 
     for p in periods:
-        # Align on shared dates
         t_tail = ticker_close.tail(p + 1)
         b_tail = benchmark_close.tail(p + 1)
 
@@ -301,12 +300,288 @@ def compute_relative_strength(
 
         t_ret = float(t_tail.iloc[-1] / t_tail.iloc[0] - 1)
         b_ret = float(b_tail.iloc[-1] / b_tail.iloc[0] - 1)
-
-        # Raw RS: outperformance vs benchmark
         rs_raw = t_ret - b_ret
         results[f"rs_raw_{p}d"] = round(rs_raw, 6)
 
     return results
+
+
+# ── IBD-Style Relative Strength ──────────────────────────────────────────────
+
+def compute_ibd_rs(
+    ticker_df: pd.DataFrame,
+    benchmark_df: pd.DataFrame,
+) -> dict[str, Any]:
+    """
+    IBD-style Relative Strength with quarter-weighted formula.
+    RS = 0.4 * Q1_return + 0.2 * Q2_return + 0.2 * Q3_return + 0.2 * Q4_return
+    where Q1 = most recent quarter (63 trading days).
+    Double-weights recent performance to catch accelerating momentum.
+    Percentile ranking is done in scorer.py across the full universe.
+    """
+    ticker_close    = ticker_df["Close"].squeeze()
+    benchmark_close = benchmark_df["Close"].squeeze()
+
+    # Quarter boundaries (trading days): Q1=0-63, Q2=63-126, Q3=126-189, Q4=189-252
+    quarter_days = [63, 126, 189, 252]
+    t_len = len(ticker_close)
+    b_len = len(benchmark_close)
+
+    if t_len < 252 or b_len < 252:
+        # Fall back to simple 12-month return if insufficient data
+        if t_len > 63 and b_len > 63:
+            t_ret = float(ticker_close.iloc[-1] / ticker_close.iloc[-63] - 1)
+            b_ret = float(benchmark_close.iloc[-1] / benchmark_close.iloc[-63] - 1)
+            return {"ibd_rs_raw": round(t_ret - b_ret, 6)}
+        return {"ibd_rs_raw": 0.0}
+
+    # Compute quarterly returns for both ticker and benchmark
+    t_q_returns = []
+    b_q_returns = []
+    for i, end in enumerate(quarter_days):
+        start = quarter_days[i - 1] if i > 0 else 0
+        t_start_price = float(ticker_close.iloc[-(end + 1)])
+        t_end_price   = float(ticker_close.iloc[-(start + 1)]) if start > 0 else float(ticker_close.iloc[-1])
+        b_start_price = float(benchmark_close.iloc[-(end + 1)])
+        b_end_price   = float(benchmark_close.iloc[-(start + 1)]) if start > 0 else float(benchmark_close.iloc[-1])
+
+        t_q_ret = (t_end_price / t_start_price - 1) if t_start_price > 0 else 0.0
+        b_q_ret = (b_end_price / b_start_price - 1) if b_start_price > 0 else 0.0
+        t_q_returns.append(t_q_ret)
+        b_q_returns.append(b_q_ret)
+
+    # IBD weighting: 2x most recent quarter, 1x each older quarter
+    # Q1(recent)=0.4, Q2=0.2, Q3=0.2, Q4=0.2
+    weights = [0.4, 0.2, 0.2, 0.2]
+    t_weighted = sum(w * r for w, r in zip(weights, t_q_returns))
+    b_weighted = sum(w * r for w, r in zip(weights, b_q_returns))
+
+    ibd_rs_raw = t_weighted - b_weighted
+
+    return {"ibd_rs_raw": round(ibd_rs_raw, 6)}
+
+
+# ── VCP Detection (Volatility Contraction Pattern) ───────────────────────────
+
+def compute_vcp(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Detect Volatility Contraction Pattern (Minervini/O'Neil).
+
+    Algorithm:
+    1. Look back over last 120 days for swing highs/lows
+    2. Identify contractions (each pullback from a swing high to a swing low)
+    3. Check if contractions are progressively shallower (50-60% smaller each time)
+    4. Check if ATR is declining from base start to current
+    5. Check if volume is drying up during the contraction
+
+    Returns:
+      - vcp_detected: True if a valid VCP pattern is found
+      - vcp_contractions: number of contractions found (2-4 is ideal)
+      - vcp_tightness: ratio of last contraction to first (lower = tighter)
+      - vcp_atr_decline: ATR decline % from base start to current
+      - vcp_vol_decline: volume decline % from base start to current
+      - vcp_score: 0-100 composite VCP quality score
+    """
+    default = {
+        "vcp_detected": False, "vcp_contractions": 0, "vcp_tightness": 1.0,
+        "vcp_atr_decline": 0.0, "vcp_vol_decline": 0.0, "vcp_score": 0.0,
+    }
+
+    close  = df["Close"].squeeze()
+    high   = df["High"].squeeze()
+    low    = df["Low"].squeeze()
+    volume = df["Volume"].squeeze()
+
+    lookback = min(120, len(df) - 1)
+    if lookback < 40:
+        return default
+
+    recent = df.tail(lookback).copy()
+    r_close = recent["Close"].values.astype(float)
+    r_high  = recent["High"].values.astype(float)
+    r_low   = recent["Low"].values.astype(float)
+    r_vol   = recent["Volume"].values.astype(float)
+
+    # Find swing highs and lows using a 5-bar pivot
+    pivot = 5
+    swing_highs: list[tuple[int, float]] = []  # (index, price)
+    swing_lows:  list[tuple[int, float]] = []
+
+    for i in range(pivot, lookback - pivot):
+        # Swing high: higher than pivot bars on both sides
+        if r_high[i] == max(r_high[i - pivot : i + pivot + 1]):
+            swing_highs.append((i, float(r_high[i])))
+        # Swing low: lower than pivot bars on both sides
+        if r_low[i] == min(r_low[i - pivot : i + pivot + 1]):
+            swing_lows.append((i, float(r_low[i])))
+
+    if len(swing_highs) < 2 or len(swing_lows) < 1:
+        return default
+
+    # Measure contractions: distance from each swing high to the next swing low
+    contractions: list[float] = []
+    for i in range(len(swing_highs)):
+        sh_idx, sh_price = swing_highs[i]
+        # Find the next swing low after this swing high
+        next_lows = [(si, sp) for si, sp in swing_lows if si > sh_idx]
+        if not next_lows:
+            continue
+        sl_idx, sl_price = next_lows[0]
+        if sh_price > 0:
+            contraction_pct = (sh_price - sl_price) / sh_price * 100
+            contractions.append(contraction_pct)
+
+    if len(contractions) < 2:
+        return default
+
+    # Check if contractions are progressively tighter
+    tightening_count = 0
+    for i in range(1, len(contractions)):
+        if contractions[i] < contractions[i - 1]:
+            tightening_count += 1
+
+    tightness = contractions[-1] / contractions[0] if contractions[0] > 0 else 1.0
+
+    # ATR decline: compare ATR at base start vs current
+    atr_series = ta.atr(
+        pd.Series(r_high), pd.Series(r_low), pd.Series(r_close), length=14
+    )
+    if atr_series is not None and len(atr_series.dropna()) > 20:
+        atr_clean = atr_series.dropna()
+        atr_start = float(atr_clean.iloc[:10].mean())
+        atr_end   = float(atr_clean.iloc[-10:].mean())
+        atr_decline = (atr_start - atr_end) / atr_start * 100 if atr_start > 0 else 0.0
+    else:
+        atr_decline = 0.0
+
+    # Volume decline: compare avg volume at base start vs current
+    vol_start = float(np.mean(r_vol[:20])) if len(r_vol) >= 20 else float(np.mean(r_vol))
+    vol_end   = float(np.mean(r_vol[-20:])) if len(r_vol) >= 20 else float(np.mean(r_vol))
+    vol_decline = (vol_start - vol_end) / vol_start * 100 if vol_start > 0 else 0.0
+
+    # VCP Score (0-100)
+    # - Tightening contractions (0-30): reward progressively shallower pullbacks
+    tighten_score = min(30.0, (tightening_count / max(1, len(contractions) - 1)) * 30.0)
+
+    # - Tightness ratio (0-25): last contraction < 50% of first is ideal
+    tight_ratio_score = _clamp((1.0 - tightness) * 50.0, 0.0, 25.0)
+
+    # - ATR decline (0-25): 20%+ decline is strong
+    atr_score = _clamp(atr_decline * 1.25, 0.0, 25.0)
+
+    # - Volume dry-up (0-20): 30-50% decline is strong
+    vol_score = _clamp(vol_decline * 0.5, 0.0, 20.0)
+
+    vcp_score = tighten_score + tight_ratio_score + atr_score + vol_score
+
+    # VCP detected if score > 40 and at least 2 tightening contractions
+    vcp_detected = vcp_score >= 40.0 and tightening_count >= 1 and len(contractions) >= 2
+
+    return {
+        "vcp_detected":     bool(vcp_detected),
+        "vcp_contractions": len(contractions),
+        "vcp_tightness":    round(tightness, 3),
+        "vcp_atr_decline":  round(atr_decline, 1),
+        "vcp_vol_decline":  round(vol_decline, 1),
+        "vcp_score":        round(vcp_score, 1),
+    }
+
+
+def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
+    return max(lo, min(hi, val))
+
+
+# ── Keltner / Bollinger Squeeze ──────────────────────────────────────────────
+
+def compute_squeeze(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Detect TTM Squeeze: Bollinger Bands contracting inside Keltner Channel.
+
+    When BB is inside KC = "squeeze on" (extreme vol contraction, coiled spring).
+    When BB expands back outside KC = "squeeze fire" (breakout imminent).
+
+    Returns:
+      - squeeze_on: True if BB is currently inside KC (coiling)
+      - squeeze_fired: True if squeeze just released (last 5 bars)
+      - squeeze_bars: how many consecutive bars the squeeze has been on
+      - squeeze_score: 0-100 quality score (long squeeze → higher score)
+    """
+    default = {
+        "squeeze_on": False, "squeeze_fired": False,
+        "squeeze_bars": 0, "squeeze_score": 0.0,
+    }
+
+    close = df["Close"].squeeze()
+    high  = df["High"].squeeze()
+    low   = df["Low"].squeeze()
+
+    if len(close) < 30:
+        return default
+
+    # Bollinger Bands (20, 2.0)
+    bb = ta.bbands(close, length=20, std=2.0)
+    if bb is None or bb.empty:
+        return default
+
+    bb_upper_col = [c for c in bb.columns if c.startswith("BBU_")]
+    bb_lower_col = [c for c in bb.columns if c.startswith("BBL_")]
+    if not bb_upper_col or not bb_lower_col:
+        return default
+
+    bb_upper = bb[bb_upper_col[0]]
+    bb_lower = bb[bb_lower_col[0]]
+
+    # Keltner Channel (20, 1.5x ATR)
+    kc_mid = ta.ema(close, length=20)
+    atr_series = ta.atr(high, low, close, length=20)
+    if kc_mid is None or atr_series is None:
+        return default
+
+    kc_upper = kc_mid + 1.5 * atr_series
+    kc_lower = kc_mid - 1.5 * atr_series
+
+    # Squeeze: BB inside KC
+    squeeze_series = (bb_lower > kc_lower) & (bb_upper < kc_upper)
+    squeeze_vals = squeeze_series.dropna().tail(60)
+
+    if len(squeeze_vals) < 5:
+        return default
+
+    squeeze_on = bool(squeeze_vals.iloc[-1])
+
+    # Count consecutive squeeze bars
+    squeeze_bars = 0
+    for i in range(len(squeeze_vals) - 1, -1, -1):
+        if squeeze_vals.iloc[i]:
+            squeeze_bars += 1
+        else:
+            break
+
+    # Squeeze fired: was on, now off (within last 5 bars)
+    squeeze_fired = False
+    if not squeeze_on and len(squeeze_vals) >= 6:
+        # Check if squeeze was on recently and just released
+        for i in range(2, min(6, len(squeeze_vals))):
+            if squeeze_vals.iloc[-i]:
+                squeeze_fired = True
+                break
+
+    # Squeeze score: longer squeezes build more energy
+    if squeeze_on:
+        # Currently squeezing — reward duration (6+ bars = building energy)
+        squeeze_score = _clamp(squeeze_bars * 5.0, 0.0, 80.0)
+    elif squeeze_fired:
+        # Just fired — this is the actionable signal
+        squeeze_score = 100.0
+    else:
+        squeeze_score = 0.0
+
+    return {
+        "squeeze_on":    squeeze_on,
+        "squeeze_fired": squeeze_fired,
+        "squeeze_bars":  squeeze_bars,
+        "squeeze_score": round(squeeze_score, 1),
+    }
 
 
 # ── Master compute ─────────────────────────────────────────────────────────────
@@ -358,6 +633,9 @@ def compute_all(
         indicators.update(compute_cmf(df))
         indicators.update(compute_volume_analysis(df))
         indicators.update(compute_relative_strength(df, benchmark_df))
+        indicators.update(compute_ibd_rs(df, benchmark_df))
+        indicators.update(compute_vcp(df))
+        indicators.update(compute_squeeze(df))
 
         return indicators
 

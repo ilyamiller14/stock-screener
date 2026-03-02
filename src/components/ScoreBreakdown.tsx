@@ -16,11 +16,11 @@ interface Props {
 }
 
 const CATEGORIES = [
-  { key: 'trend_score',    label: 'Trend',           color: '#238636', weight: '35%' },
-  { key: 'rs_score',       label: 'Rel. Strength',   color: '#58a6ff', weight: '25%' },
-  { key: 'volume_score',   label: 'Volume/Accum',    color: '#bc8cff', weight: '20%' },
+  { key: 'trend_score',    label: 'Trend',           color: '#238636', weight: '30%' },
+  { key: 'rs_score',       label: 'IBD Rel. Strength', color: '#58a6ff', weight: '25%' },
+  { key: 'volume_score',   label: 'Volume/Accum',    color: '#bc8cff', weight: '15%' },
   { key: 'momentum_score', label: 'Momentum',        color: '#e3b341', weight: '15%' },
-  { key: 'stage2_score',   label: 'Stage 2',         color: '#26a641', weight: '5%'  },
+  { key: 'pattern_score',  label: 'Pattern',         color: '#f0883e', weight: '15%' },
 ] as const
 
 export function ScoreBreakdown({ breakdown }: Props) {

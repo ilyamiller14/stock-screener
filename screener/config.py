@@ -53,11 +53,11 @@ CHART_CLEANUP_DAYS = 7  # Delete PNGs older than this many days
 
 # ── Scoring weights (must sum to 1.0) ─────────────────────────────────────────
 CATEGORY_WEIGHTS = {
-    "trend":    0.35,
+    "trend":    0.30,
     "rs":       0.25,
-    "volume":   0.20,
+    "volume":   0.15,
     "momentum": 0.15,
-    "stage2":   0.05,
+    "pattern":  0.15,  # VCP + Squeeze + Stage 2
 }
 
 # Sub-weights within each category (must sum to 1.0)
@@ -69,8 +69,9 @@ TREND_SUB_WEIGHTS = {
 }
 
 RS_SUB_WEIGHTS = {
-    "rs_3m_percentile": 0.60,
-    "rs_6m_percentile": 0.40,
+    "ibd_rs_percentile": 0.50,  # IBD-style quarter-weighted RS
+    "rs_3m_percentile":  0.30,
+    "rs_6m_percentile":  0.20,
 }
 
 VOLUME_SUB_WEIGHTS = {
@@ -83,6 +84,12 @@ MOMENTUM_SUB_WEIGHTS = {
     "rsi":             0.50,
     "macd_hist":       0.30,
     "macd_crossover":  0.20,
+}
+
+PATTERN_SUB_WEIGHTS = {
+    "vcp":     0.40,  # VCP quality score
+    "squeeze": 0.35,  # Keltner/BB squeeze
+    "stage2":  0.25,  # Full Weinstein Stage 2
 }
 
 # RSI scoring: 60 is ideal (bullish momentum, not overbought)

@@ -17,12 +17,12 @@ const COLUMNS: { key: SortKey | 'ticker' | 'sector'; label: string; align?: 'rig
   { key: 'ticker',            label: 'Ticker' },
   { key: 'sector',            label: 'Sector' },
   { key: 'composite_score',   label: 'Score',    align: 'right' },
-  { key: 'rs_3m_percentile',  label: 'RS %ile',  align: 'right' },
+  { key: 'ibd_rs_percentile', label: 'IBD RS',   align: 'right' },
   { key: 'trend_score',       label: 'Trend',    align: 'right' },
+  { key: 'pattern_score',     label: 'Pattern',  align: 'right' },
   { key: 'adx_14',            label: 'ADX',      align: 'right' },
   { key: 'rsi_14',            label: 'RSI',      align: 'right' },
   { key: 'cmf_20',            label: 'CMF',      align: 'right' },
-  { key: 'dist_from_52w_high_pct', label: 'vs 52W Hi', align: 'right' },
 ]
 
 function getValue(pick: TopPick, key: string): number | string {
@@ -31,7 +31,8 @@ function getValue(pick: TopPick, key: string): number | string {
   if (key === 'composite_score') return pick.composite_score
   if (key === 'trend_score')     return pick.score_breakdown.trend_score
   if (key === 'rs_score')        return pick.score_breakdown.rs_score
-  if (key === 'rs_3m_percentile') return pick.indicators.rs_3m_percentile
+  if (key === 'pattern_score')   return pick.score_breakdown.pattern_score
+  if (key === 'ibd_rs_percentile') return pick.indicators.ibd_rs_percentile
   if (key === 'adx_14')          return pick.indicators.adx_14
   if (key === 'rsi_14')          return pick.indicators.rsi_14
   if (key === 'cmf_20')          return pick.indicators.cmf_20
@@ -93,13 +94,18 @@ export function StockTable({ picks }: Props) {
               <td className="stock-table__td">
                 <span className="stock-table__ticker">{pick.ticker}</span>
                 {pick.stage2 && <span className="badge badge--stage2 badge--sm">S2</span>}
+                {pick.vcp && <span className="badge badge--vcp badge--sm">VCP</span>}
+                {pick.squeeze && <span className="badge badge--squeeze badge--sm">SQ</span>}
               </td>
               <td className="stock-table__td stock-table__td--muted">{pick.sector}</td>
               <td className="stock-table__td stock-table__td--right" style={{ color: scoreColor(pick.composite_score), fontWeight: 700 }}>
                 {pick.composite_score.toFixed(1)}
               </td>
-              <td className="stock-table__td stock-table__td--right">{pick.indicators.rs_3m_percentile.toFixed(0)}</td>
+              <td className="stock-table__td stock-table__td--right">{pick.indicators.ibd_rs_percentile.toFixed(0)}</td>
               <td className="stock-table__td stock-table__td--right">{pick.score_breakdown.trend_score.toFixed(0)}</td>
+              <td className="stock-table__td stock-table__td--right" style={{ color: pick.score_breakdown.pattern_score >= 50 ? '#f0883e' : '#8b949e' }}>
+                {pick.score_breakdown.pattern_score.toFixed(0)}
+              </td>
               <td className="stock-table__td stock-table__td--right">{pick.indicators.adx_14.toFixed(1)}</td>
               <td className="stock-table__td stock-table__td--right">{pick.indicators.rsi_14.toFixed(1)}</td>
               <td className="stock-table__td stock-table__td--right">
@@ -107,7 +113,6 @@ export function StockTable({ picks }: Props) {
                   {pick.indicators.cmf_20 >= 0 ? '+' : ''}{pick.indicators.cmf_20.toFixed(2)}
                 </span>
               </td>
-              <td className="stock-table__td stock-table__td--right">{pick.dist_from_52w_high_pct.toFixed(1)}%</td>
             </tr>
           ))}
         </tbody>

@@ -47,31 +47,33 @@ def compute_rs_percentiles(
     all_indicators: list[dict[str, Any]],
 ) -> dict[str, dict[str, float]]:
     """
-    Compute RS percentile for each stock within the qualifying universe.
-    Returns {ticker: {rs_3m_percentile: float, rs_6m_percentile: float}}.
+    Compute RS percentiles for each stock within the qualifying universe.
+    Includes standard 3m/6m RS and IBD-style quarter-weighted RS.
     """
-    tickers   = [i["ticker"] for i in all_indicators]
-    rs_3m_raw = np.array([i.get("rs_raw_63d", 0.0) for i in all_indicators])
-    rs_6m_raw = np.array([i.get("rs_raw_126d", 0.0) for i in all_indicators])
+    tickers    = [i["ticker"] for i in all_indicators]
+    rs_3m_raw  = np.array([i.get("rs_raw_63d", 0.0) for i in all_indicators])
+    rs_6m_raw  = np.array([i.get("rs_raw_126d", 0.0) for i in all_indicators])
+    ibd_rs_raw = np.array([i.get("ibd_rs_raw", 0.0) for i in all_indicators])
 
     n = len(tickers)
     if n == 0:
         return {}
 
-    # Percentile rank: fraction of stocks this one beats
     def _percentile_ranks(values: np.ndarray) -> np.ndarray:
         ranks = np.zeros(n)
         for i, v in enumerate(values):
             ranks[i] = float(np.sum(values < v)) / (n - 1) * 100 if n > 1 else 50.0
         return ranks
 
-    p3m = _percentile_ranks(rs_3m_raw)
-    p6m = _percentile_ranks(rs_6m_raw)
+    p3m  = _percentile_ranks(rs_3m_raw)
+    p6m  = _percentile_ranks(rs_6m_raw)
+    pibd = _percentile_ranks(ibd_rs_raw)
 
     return {
         tickers[i]: {
-            "rs_3m_percentile": round(float(p3m[i]), 1),
-            "rs_6m_percentile": round(float(p6m[i]), 1),
+            "rs_3m_percentile":  round(float(p3m[i]),  1),
+            "rs_6m_percentile":  round(float(p6m[i]),  1),
+            "ibd_rs_percentile": round(float(pibd[i]), 1),
         }
         for i in range(n)
     }
@@ -109,10 +111,11 @@ def _score_trend(ind: dict[str, Any]) -> float:
 
 
 def _score_rs(ind: dict[str, Any]) -> float:
+    ibd = ind.get("ibd_rs_percentile", 50.0)
     p3m = ind.get("rs_3m_percentile", 50.0)
     p6m = ind.get("rs_6m_percentile", 50.0)
     w = config.RS_SUB_WEIGHTS
-    return p3m * w["rs_3m_percentile"] + p6m * w["rs_6m_percentile"]
+    return ibd * w["ibd_rs_percentile"] + p3m * w["rs_3m_percentile"] + p6m * w["rs_6m_percentile"]
 
 
 def _score_volume(ind: dict[str, Any]) -> float:
@@ -176,6 +179,23 @@ def _score_stage2(ind: dict[str, Any]) -> float:
     return 100.0 if (ema_ok and near_hh and obv_ok and adx_ok) else 0.0
 
 
+def _score_pattern(ind: dict[str, Any]) -> float:
+    """
+    Pattern quality score: VCP + Keltner/BB Squeeze + Stage 2.
+    Rewards stocks with identifiable base patterns and volatility contraction.
+    """
+    vcp_score     = _clamp(ind.get("vcp_score", 0.0))
+    squeeze_score = _clamp(ind.get("squeeze_score", 0.0))
+    stage2_score  = _score_stage2(ind)
+
+    w = config.PATTERN_SUB_WEIGHTS
+    return (
+        vcp_score     * w["vcp"]
+        + squeeze_score * w["squeeze"]
+        + stage2_score  * w["stage2"]
+    )
+
+
 def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
     """Return composite score and per-category breakdown."""
     close = ind.get("close", 1.0)
@@ -184,7 +204,7 @@ def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
     rs_s       = _score_rs(ind)
     volume_s   = _score_volume(ind)
     momentum_s = _score_momentum(ind, close)
-    stage2_s   = _score_stage2(ind)
+    pattern_s  = _score_pattern(ind)
 
     w = config.CATEGORY_WEIGHTS
     composite = (
@@ -192,7 +212,7 @@ def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
         + rs_s       * w["rs"]
         + volume_s   * w["volume"]
         + momentum_s * w["momentum"]
-        + stage2_s   * w["stage2"]
+        + pattern_s  * w["pattern"]
     )
 
     return {
@@ -201,7 +221,7 @@ def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
         "rs_score":        round(rs_s, 1),
         "volume_score":    round(volume_s, 1),
         "momentum_score":  round(momentum_s, 1),
-        "stage2_score":    round(stage2_s, 1),
+        "pattern_score":   round(pattern_s, 1),
     }
 
 
@@ -259,7 +279,7 @@ def rank_stocks(
     percentiles = compute_rs_percentiles(qualifying)
     for ind in qualifying:
         ticker = ind["ticker"]
-        ind.update(percentiles.get(ticker, {"rs_3m_percentile": 50.0, "rs_6m_percentile": 50.0}))
+        ind.update(percentiles.get(ticker, {"rs_3m_percentile": 50.0, "rs_6m_percentile": 50.0, "ibd_rs_percentile": 50.0}))
 
     # 3. Composite score
     for ind in qualifying:

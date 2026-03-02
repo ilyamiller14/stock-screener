@@ -66,15 +66,15 @@ export default function Dashboard() {
 
       {/* Scoring legend */}
       <div className="dashboard__legend">
-        <span className="legend-item" style={{ color: '#238636' }}>Trend 35%</span>
+        <span className="legend-item" style={{ color: '#238636' }}>Trend 30%</span>
         <span className="legend-sep">·</span>
-        <span className="legend-item" style={{ color: '#58a6ff' }}>Rel. Strength 25%</span>
+        <span className="legend-item" style={{ color: '#58a6ff' }}>IBD Rel. Strength 25%</span>
         <span className="legend-sep">·</span>
-        <span className="legend-item" style={{ color: '#bc8cff' }}>Volume 20%</span>
+        <span className="legend-item" style={{ color: '#bc8cff' }}>Volume 15%</span>
         <span className="legend-sep">·</span>
         <span className="legend-item" style={{ color: '#e3b341' }}>Momentum 15%</span>
         <span className="legend-sep">·</span>
-        <span className="legend-item" style={{ color: '#26a641' }}>Stage 2 5%</span>
+        <span className="legend-item" style={{ color: '#f0883e' }}>Pattern (VCP/Squeeze/S2) 15%</span>
       </div>
 
       {/* Controls */}

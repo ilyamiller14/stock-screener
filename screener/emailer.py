@@ -56,6 +56,20 @@ def _stage2_badge(is_stage2: bool) -> str:
     return '<span style="background:#2d2208;color:#e3b341;border:1px solid #e3b341;border-radius:12px;padding:2px 8px;font-size:10px;">Near Stage 2</span>'
 
 
+def _vcp_badge(vcp_detected: bool) -> str:
+    if vcp_detected:
+        return '<span style="background:#1a2744;color:#58a6ff;border:1px solid #58a6ff;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:bold;">VCP</span>'
+    return ''
+
+
+def _squeeze_badge(squeeze_on: bool, squeeze_fired: bool) -> str:
+    if squeeze_fired:
+        return '<span style="background:#2d1a08;color:#f0883e;border:1px solid #f0883e;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:bold;">Squeeze Fire</span>'
+    if squeeze_on:
+        return '<span style="background:#2d2208;color:#e3b341;border:1px solid #e3b341;border-radius:12px;padding:2px 8px;font-size:10px;">Squeeze</span>'
+    return ''
+
+
 def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
     ticker        = pick["ticker"]
     company       = pick.get("company_name", ticker)
@@ -67,18 +81,30 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
     rs_s          = pick.get("rs_score", 0.0)
     vol_s         = pick.get("volume_score", 0.0)
     mom_s         = pick.get("momentum_score", 0.0)
-    stage2_s      = pick.get("stage2_score", 0.0)
-    rs_pct        = pick.get("rs_3m_percentile", 0.0)
+    pattern_s     = pick.get("pattern_score", 0.0)
+    ibd_rs        = pick.get("ibd_rs_percentile", 0.0)
     adx           = pick.get("adx_14", 0.0)
     rsi           = pick.get("rsi_14", 50.0)
     cmf           = pick.get("cmf_20", 0.0)
     obv_trend     = pick.get("obv_trend", "flat").capitalize()
     dist_high     = pick.get("dist_from_52w_high_pct", 0.0)
-    is_stage2     = pick.get("stage2_score", 0.0) == 100.0
+    is_stage2     = pick.get("ema_aligned", False) and pick.get("near_52w_high", False)
+    vcp_detected  = pick.get("vcp_detected", False)
+    squeeze_on    = pick.get("squeeze_on", False)
+    squeeze_fired = pick.get("squeeze_fired", False)
     change_color  = "#26a641" if change_pct >= 0 else "#da3633"
     change_arrow  = "▲" if change_pct >= 0 else "▼"
 
     chart_url = f"{config.GITHUB_RAW_BASE}/results/charts/{ticker}_{run_date}.png"
+
+    # Build badges
+    badges = _stage2_badge(is_stage2)
+    vcp_b = _vcp_badge(vcp_detected)
+    sq_b  = _squeeze_badge(squeeze_on, squeeze_fired)
+    if vcp_b:
+        badges += f"&nbsp;{vcp_b}"
+    if sq_b:
+        badges += f"&nbsp;{sq_b}"
 
     return f"""
     <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;margin:12px 0;padding:16px;max-width:680px;">
@@ -90,7 +116,7 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
           <span style="color:#8b949e;font-size:12px;margin-left:8px;">{company}</span>
           <br/>
           <span style="color:#6e7681;font-size:10px;">{sector}</span>
-          &nbsp;&nbsp;{_stage2_badge(is_stage2)}
+          &nbsp;&nbsp;{badges}
         </div>
         <div style="text-align:right;">
           <div style="font-size:22px;font-weight:bold;color:#c9d1d9;">${close:.2f}</div>
@@ -101,17 +127,17 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
 
       <!-- Score bars -->
       <table style="border-collapse:collapse;margin-bottom:10px;">
-        {_bar(trend_s,  "#238636", "Trend")}
-        {_bar(rs_s,     "#58a6ff", "Rel. Strength")}
-        {_bar(vol_s,    "#bc8cff", "Volume")}
-        {_bar(mom_s,    "#e3b341", "Momentum")}
-        {_bar(stage2_s, "#26a641", "Stage 2")}
+        {_bar(trend_s,   "#238636", "Trend")}
+        {_bar(rs_s,      "#58a6ff", "Rel. Strength")}
+        {_bar(vol_s,     "#bc8cff", "Volume")}
+        {_bar(mom_s,     "#e3b341", "Momentum")}
+        {_bar(pattern_s, "#f0883e", "Pattern")}
       </table>
 
       <!-- Key metrics -->
       <table style="border-collapse:collapse;background:#0d1117;border-radius:6px;width:100%;margin-bottom:12px;">
         <tr>
-          {_metric("RS %ile", f"{rs_pct:.0f}")}
+          {_metric("IBD RS", f"{ibd_rs:.0f}")}
           {_metric("ADX", f"{adx:.1f}")}
           {_metric("RSI 14", f"{rsi:.1f}")}
           {_metric("CMF", f"{cmf:+.2f}")}
@@ -171,11 +197,11 @@ def build_html(
   <div style="background:#0d1117;padding:12px 24px;border-bottom:1px solid #21262d;">
     <div style="max-width:700px;margin:0 auto;font-size:10px;color:#6e7681;">
       Scoring: &nbsp;
-      <span style="color:#238636;">Trend 35%</span> &nbsp;|&nbsp;
-      <span style="color:#58a6ff;">Relative Strength 25%</span> &nbsp;|&nbsp;
-      <span style="color:#bc8cff;">Volume/Accum 20%</span> &nbsp;|&nbsp;
+      <span style="color:#238636;">Trend 30%</span> &nbsp;|&nbsp;
+      <span style="color:#58a6ff;">IBD Rel. Strength 25%</span> &nbsp;|&nbsp;
+      <span style="color:#bc8cff;">Volume/Accum 15%</span> &nbsp;|&nbsp;
       <span style="color:#e3b341;">Momentum 15%</span> &nbsp;|&nbsp;
-      <span style="color:#26a641;">Stage 2 5%</span>
+      <span style="color:#f0883e;">Pattern (VCP/Squeeze/S2) 15%</span>
       &nbsp;&nbsp;·&nbsp;&nbsp;
       Hard filters: Price &gt; $2, Volume &gt; 100k, Close &gt; EMA 200, EMA 200 slope positive
     </div>

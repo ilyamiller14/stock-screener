@@ -103,6 +103,24 @@
   border: 1px solid #e3b341;
 }
 
+.badge--vcp {
+  background: #1a2744;
+  color: #58a6ff;
+  border: 1px solid #58a6ff;
+}
+
+.badge--squeeze {
+  background: #2d2208;
+  color: #e3b341;
+  border: 1px solid #e3b341;
+}
+
+.badge--squeeze-fire {
+  background: #2d1a08;
+  color: #f0883e;
+  border: 1px solid #f0883e;
+}
+
 /* Score bars */
 .stock-card__bars {
   display: flex;

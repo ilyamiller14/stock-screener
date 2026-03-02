@@ -24,7 +24,7 @@ export function StockCard({ pick }: Props) {
   const navigate = useNavigate()
   const {
     rank, ticker, company_name, sector, close, change_pct,
-    composite_score, score_breakdown, indicators, stage2,
+    composite_score, score_breakdown, indicators, stage2, vcp, squeeze,
     dist_from_52w_high_pct,
   } = pick
 
@@ -37,8 +37,10 @@ export function StockCard({ pick }: Props) {
         <div className="stock-card__left">
           <span className="stock-card__rank">#{rank}</span>
           <span className="stock-card__ticker">{ticker}</span>
-          {stage2 && <span className="badge badge--stage2">Stage 2</span>}
-          {!stage2 && <span className="badge badge--near">Near S2</span>}
+          {stage2 && <span className="badge badge--stage2">S2</span>}
+          {vcp && <span className="badge badge--vcp">VCP</span>}
+          {indicators.squeeze_fired && <span className="badge badge--squeeze-fire">Squeeze Fire</span>}
+          {!indicators.squeeze_fired && squeeze && <span className="badge badge--squeeze">Squeeze</span>}
           <div className="stock-card__company">{company_name}</div>
           <div className="stock-card__sector">{sector}</div>
         </div>
@@ -59,12 +61,13 @@ export function StockCard({ pick }: Props) {
         <ScoreBar score={score_breakdown.rs_score}       color="#58a6ff" />
         <ScoreBar score={score_breakdown.volume_score}   color="#bc8cff" />
         <ScoreBar score={score_breakdown.momentum_score} color="#e3b341" />
+        <ScoreBar score={score_breakdown.pattern_score}  color="#f0883e" />
       </div>
 
       <div className="stock-card__metrics">
         <div className="metric">
-          <div className="metric__label">RS %ile</div>
-          <div className="metric__value">{indicators.rs_3m_percentile.toFixed(0)}</div>
+          <div className="metric__label">IBD RS</div>
+          <div className="metric__value">{indicators.ibd_rs_percentile.toFixed(0)}</div>
         </div>
         <div className="metric">
           <div className="metric__label">ADX</div>
