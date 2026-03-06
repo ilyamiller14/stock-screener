@@ -304,7 +304,7 @@ def generate_chart(
     obv_trend = indicators.get("obv_trend", "flat")
     run_date = datetime.now().strftime("%Y-%m-%d")
 
-    title_text = f"${{ticker}}  |  {company}  |  {sector}  |  {run_date}"
+    title_text = f"${ticker}  |  {company}  |  {sector}  |  {run_date}"
     subtitle   = (
         f"Score: {score:.1f}  |  RS%: {rs_pct:.0f}  |  "
         f"ADX: {adx_val:.1f}  |  CMF: {cmf_val:+.2f}  |  OBV: {obv_trend.capitalize()}"

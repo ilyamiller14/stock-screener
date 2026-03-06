@@ -34,7 +34,7 @@ EMA200_SLOPE_THRESHOLD = 0.0      # Slope must be > 0 (upward trend)
 
 # ── Selection output ───────────────────────────────────────────────────────────
 TOP_N = 20                        # Total picks in output
-CHART_TOP_N = 15                  # Charts generated for top N only
+CHART_TOP_N = 20                  # Charts generated for all top picks
 MAX_PICKS_PER_SECTOR = 3          # Sector diversification cap
 
 # ── Chart settings ─────────────────────────────────────────────────────────────
