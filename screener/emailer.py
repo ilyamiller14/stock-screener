@@ -44,9 +44,9 @@ def _bar(pct: float, color: str, label: str) -> str:
 
 def _metric(label: str, value: str) -> str:
     return f"""
-      <td style="text-align:center;padding:4px 8px;">
-        <div style="color:#8b949e;font-size:9px;text-transform:uppercase;">{label}</div>
-        <div style="color:#c9d1d9;font-size:12px;font-weight:bold;">{value}</div>
+      <td style="text-align:center;padding:4px 6px;white-space:nowrap;">
+        <div style="color:#8b949e;font-size:9px;text-transform:uppercase;white-space:nowrap;">{label}</div>
+        <div style="color:#c9d1d9;font-size:12px;font-weight:bold;white-space:nowrap;">{value}</div>
       </td>"""
 
 
@@ -107,13 +107,13 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
         badges += f"&nbsp;{sq_b}"
 
     return f"""
-    <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;margin:12px 0;padding:16px;max-width:680px;">
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;margin:12px 0;padding:16px;max-width:680px;word-break:break-word;">
       <!-- Header -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-        <div>
+        <div style="min-width:0;flex:1;margin-right:12px;">
           <span style="color:#8b949e;font-size:12px;margin-right:6px;">#{rank}</span>
           <span style="color:#58a6ff;font-size:22px;font-weight:bold;">{ticker}</span>
-          <span style="color:#8b949e;font-size:12px;margin-left:8px;">{company}</span>
+          <span style="color:#8b949e;font-size:12px;margin-left:8px;display:inline-block;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;">{company}</span>
           <br/>
           <span style="color:#6e7681;font-size:10px;">{sector}</span>
           &nbsp;&nbsp;{badges}
@@ -135,7 +135,7 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
       </table>
 
       <!-- Key metrics -->
-      <table style="border-collapse:collapse;background:#0d1117;border-radius:6px;width:100%;margin-bottom:12px;">
+      <table style="border-collapse:collapse;background:#0d1117;border-radius:6px;width:100%;margin-bottom:12px;table-layout:fixed;">
         <tr>
           {_metric("IBD RS", f"{ibd_rs:.0f}")}
           {_metric("ADX", f"{adx:.1f}")}

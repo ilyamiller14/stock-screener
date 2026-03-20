@@ -45,6 +45,18 @@ CANDLE_UP   = "#238636"
 CANDLE_DOWN = "#da3633"
 
 
+def _fmt_axis_value(x: float, _pos: object = None) -> str:
+    """Format large numbers as K/M/B without scientific notation."""
+    ax_val = abs(x)
+    if ax_val >= 1e9:
+        return f"{x/1e9:.1f}B"
+    if ax_val >= 1e6:
+        return f"{x/1e6:.1f}M"
+    if ax_val >= 1e3:
+        return f"{x/1e3:.0f}K"
+    return f"{x:.0f}"
+
+
 def _make_candlestick(ax: plt.Axes, df: pd.DataFrame) -> None:
     """Draw candlestick bars manually (mplfinance-style on a regular matplotlib axes)."""
     dates = mdates.date2num(df.index.to_pydatetime())
@@ -57,8 +69,8 @@ def _make_candlestick(ax: plt.Axes, df: pd.DataFrame) -> None:
         # Body
         body_bottom = min(open_, close)
         body_height = abs(close - open_)
-        ax.bar(date_num, body_height, width=width * 0.6, bottom=body_bottom,
-               color=color, linewidth=0, zorder=2)
+        ax.bar(date_num, body_height, width=width * 0.8, bottom=body_bottom,
+               color=color, edgecolor=color, linewidth=0.3, zorder=2)
         # Wick
         ax.plot([date_num, date_num], [low, high], color=color, linewidth=0.8, zorder=1)
 
@@ -183,6 +195,7 @@ def generate_chart(
         rs_dates = mdates.date2num(rs_line.index.to_pydatetime())
         ax1_rs.plot(rs_dates, rs_line.values, color=PURPLE, linewidth=0.8, alpha=0.7, label="RS vs IWM")
         ax1_rs.set_ylabel("RS Line", color=PURPLE, fontsize=7)
+    ax1_rs.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
 
     # Legend
     ema_handles = [
@@ -215,7 +228,7 @@ def generate_chart(
     ax2.axhline(y=avg_vol, color=GOLD, linewidth=0.7, linestyle="--", alpha=0.7, label="Avg Vol 20d")
 
     ax2.set_ylabel("Volume", color=AXIS_LBL, fontsize=7)
-    ax2.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x/1e6:.1f}M"))
+    ax2.yaxis.set_major_formatter(mticker.FuncFormatter(_fmt_axis_value))
 
     # OBV on right axis
     ax2_obv = ax2.twinx()
@@ -226,6 +239,8 @@ def generate_chart(
     obv_dates = mdates.date2num(df.index.to_pydatetime())
     ax2_obv.plot(obv_dates, obv_series.values, color=CYAN, linewidth=0.8, alpha=0.8, label="OBV")
     ax2_obv.set_ylabel("OBV", color=CYAN, fontsize=6)
+    ax2_obv.yaxis.set_major_formatter(mticker.FuncFormatter(_fmt_axis_value))
+    ax2_obv.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
 
     ax2.legend(loc="upper left", fontsize=5, facecolor="#161b22", edgecolor=GRID, labelcolor=FG)
 
@@ -284,6 +299,7 @@ def generate_chart(
             )
 
     ax3_macd.tick_params(colors=AXIS_LBL, labelsize=5)
+    ax3_macd.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
     ax3.set_ylabel("RSI", color="#2196F3", fontsize=7)
     ax3_macd.set_ylabel("MACD", color=AXIS_LBL, fontsize=6)
 
@@ -321,7 +337,7 @@ def generate_chart(
         transform=fig.transFigure,
     )
 
-    fig.subplots_adjust(top=0.96, bottom=0.04, left=0.06, right=0.93)
+    fig.subplots_adjust(top=0.96, bottom=0.04, left=0.06, right=0.90)
 
     # ── Save ──────────────────────────────────────────────────────────────────
     fig.savefig(str(output_path), dpi=config.CHART_DPI, bbox_inches="tight", facecolor=BG)
