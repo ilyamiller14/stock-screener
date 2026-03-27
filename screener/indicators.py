@@ -584,6 +584,76 @@ def compute_squeeze(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+# ── Extension / gap-up detection ──────────────────────────────────────────────
+
+def compute_extension(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Detect extended stocks and large gap-ups.
+
+    Returns ATR-based extension metrics that scorer.py uses to penalise
+    stocks that have moved too far too fast from their moving averages.
+    """
+    default = {
+        "extension_ema21_pct": 0.0, "extension_ema50_pct": 0.0,
+        "atr_14": 0.0, "atr_pct": 0.0, "extension_atr_multiple": 0.0,
+        "max_gap_pct": 0.0, "is_extended": False,
+    }
+
+    close = df["Close"].squeeze()
+    last_close = float(close.iloc[-1])
+    if last_close <= 0:
+        return default
+
+    # EMA values (already computed by compute_emas)
+    ema21 = float(df["EMA_21"].iloc[-1]) if "EMA_21" in df.columns and not pd.isna(df["EMA_21"].iloc[-1]) else None
+    ema50 = float(df["EMA_50"].iloc[-1]) if "EMA_50" in df.columns and not pd.isna(df["EMA_50"].iloc[-1]) else None
+
+    if ema21 is None or ema21 <= 0:
+        return default
+
+    ext_ema21 = (last_close - ema21) / ema21 * 100
+    ext_ema50 = (last_close - ema50) / ema50 * 100 if ema50 and ema50 > 0 else 0.0
+
+    # ATR(14)
+    atr_series = ta.atr(df["High"].squeeze(), df["Low"].squeeze(), close, length=14)
+    if atr_series is None or atr_series.empty:
+        return default
+    atr_val = float(atr_series.iloc[-1])
+    if np.isnan(atr_val) or atr_val <= 0:
+        return default
+
+    atr_pct = atr_val / last_close * 100
+    ext_atr_mult = (last_close - ema21) / atr_val if atr_val > 0 else 0.0
+
+    # Largest single-day gap-up in last N days
+    lookback = min(config.GAP_LOOKBACK_DAYS, len(df) - 1)
+    tail = df.tail(lookback + 1)
+    opens = tail["Open"].values.astype(float)
+    closes = tail["Close"].values.astype(float)
+    max_gap = 0.0
+    for i in range(1, len(opens)):
+        prev_close = closes[i - 1]
+        if prev_close > 0:
+            gap_pct = (opens[i] - prev_close) / prev_close * 100
+            if gap_pct > max_gap:
+                max_gap = gap_pct
+
+    is_extended = (
+        ext_atr_mult >= config.EXTENSION_ATR_MILD
+        or ext_ema21 >= 15.0
+    )
+
+    return {
+        "extension_ema21_pct":   round(ext_ema21, 2),
+        "extension_ema50_pct":   round(ext_ema50, 2),
+        "atr_14":                round(atr_val, 4),
+        "atr_pct":               round(atr_pct, 2),
+        "extension_atr_multiple": round(ext_atr_mult, 2),
+        "max_gap_pct":           round(max_gap, 2),
+        "is_extended":           bool(is_extended),
+    }
+
+
 # ── Master compute ─────────────────────────────────────────────────────────────
 
 def compute_all(
@@ -636,6 +706,7 @@ def compute_all(
         indicators.update(compute_ibd_rs(df, benchmark_df))
         indicators.update(compute_vcp(df))
         indicators.update(compute_squeeze(df))
+        indicators.update(compute_extension(df))
 
         return indicators
 

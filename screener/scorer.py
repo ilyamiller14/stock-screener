@@ -196,6 +196,43 @@ def _score_pattern(ind: dict[str, Any]) -> float:
     )
 
 
+def _extension_penalty_multiplier(ind: dict[str, Any]) -> float:
+    """
+    Penalise extended stocks (too far above moving averages or large gap-ups).
+
+    Returns a multiplier 0.05–1.0 applied to the composite score.
+    Uses ATR-based distance from EMA21 as the primary metric, with
+    percentage-based fallbacks for EMA50 extension and large gaps.
+    """
+    atr_mult = ind.get("extension_atr_multiple", 0.0)
+    ema50_ext = ind.get("extension_ema50_pct", 0.0)
+    max_gap = ind.get("max_gap_pct", 0.0)
+
+    multiplier = 1.0
+
+    # ATR-based penalty (primary)
+    if atr_mult >= config.EXTENSION_ATR_REJECT:
+        multiplier = min(multiplier, 0.10)
+    elif atr_mult >= config.EXTENSION_ATR_HEAVY:
+        frac = (atr_mult - config.EXTENSION_ATR_HEAVY) / (config.EXTENSION_ATR_REJECT - config.EXTENSION_ATR_HEAVY)
+        multiplier = min(multiplier, 0.50 - frac * 0.40)
+    elif atr_mult >= config.EXTENSION_ATR_MILD:
+        frac = (atr_mult - config.EXTENSION_ATR_MILD) / (config.EXTENSION_ATR_HEAVY - config.EXTENSION_ATR_MILD)
+        multiplier = min(multiplier, 0.85 - frac * 0.35)
+
+    # EMA50 percentage fallback
+    if ema50_ext >= config.EXTENSION_EMA50_WARN_PCT:
+        pct_penalty = max(0.30, 1.0 - (ema50_ext - config.EXTENSION_EMA50_WARN_PCT) * 0.02)
+        multiplier = min(multiplier, pct_penalty)
+
+    # Large gap penalty
+    if max_gap >= config.GAP_LARGE_PCT:
+        gap_penalty = max(0.60, 1.0 - (max_gap - config.GAP_LARGE_PCT) * 0.02)
+        multiplier = min(multiplier, gap_penalty)
+
+    return max(0.05, multiplier)
+
+
 def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
     """Return composite score and per-category breakdown."""
     close = ind.get("close", 1.0)
@@ -215,13 +252,18 @@ def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
         + pattern_s  * w["pattern"]
     )
 
+    # Extension penalty: penalise stocks too far above moving averages
+    ext_mult = _extension_penalty_multiplier(ind)
+    composite = composite * ext_mult
+
     return {
-        "composite_score": round(composite, 1),
-        "trend_score":     round(trend_s, 1),
-        "rs_score":        round(rs_s, 1),
-        "volume_score":    round(volume_s, 1),
-        "momentum_score":  round(momentum_s, 1),
-        "pattern_score":   round(pattern_s, 1),
+        "composite_score":  round(composite, 1),
+        "trend_score":      round(trend_s, 1),
+        "rs_score":         round(rs_s, 1),
+        "volume_score":     round(volume_s, 1),
+        "momentum_score":   round(momentum_s, 1),
+        "pattern_score":    round(pattern_s, 1),
+        "extension_penalty": round(ext_mult, 3),
     }
 
 

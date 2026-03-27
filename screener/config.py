@@ -32,6 +32,14 @@ MIN_AVG_VOLUME = 100_000          # 100k shares/day minimum liquidity
 MIN_EMA200_SLOPE_SESSIONS = 20    # Rolling window for EMA_200 slope calc
 EMA200_SLOPE_THRESHOLD = 0.0      # Slope must be > 0 (upward trend)
 
+# ── Extension / gap-up filter ─────────────────────────────────────────────────
+EXTENSION_ATR_MILD = 4.0          # 4x ATR above EMA21 → mild penalty starts
+EXTENSION_ATR_HEAVY = 6.0         # 6x ATR → heavy penalty
+EXTENSION_ATR_REJECT = 10.0       # 10x ATR → near-zero score
+EXTENSION_EMA50_WARN_PCT = 20.0   # >20% above EMA50 → fallback penalty
+GAP_LOOKBACK_DAYS = 20            # Scan last 20 days for large gaps
+GAP_LARGE_PCT = 15.0              # Single-day gap >15% = suspect
+
 # ── Selection output ───────────────────────────────────────────────────────────
 TOP_N = 20                        # Total picks in output
 CHART_TOP_N = 20                  # Charts generated for all top picks
@@ -39,7 +47,7 @@ MAX_PICKS_PER_SECTOR = 3          # Sector diversification cap
 
 # ── Chart settings ─────────────────────────────────────────────────────────────
 CHART_WIDTH_PX = 1400
-CHART_HEIGHT_PX = 900
+CHART_HEIGHT_PX = 1050
 CHART_DPI = 150
 CHART_BG_COLOR = "#0D1117"
 CHART_FG_COLOR = "#C9D1D9"

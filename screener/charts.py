@@ -139,6 +139,10 @@ def generate_chart(
     rs_line = close_s.div(bench_tail.reindex(close_s.index, method="ffill"))
     rs_line = rs_line.dropna()
 
+    # RS RSI: momentum of relative strength (for Panel 4)
+    import pandas_ta as _ta
+    rs_rsi_series = _ta.rsi(rs_line, length=14) if len(rs_line) > 20 else None
+
     # 52W high line
     high_52w = indicators.get("high_52w", df["High"].max())
 
@@ -152,17 +156,18 @@ def generate_chart(
         facecolor=BG,
     )
     gs = gridspec.GridSpec(
-        3, 1,
+        4, 1,
         figure=fig,
-        height_ratios=[0.60, 0.20, 0.20],
+        height_ratios=[0.50, 0.17, 0.17, 0.16],
         hspace=0.04,
     )
 
     ax1 = fig.add_subplot(gs[0])  # Price
     ax2 = fig.add_subplot(gs[1], sharex=ax1)  # Volume / OBV
     ax3 = fig.add_subplot(gs[2], sharex=ax1)  # RSI / MACD / ADX
+    ax4 = fig.add_subplot(gs[3], sharex=ax1)  # RS RSI
 
-    for ax in (ax1, ax2, ax3):
+    for ax in (ax1, ax2, ax3, ax4):
         ax.set_facecolor(BG)
         ax.tick_params(colors=AXIS_LBL, labelsize=7)
         ax.yaxis.label.set_color(AXIS_LBL)
@@ -303,12 +308,32 @@ def generate_chart(
     ax3.set_ylabel("RSI", color="#2196F3", fontsize=7)
     ax3_macd.set_ylabel("MACD", color=AXIS_LBL, fontsize=6)
 
+    # ── Panel 4: RS RSI ─────────────────────────────────────────────────────────
+    RS_RSI_COLOR = "#E040FB"  # Bright magenta
+
+    if rs_rsi_series is not None and not rs_rsi_series.empty:
+        rs_rsi_clean = rs_rsi_series.dropna()
+        if len(rs_rsi_clean) > 5:
+            rs_rsi_dates = mdates.date2num(rs_rsi_clean.index.to_pydatetime())
+            ax4.plot(rs_rsi_dates, rs_rsi_clean.values, color=RS_RSI_COLOR,
+                     linewidth=0.9, label="RS RSI(14)")
+            ax4.axhline(y=70, color=RED,      linewidth=0.5, linestyle="--", alpha=0.6)
+            ax4.axhline(y=50, color=AXIS_LBL, linewidth=0.5, linestyle="--", alpha=0.4)
+            ax4.axhline(y=30, color=GREEN,    linewidth=0.5, linestyle="--", alpha=0.6)
+            ax4.set_ylim(0, 100)
+            ax4.set_yticks([30, 50, 70])
+            ax4.tick_params(axis="y", colors=RS_RSI_COLOR, labelsize=6)
+            ax4.set_ylabel("RS RSI", color=RS_RSI_COLOR, fontsize=7)
+            ax4.legend(loc="upper left", fontsize=5, facecolor="#161b22",
+                       edgecolor=GRID, labelcolor=FG)
+
     # ── X-axis formatting ──────────────────────────────────────────────────────
-    ax3.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
-    ax3.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-    plt.setp(ax3.xaxis.get_majorticklabels(), color=AXIS_LBL, fontsize=6, rotation=0)
+    ax4.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
+    ax4.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+    plt.setp(ax4.xaxis.get_majorticklabels(), color=AXIS_LBL, fontsize=6, rotation=0)
     plt.setp(ax1.xaxis.get_majorticklabels(), visible=False)
     plt.setp(ax2.xaxis.get_majorticklabels(), visible=False)
+    plt.setp(ax3.xaxis.get_majorticklabels(), visible=False)
 
     # ── Title ──────────────────────────────────────────────────────────────────
     company  = indicators.get("company_name", ticker)
