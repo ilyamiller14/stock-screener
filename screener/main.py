@@ -207,12 +207,22 @@ def main(dry_run: bool = False) -> int:
         logger.warning("No qualifying stocks found")
         stats["run_date"] = run_date
 
+    # 4.5 Macro / sector analysis
+    macro_results = None
+    try:
+        from .macro import run_macro_analysis
+        macro_results = run_macro_analysis(run_date)
+    except Exception:
+        logger.exception("Macro analysis failed (continuing without)")
+
     # 5. Generate charts
     logger.info("Generating charts for top %d picks...", min(config.CHART_TOP_N, len(top_picks)))
     generate_all_charts(top_picks, all_ohlcv, benchmark_df, run_date)
 
     # 6. Write results JSON
     results = _build_results_json(top_picks, stats, run_date)
+    if macro_results:
+        results["macro"] = macro_results
     write_results(results, run_date)
 
     # 7. Send email (skip on dry run; never crash the run)
@@ -220,7 +230,7 @@ def main(dry_run: bool = False) -> int:
         logger.info("Dry run — email skipped")
     else:
         try:
-            send_email(top_picks, run_date, stats)
+            send_email(top_picks, run_date, stats, macro_results=macro_results)
         except Exception:
             logger.exception("Email send failed (results still committed)")
 

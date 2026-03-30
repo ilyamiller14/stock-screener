@@ -156,10 +156,52 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
     </div>"""
 
 
+def _macro_card(item: dict[str, Any]) -> str:
+    """Render a macro/ratio chart card for the email."""
+    # Works for both ETF items (has "ticker") and ratio items (has "pair")
+    ticker_or_pair = item.get("ticker", item.get("pair", ""))
+    name = item.get("name", ticker_or_pair)
+    narrative = item.get("narrative", "")
+    score = item.get("interest_score", 0)
+    rsi = item.get("rsi", 50.0)
+    chart_url = item.get("chart_url", "")
+    rising = item.get("rising", "")
+    falling = item.get("falling", "")
+
+    score_color = "#26a641" if score >= 70 else ("#e3b341" if score >= 50 else "#6e7681")
+
+    subtitle = ""
+    if rising and falling:
+        subtitle = f'<div style="color:#6e7681;font-size:10px;margin-top:2px;">Rising: {rising} &nbsp;|&nbsp; Falling: {falling}</div>'
+
+    return f"""
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;margin:10px 0;padding:14px;max-width:680px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <span style="color:#58a6ff;font-size:18px;font-weight:bold;">{ticker_or_pair}</span>
+          <span style="color:#8b949e;font-size:11px;margin-left:8px;">{name}</span>
+          {subtitle}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:bold;color:{score_color};">{score}<span style="font-size:9px;color:#6e7681;"> interest</span></div>
+          <div style="font-size:10px;color:#8b949e;">RSI {rsi:.0f}</div>
+        </div>
+      </div>
+      <div style="color:#c9d1d9;font-size:12px;margin-bottom:8px;">{narrative}</div>
+      <div>
+        <img src="{chart_url}"
+             alt="{ticker_or_pair} chart"
+             style="width:100%;max-width:680px;border-radius:6px;border:1px solid #30363d;"
+             onerror="this.style.display='none'"/>
+      </div>
+    </div>"""
+
+
 def build_html(
     top_picks: list[dict[str, Any]],
     run_date: str,
     stats: dict[str, Any],
+    macro_results: dict[str, Any] | None = None,
 ) -> str:
     """Render the full HTML email."""
     screened    = stats.get("screened_count", 0)
@@ -170,6 +212,24 @@ def build_html(
     cards = "\n".join(
         _stock_card(i + 1, pick, run_date) for i, pick in enumerate(top_picks)
     )
+
+    # Build macro section if available
+    macro_section = ""
+    if macro_results:
+        etfs = macro_results.get("etfs", [])
+        ratios = macro_results.get("ratios", [])
+        all_macro = etfs + ratios
+        if all_macro:
+            macro_cards = "\n".join(_macro_card(item) for item in all_macro)
+            macro_section = f"""
+  <!-- Market Conditions -->
+  <div style="max-width:700px;margin:0 auto;padding:16px 24px;">
+    <div style="color:#c9d1d9;font-size:16px;font-weight:bold;margin-bottom:4px;">Market Conditions</div>
+    <div style="color:#8b949e;font-size:11px;margin-bottom:12px;">Sector ETFs and ratio charts at interesting support/resistance levels</div>
+    {macro_cards}
+  </div>
+  <div style="max-width:700px;margin:0 auto;padding:0 24px;"><div style="border-top:1px solid #21262d;"></div></div>
+"""
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -207,6 +267,8 @@ def build_html(
     </div>
   </div>
 
+  {macro_section}
+
   <!-- Stock cards -->
   <div style="max-width:700px;margin:0 auto;padding:16px 24px;">
     {cards}
@@ -232,6 +294,7 @@ def send_email(
     top_picks: list[dict[str, Any]],
     run_date: str,
     stats: dict[str, Any],
+    macro_results: dict[str, Any] | None = None,
 ) -> None:
     """Build and send the daily email via Gmail SMTP."""
     if not config.GMAIL_USER or not config.GMAIL_APP_PASSWORD:
@@ -241,7 +304,7 @@ def send_email(
         logger.warning("No email recipients configured — skipping")
         return
 
-    html = build_html(top_picks, run_date, stats)
+    html = build_html(top_picks, run_date, stats, macro_results=macro_results)
     n = len(top_picks)
     subject = f"Stock Screen: {run_date} | Top {n} Russell 2000 Setups"
 

@@ -59,6 +59,36 @@ EMA_COLORS = {
 }
 CHART_CLEANUP_DAYS = 7  # Delete PNGs older than this many days
 
+# ── Macro / sector ETF tracking ───────────────────────────────────────────────
+MACRO_ETFS = [
+    "SMH", "XLY", "XLP", "XLK", "XLE", "XLF", "KRE",
+    "IWM", "SPY", "QQQ", "HYG", "TLT", "GLD", "SPHB", "SPLV",
+]
+
+RATIO_PAIRS = [
+    {"num": "IWM",  "den": "SPY",  "name": "Small Cap / Large Cap",
+     "rising": "Small-cap leadership", "falling": "Large-cap dominance"},
+    {"num": "XLY",  "den": "XLP",  "name": "Discretionary / Staples",
+     "rising": "Risk appetite", "falling": "Defensive rotation"},
+    {"num": "HYG",  "den": "TLT",  "name": "High Yield / Treasuries",
+     "rising": "Credit confidence", "falling": "Flight to safety"},
+    {"num": "SMH",  "den": "SPY",  "name": "Semis / S&P 500",
+     "rising": "Tech leadership", "falling": "Tech weakness"},
+    {"num": "SPHB", "den": "SPLV", "name": "High Beta / Low Vol",
+     "rising": "Risk-on", "falling": "Risk-off"},
+    {"num": "XLK",  "den": "XLP",  "name": "Tech / Staples",
+     "rising": "Growth leadership", "falling": "Defensive mode"},
+]
+
+MACRO_CHART_BARS = 200            # ~10 months of daily data for S/R detection
+MACRO_SR_TOLERANCE_PCT = 1.5      # % band to merge nearby pivots into one level
+MACRO_SR_MIN_TOUCHES = 2          # minimum touches to display a S/R level
+MACRO_INTEREST_THRESHOLD = 40     # minimum interest score (0-100) to include in email
+MACRO_MAX_ETF_CHARTS = 5          # max standalone ETF charts in email
+MACRO_MAX_RATIO_CHARTS = 3        # max ratio charts in email
+MACRO_CHART_WIDTH_PX = 1400
+MACRO_CHART_HEIGHT_PX = 600
+
 # ── Scoring weights (must sum to 1.0) ─────────────────────────────────────────
 CATEGORY_WEIGHTS = {
     "trend":    0.30,
