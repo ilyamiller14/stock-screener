@@ -269,27 +269,77 @@ def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
 
 # ── Sector info ───────────────────────────────────────────────────────────────
 
-def fetch_sector_info(tickers: list[str]) -> dict[str, str]:
+_SECTOR_CACHE_PATH = config.RESULTS_DIR / "sector_cache.json"
+
+
+def _load_sector_cache() -> dict[str, dict[str, str]]:
+    """Load cached sector info from disk."""
+    import json
+    if _SECTOR_CACHE_PATH.exists():
+        try:
+            with open(_SECTOR_CACHE_PATH) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+
+def _save_sector_cache(cache: dict[str, dict[str, str]]) -> None:
+    """Persist sector cache to disk."""
+    import json
+    try:
+        _SECTOR_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(_SECTOR_CACHE_PATH, "w") as f:
+            json.dump(cache, f, indent=2)
+    except Exception as exc:
+        logger.warning("Failed to save sector cache: %s", exc)
+
+
+def fetch_sector_info(tickers: list[str]) -> dict[str, dict[str, str]]:
     """
     Fetch sector + company name for a small list of tickers.
-    Only called for final top-30 candidates (not all 2000 — too slow).
+    Uses a persistent disk cache since sector data rarely changes.
+    Falls back to cache if yfinance API fails.
     """
-    info: dict[str, str] = {}
+    cache = _load_sector_cache()
+    info: dict[str, dict[str, str]] = {}
+    tickers_to_fetch = []
+
+    # Use cache for tickers we already know
     for ticker in tickers:
-        try:
-            t = yf.Ticker(ticker)
-            data = t.info
-            info[ticker] = {
-                "company_name": data.get("longName") or data.get("shortName") or ticker,
-                "sector":       data.get("sector") or "Unknown",
-                "industry":     data.get("industry") or "Unknown",
-            }
-        except Exception:
-            info[ticker] = {
-                "company_name": ticker,
-                "sector":       "Unknown",
-                "industry":     "Unknown",
-            }
+        if ticker in cache and cache[ticker].get("sector", "Unknown") != "Unknown":
+            info[ticker] = cache[ticker]
+        else:
+            tickers_to_fetch.append(ticker)
+
+    # Fetch only unknown tickers from yfinance
+    if tickers_to_fetch:
+        logger.info("Fetching sector info for %d uncached tickers...", len(tickers_to_fetch))
+        for ticker in tickers_to_fetch:
+            try:
+                t = yf.Ticker(ticker)
+                data = t.info
+                sector = data.get("sector") or "Unknown"
+                entry = {
+                    "company_name": data.get("longName") or data.get("shortName") or ticker,
+                    "sector":       sector,
+                    "industry":     data.get("industry") or "Unknown",
+                }
+                info[ticker] = entry
+                if sector != "Unknown":
+                    cache[ticker] = entry
+            except Exception:
+                # Fall back to cache even if it's "Unknown"
+                info[ticker] = cache.get(ticker, {
+                    "company_name": ticker,
+                    "sector":       "Unknown",
+                    "industry":     "Unknown",
+                })
+
+        _save_sector_cache(cache)
+    else:
+        logger.info("All %d tickers found in sector cache", len(tickers))
+
     return info
 
 
@@ -337,6 +387,16 @@ def rank_stocks(
     logger.info("Fetching sector info for %d candidates...", len(candidate_tickers))
     sector_info = fetch_sector_info(candidate_tickers)
 
+    # Check if sector lookup succeeded — if most sectors are "Unknown",
+    # skip diversification to avoid capping all picks at MAX_PICKS_PER_SECTOR
+    known_sectors = sum(1 for v in sector_info.values() if v["sector"] != "Unknown")
+    use_sector_cap = known_sectors >= len(sector_info) * 0.5
+    if not use_sector_cap:
+        logger.warning(
+            "Sector lookup mostly failed (%d/%d unknown) — skipping sector cap",
+            len(sector_info) - known_sectors, len(sector_info),
+        )
+
     top_picks: list[dict[str, Any]] = []
     sector_counts: dict[str, int] = {}
 
@@ -346,8 +406,9 @@ def rank_stocks(
         ticker = ind["ticker"]
         meta   = sector_info.get(ticker, {"sector": "Unknown", "company_name": ticker, "industry": "Unknown"})
         sector = meta["sector"]
-        if sector_counts.get(sector, 0) >= config.MAX_PICKS_PER_SECTOR:
-            continue
+        if use_sector_cap and sector != "Unknown":
+            if sector_counts.get(sector, 0) >= config.MAX_PICKS_PER_SECTOR:
+                continue
         sector_counts[sector] = sector_counts.get(sector, 0) + 1
         ind.update(meta)
         top_picks.append(ind)

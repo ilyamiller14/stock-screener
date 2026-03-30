@@ -654,6 +654,83 @@ def compute_extension(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+# ── Support / Resistance for individual stocks ───────────────────────────────
+
+def compute_support_resistance(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Detect key support/resistance levels on the stock's price chart.
+    Returns proximity info used by scorer to reward stocks near support
+    (better risk/reward) and penalise stocks at resistance.
+    """
+    default = {
+        "sr_nearest_support": 0.0,
+        "sr_nearest_resistance": 0.0,
+        "sr_support_touches": 0,
+        "sr_resistance_touches": 0,
+        "sr_support_dist_pct": 99.0,
+        "sr_resistance_dist_pct": 99.0,
+        "sr_near_support": False,
+    }
+
+    close = df["Close"].squeeze()
+    if len(close) < 60:
+        return default
+
+    prices = close.tail(200).values.astype(float)
+    current = float(prices[-1])
+    if current <= 0:
+        return default
+
+    # Find swing highs/lows using 5-bar pivot
+    pivot = 5
+    all_pivots: list[float] = []
+    for i in range(pivot, len(prices) - pivot):
+        window = prices[i - pivot : i + pivot + 1]
+        if prices[i] == np.max(window) or prices[i] == np.min(window):
+            all_pivots.append(float(prices[i]))
+
+    if len(all_pivots) < 4:
+        return default
+
+    # Cluster pivots within 1.5% tolerance
+    sorted_pivots = sorted(all_pivots)
+    clusters: list[list[float]] = [[sorted_pivots[0]]]
+    for price in sorted_pivots[1:]:
+        if abs(price - np.mean(clusters[-1])) / np.mean(clusters[-1]) * 100 <= 1.5:
+            clusters[-1].append(price)
+        else:
+            clusters.append([price])
+
+    levels = [(float(np.median(c)), len(c)) for c in clusters if len(c) >= 2]
+    if not levels:
+        return default
+
+    # Find nearest support (below current) and resistance (above current)
+    supports = [(p, t) for p, t in levels if p <= current]
+    resistances = [(p, t) for p, t in levels if p > current]
+
+    result = dict(default)
+
+    if supports:
+        supports.sort(key=lambda x: x[1], reverse=True)  # strongest first
+        best_sup = supports[0]
+        dist = (current - best_sup[0]) / current * 100
+        result["sr_nearest_support"] = round(best_sup[0], 2)
+        result["sr_support_touches"] = best_sup[1]
+        result["sr_support_dist_pct"] = round(dist, 2)
+        result["sr_near_support"] = dist <= 5.0  # within 5% of support
+
+    if resistances:
+        resistances.sort(key=lambda x: x[1], reverse=True)
+        best_res = resistances[0]
+        dist = (best_res[0] - current) / current * 100
+        result["sr_nearest_resistance"] = round(best_res[0], 2)
+        result["sr_resistance_touches"] = best_res[1]
+        result["sr_resistance_dist_pct"] = round(dist, 2)
+
+    return result
+
+
 # ── Master compute ─────────────────────────────────────────────────────────────
 
 def compute_all(
@@ -707,6 +784,7 @@ def compute_all(
         indicators.update(compute_vcp(df))
         indicators.update(compute_squeeze(df))
         indicators.update(compute_extension(df))
+        indicators.update(compute_support_resistance(df))
 
         return indicators
 
