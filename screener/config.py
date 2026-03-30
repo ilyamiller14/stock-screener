@@ -47,7 +47,7 @@ MAX_PICKS_PER_SECTOR = 3          # Sector diversification cap
 
 # ── Chart settings ─────────────────────────────────────────────────────────────
 CHART_WIDTH_PX = 1400
-CHART_HEIGHT_PX = 1050
+CHART_HEIGHT_PX = 1200
 CHART_DPI = 150
 CHART_BG_COLOR = "#0D1117"
 CHART_FG_COLOR = "#C9D1D9"

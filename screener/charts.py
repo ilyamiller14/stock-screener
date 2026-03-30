@@ -156,18 +156,19 @@ def generate_chart(
         facecolor=BG,
     )
     gs = gridspec.GridSpec(
-        4, 1,
+        5, 1,
         figure=fig,
-        height_ratios=[0.50, 0.17, 0.17, 0.16],
+        height_ratios=[0.42, 0.15, 0.15, 0.14, 0.14],
         hspace=0.04,
     )
 
-    ax1 = fig.add_subplot(gs[0])  # Price
+    ax1 = fig.add_subplot(gs[0])  # Price + EMAs
     ax2 = fig.add_subplot(gs[1], sharex=ax1)  # Volume / OBV
-    ax3 = fig.add_subplot(gs[2], sharex=ax1)  # RSI / MACD / ADX
-    ax4 = fig.add_subplot(gs[3], sharex=ax1)  # RS RSI
+    ax3 = fig.add_subplot(gs[2], sharex=ax1)  # RSI only
+    ax4 = fig.add_subplot(gs[3], sharex=ax1)  # MACD only
+    ax5 = fig.add_subplot(gs[4], sharex=ax1)  # RS RSI
 
-    for ax in (ax1, ax2, ax3, ax4):
+    for ax in (ax1, ax2, ax3, ax4, ax5):
         ax.set_facecolor(BG)
         ax.tick_params(colors=AXIS_LBL, labelsize=7)
         ax.yaxis.label.set_color(AXIS_LBL)
@@ -188,28 +189,12 @@ def generate_chart(
         label=f"52W High {high_52w:.2f}",
     )
 
-    # RS Line on right axis (purple)
-    ax1_rs = ax1.twinx()
-    ax1_rs.set_facecolor(BG)
-    ax1_rs.tick_params(colors=PURPLE, labelsize=6)
-    ax1_rs.yaxis.label.set_color(PURPLE)
-    for spine in ax1_rs.spines.values():
-        spine.set_color(GRID)
-
-    if len(rs_line) > 1:
-        rs_dates = mdates.date2num(rs_line.index.to_pydatetime())
-        ax1_rs.plot(rs_dates, rs_line.values, color=PURPLE, linewidth=0.8, alpha=0.7, label="RS vs IWM")
-        ax1_rs.set_ylabel("RS Line", color=PURPLE, fontsize=7)
-    ax1_rs.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
-
-    # Legend
+    # Legend (compact — RS line moved to dedicated RS RSI panel)
     ema_handles = [
         Line2D([0], [0], color=config.EMA_COLORS[p], linewidth=1.2, label=f"EMA {p}")
         for p in (21, 50, 150, 200)
         if f"EMA_{p}" in df.columns
     ]
-    rs_handle = Line2D([0], [0], color=PURPLE, linewidth=1.0, label="RS vs IWM")
-    ema_handles.append(rs_handle)
     ax1.legend(
         handles=ema_handles,
         loc="upper left",
@@ -217,7 +202,8 @@ def generate_chart(
         facecolor="#161b22",
         edgecolor=GRID,
         labelcolor=FG,
-        ncol=5,
+        framealpha=0.85,
+        ncol=4,
     )
 
     # ── Panel 2: Volume + OBV ──────────────────────────────────────────────────
@@ -259,7 +245,7 @@ def generate_chart(
     macd_df    = ta.macd(close_full, fast=12, slow=26, signal=9)
     adx_df     = ta.adx(df["High"].squeeze(), df["Low"].squeeze(), close_full, length=14)
 
-    # RSI line
+    # ── Panel 3: RSI (own panel) ────────────────────────────────────────────────
     if rsi_series is not None and not rsi_series.empty:
         rsi_dates = mdates.date2num(rsi_series.dropna().index.to_pydatetime())
         rsi_vals  = rsi_series.dropna().values
@@ -270,13 +256,9 @@ def generate_chart(
         ax3.set_ylim(0, 100)
         ax3.set_yticks([30, 50, 70])
         ax3.tick_params(axis="y", colors="#2196F3", labelsize=6)
+        ax3.set_ylabel("RSI", color="#2196F3", fontsize=7)
 
-    # MACD histogram + signal on right axis
-    ax3_macd = ax3.twinx()
-    ax3_macd.set_facecolor(BG)
-    for spine in ax3_macd.spines.values():
-        spine.set_color(GRID)
-
+    # ── Panel 4: MACD (own panel) ────────────────────────────────────────────
     if macd_df is not None and not macd_df.empty:
         hist_col   = [c for c in macd_df.columns if c.startswith("MACDh_")]
         signal_col = [c for c in macd_df.columns if c.startswith("MACDs_")]
@@ -286,54 +268,53 @@ def generate_chart(
             hist = macd_df[hist_col[0]].dropna()
             h_dates = mdates.date2num(hist.index.to_pydatetime())
             colors  = [GREEN if v >= 0 else RED for v in hist.values]
-            ax3_macd.bar(h_dates, hist.values, width=0.6, color=colors, alpha=0.5, zorder=1)
+            ax4.bar(h_dates, hist.values, width=0.6, color=colors, alpha=0.6, zorder=1)
 
         if macd_col and signal_col:
             m_series = macd_df[macd_col[0]].dropna()
             s_series = macd_df[signal_col[0]].dropna()
             shared_idx = m_series.index.intersection(s_series.index)
-            ax3_macd.plot(
+            ax4.plot(
                 mdates.date2num(shared_idx.to_pydatetime()),
                 m_series.loc[shared_idx].values,
-                color=FG, linewidth=0.7, alpha=0.8,
+                color=FG, linewidth=0.7, alpha=0.9, label="MACD",
             )
-            ax3_macd.plot(
+            ax4.plot(
                 mdates.date2num(shared_idx.to_pydatetime()),
                 s_series.loc[shared_idx].values,
-                color=GOLD, linewidth=0.7, alpha=0.8,
+                color=GOLD, linewidth=0.7, alpha=0.9, label="Signal",
             )
 
-    ax3_macd.tick_params(colors=AXIS_LBL, labelsize=5)
-    ax3_macd.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
-    ax3.set_ylabel("RSI", color="#2196F3", fontsize=7)
-    ax3_macd.set_ylabel("MACD", color=AXIS_LBL, fontsize=6)
+    ax4.tick_params(colors=AXIS_LBL, labelsize=6)
+    ax4.yaxis.set_major_locator(mticker.MaxNLocator(nbins=4))
+    ax4.set_ylabel("MACD", color=AXIS_LBL, fontsize=7)
+    ax4.legend(loc="upper left", fontsize=5, facecolor="#161b22", edgecolor=GRID, labelcolor=FG)
 
-    # ── Panel 4: RS RSI ─────────────────────────────────────────────────────────
+    # ── Panel 5: RS RSI ──────────────────────────────────────────────────────────
     RS_RSI_COLOR = "#E040FB"  # Bright magenta
 
     if rs_rsi_series is not None and not rs_rsi_series.empty:
         rs_rsi_clean = rs_rsi_series.dropna()
         if len(rs_rsi_clean) > 5:
             rs_rsi_dates = mdates.date2num(rs_rsi_clean.index.to_pydatetime())
-            ax4.plot(rs_rsi_dates, rs_rsi_clean.values, color=RS_RSI_COLOR,
+            ax5.plot(rs_rsi_dates, rs_rsi_clean.values, color=RS_RSI_COLOR,
                      linewidth=0.9, label="RS RSI(14)")
-            ax4.axhline(y=70, color=RED,      linewidth=0.5, linestyle="--", alpha=0.6)
-            ax4.axhline(y=50, color=AXIS_LBL, linewidth=0.5, linestyle="--", alpha=0.4)
-            ax4.axhline(y=30, color=GREEN,    linewidth=0.5, linestyle="--", alpha=0.6)
-            ax4.set_ylim(0, 100)
-            ax4.set_yticks([30, 50, 70])
-            ax4.tick_params(axis="y", colors=RS_RSI_COLOR, labelsize=6)
-            ax4.set_ylabel("RS RSI", color=RS_RSI_COLOR, fontsize=7)
-            ax4.legend(loc="upper left", fontsize=5, facecolor="#161b22",
-                       edgecolor=GRID, labelcolor=FG)
+            ax5.axhline(y=70, color=RED,      linewidth=0.5, linestyle="--", alpha=0.6)
+            ax5.axhline(y=50, color=AXIS_LBL, linewidth=0.5, linestyle="--", alpha=0.4)
+            ax5.axhline(y=30, color=GREEN,    linewidth=0.5, linestyle="--", alpha=0.6)
+            ax5.set_ylim(0, 100)
+            ax5.set_yticks([30, 50, 70])
+            ax5.tick_params(axis="y", colors=RS_RSI_COLOR, labelsize=6)
+            ax5.set_ylabel("RS RSI", color=RS_RSI_COLOR, fontsize=7)
 
     # ── X-axis formatting ──────────────────────────────────────────────────────
-    ax4.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
-    ax4.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-    plt.setp(ax4.xaxis.get_majorticklabels(), color=AXIS_LBL, fontsize=6, rotation=0)
+    ax5.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
+    ax5.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+    plt.setp(ax5.xaxis.get_majorticklabels(), color=AXIS_LBL, fontsize=6, rotation=0)
     plt.setp(ax1.xaxis.get_majorticklabels(), visible=False)
     plt.setp(ax2.xaxis.get_majorticklabels(), visible=False)
     plt.setp(ax3.xaxis.get_majorticklabels(), visible=False)
+    plt.setp(ax4.xaxis.get_majorticklabels(), visible=False)
 
     # ── Title ──────────────────────────────────────────────────────────────────
     company  = indicators.get("company_name", ticker)
