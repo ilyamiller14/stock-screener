@@ -2,9 +2,10 @@ name: Daily Technical Screen
 
 on:
   schedule:
-    # 5:30 AM ET weekdays = 10:30 UTC (EST) / 09:30 UTC (EDT)
-    # Runs on previous day's close data; ~15 min runtime → email arrives ~5:45 AM
-    - cron: "30 10 * * 1-5"
+    # Target: email arrives by ~6:30 AM ET
+    # GitHub Actions cron delays 30-60 min, run takes ~5 min
+    # Schedule at 5:00 AM ET = 09:00 UTC (EDT) / 10:00 UTC (EST)
+    - cron: "0 9 * * 1-5"
   workflow_dispatch: # Manual trigger from Actions tab
 
 permissions:

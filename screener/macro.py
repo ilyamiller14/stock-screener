@@ -287,7 +287,12 @@ def _build_narrative(
     sr_type = nearest_level["type"]
 
     if is_breakout:
-        action = f"Breaking {'above' if current > level_price else 'below'} {sr_type}"
+        if current > level_price:
+            # Price crossed above the level → it was resistance, now broken
+            action = "Breaking above resistance"
+        else:
+            # Price crossed below the level → it was support, now broken
+            action = "Breaking below support"
     else:
         action = f"Testing {sr_type}"
 
