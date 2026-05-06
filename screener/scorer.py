@@ -1,9 +1,9 @@
 """
-Score and rank all Russell 2000 stocks.
+Score and rank all stocks in the universe (Russell 2000 + S&P 500).
 
 Pipeline:
 1. Apply hard filter gate (discard non-qualifying stocks)
-2. Compute RS percentiles across qualifying universe
+2. Compute RS percentiles across qualifying universe (vs SPY benchmark)
 3. Score each qualifying stock (0–100 composite)
 4. Apply sector diversification cap
 5. Return top N picks
@@ -229,6 +229,17 @@ def _extension_penalty_multiplier(ind: dict[str, Any]) -> float:
     if max_gap >= config.GAP_LARGE_PCT:
         gap_penalty = max(0.60, 1.0 - (max_gap - config.GAP_LARGE_PCT) * 0.02)
         multiplier = min(multiplier, gap_penalty)
+
+    # Distance from 52W low penalty — penalise stocks that have already made huge moves
+    pct_above_low = ind.get("pct_above_52w_low", 0.0)
+    if pct_above_low >= config.DIST_52W_LOW_REJECT_PCT:
+        multiplier = min(multiplier, 0.15)
+    elif pct_above_low >= config.DIST_52W_LOW_HEAVY_PCT:
+        frac = (pct_above_low - config.DIST_52W_LOW_HEAVY_PCT) / (config.DIST_52W_LOW_REJECT_PCT - config.DIST_52W_LOW_HEAVY_PCT)
+        multiplier = min(multiplier, 0.50 - frac * 0.35)
+    elif pct_above_low >= config.DIST_52W_LOW_MILD_PCT:
+        frac = (pct_above_low - config.DIST_52W_LOW_MILD_PCT) / (config.DIST_52W_LOW_HEAVY_PCT - config.DIST_52W_LOW_MILD_PCT)
+        multiplier = min(multiplier, 0.85 - frac * 0.35)
 
     return max(0.05, multiplier)
 

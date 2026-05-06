@@ -1,9 +1,9 @@
 """
-Fetch Russell 2000 ticker list and OHLCV data via yfinance.
+Fetch ticker universe (Russell 2000 + S&P 500) and OHLCV data via yfinance.
 
 Ticker list sources (in order of priority):
-1. iShares IWM ETF holdings CSV (always current)
-2. Cached results/tickers.json in repo
+1. iShares IWM (Russell 2000) + IVV (S&P 500) holdings CSVs — always current
+2. Cached results/tickers.json fallback
 """
 from __future__ import annotations
 
@@ -28,19 +28,20 @@ logger = logging.getLogger(__name__)
 
 # ── Ticker list ───────────────────────────────────────────────────────────────
 
-def _fetch_iwm_holdings() -> list[str]:
-    """Download iShares IWM holdings CSV and extract ticker symbols."""
-    logger.info("Fetching IWM holdings from iShares...")
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36"
-        )
-    }
-    resp = requests.get(config.IWM_HOLDINGS_URL, headers=headers, timeout=30)
+_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+)
+
+
+def _fetch_ishares_holdings(url: str, label: str) -> list[str]:
+    """
+    Generic iShares holdings CSV fetcher. Both IWM and IVV use the same CSV
+    format with a header preamble before the 'Ticker,' column line.
+    """
+    logger.info("Fetching %s holdings from iShares...", label)
+    resp = requests.get(url, headers={"User-Agent": _USER_AGENT}, timeout=30)
     resp.raise_for_status()
 
-    # iShares CSV has header rows before the actual data; skip until 'Ticker' column
     lines = resp.text.splitlines()
     start_idx = 0
     for i, line in enumerate(lines):
@@ -51,7 +52,6 @@ def _fetch_iwm_holdings() -> list[str]:
     csv_body = "\n".join(lines[start_idx:])
     df = pd.read_csv(StringIO(csv_body))
 
-    # Normalize column names
     df.columns = [c.strip() for c in df.columns]
     ticker_col = next(c for c in df.columns if c.lower() == "ticker")
     tickers = (
@@ -62,9 +62,9 @@ def _fetch_iwm_holdings() -> list[str]:
         .str.replace(r"\s+", "", regex=True)
         .tolist()
     )
-    # Filter out cash/other non-equity rows
+    # Filter out cash/non-equity rows (CASH_USD, "-", empty, etc.)
     tickers = [t for t in tickers if t and t != "-" and t != "nan" and len(t) <= 5]
-    logger.info("IWM holdings: %d tickers", len(tickers))
+    logger.info("%s holdings: %d tickers", label, len(tickers))
     return tickers
 
 
@@ -80,18 +80,58 @@ def _load_cached_tickers() -> list[str]:
     return tickers
 
 
-def get_russell2000_tickers() -> list[str]:
-    """Return Russell 2000 tickers. Try live IWM holdings first, fallback to cache."""
+def get_universe_tickers() -> list[str]:
+    """
+    Return the combined Russell 2000 + S&P 500 ticker universe.
+    Tries both iShares ETFs live, dedups, and caches the result. If both
+    fetches fail, falls back to the cached tickers.json.
+    """
+    universe: list[str] = []
+    fetched_any = False
+
+    for url, label in [
+        (config.IWM_HOLDINGS_URL, "IWM (Russell 2000)"),
+        (config.IVV_HOLDINGS_URL, "IVV (S&P 500)"),
+    ]:
+        try:
+            universe.extend(_fetch_ishares_holdings(url, label))
+            fetched_any = True
+        except Exception as exc:
+            logger.warning("%s holdings fetch failed (%s)", label, exc)
+
+    if not fetched_any:
+        logger.warning("All live holdings fetches failed — using cached list")
+        return _load_cached_tickers()
+
+    # Dedup while preserving order. Some tickers may appear in both indexes
+    # (e.g. promotions during the year between Russell rebalances).
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for t in universe:
+        if t in seen:
+            continue
+        seen.add(t)
+        deduped.append(t)
+
+    logger.info(
+        "Universe: %d unique tickers (R2000+S&P500, %d duplicates removed)",
+        len(deduped),
+        len(universe) - len(deduped),
+    )
+
+    # Cache the deduped union for future fallback runs.
     try:
-        tickers = _fetch_iwm_holdings()
-        # Cache for next time
         config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
         with open(config.TICKERS_JSON, "w") as f:
-            json.dump(tickers, f)
-        return tickers
+            json.dump(deduped, f)
     except Exception as exc:
-        logger.warning("IWM holdings fetch failed (%s), using cached list", exc)
-        return _load_cached_tickers()
+        logger.warning("Failed to cache ticker list: %s", exc)
+
+    return deduped
+
+
+# Backwards-compat alias — old callers still get the new combined universe.
+get_russell2000_tickers = get_universe_tickers
 
 
 # ── OHLCV download ────────────────────────────────────────────────────────────

@@ -14,13 +14,23 @@ LATEST_JSON = RESULTS_DIR / "latest.json"
 TICKERS_JSON = RESULTS_DIR / "tickers.json"
 
 # ── Data fetching ──────────────────────────────────────────────────────────────
-# Primary: iShares IWM ETF holdings CSV (always current after annual reconstitution)
+# Universe: Russell 2000 (small caps via IWM) + S&P 500 (large caps via IVV).
+# Both pull from iShares holdings CSVs which are reconstituted continuously.
 IWM_HOLDINGS_URL = (
     "https://www.ishares.com/us/products/239710/"
     "ishares-russell-2000-etf/1467271812596.ajax"
     "?fileType=csv&fileName=IWM_holdings&dataType=fund"
 )
-BENCHMARK_TICKER = "IWM"
+IVV_HOLDINGS_URL = (
+    "https://www.ishares.com/us/products/239726/"
+    "ishares-core-sp-500-etf/1467271812596.ajax"
+    "?fileType=csv&fileName=IVV_holdings&dataType=fund"
+)
+UNIVERSE_LABEL = "Russell 2000 + S&P 500"
+# Benchmark for relative-strength scoring. SPY is the natural choice for a
+# mixed small/large universe — every ticker is graded against the same
+# broad-market yardstick. (Was IWM when the universe was R2000-only.)
+BENCHMARK_TICKER = "SPY"
 DATA_PERIOD = "2y"       # 2 years for EMA_200 warmup (needs ~400 bars)
 CHART_BARS = 150         # Display last 150 daily bars on charts
 BATCH_SIZE = 100         # Tickers per yfinance batch call
@@ -39,11 +49,16 @@ EXTENSION_ATR_REJECT = 10.0       # 10x ATR → near-zero score
 EXTENSION_EMA50_WARN_PCT = 20.0   # >20% above EMA50 → fallback penalty
 GAP_LOOKBACK_DAYS = 20            # Scan last 20 days for large gaps
 GAP_LARGE_PCT = 15.0              # Single-day gap >15% = suspect
+DIST_52W_LOW_MILD_PCT = 100.0     # >100% above 52W low → mild penalty starts
+DIST_52W_LOW_HEAVY_PCT = 200.0    # >200% above 52W low → heavy penalty
+DIST_52W_LOW_REJECT_PCT = 350.0   # >350% above 52W low → near-reject
 
 # ── Selection output ───────────────────────────────────────────────────────────
-TOP_N = 20                        # Total picks in output
-CHART_TOP_N = 20                  # Charts generated for all top picks
-MAX_PICKS_PER_SECTOR = 3          # Sector diversification cap
+# Universe roughly doubled when S&P 500 was added (~2400 tickers vs ~1900).
+# Bumping TOP_N + per-sector cap to allow more breadth without losing focus.
+TOP_N = 25                        # Total picks in output
+CHART_TOP_N = 25                  # Charts generated for all top picks
+MAX_PICKS_PER_SECTOR = 4          # Sector diversification cap
 
 # ── Chart settings ─────────────────────────────────────────────────────────────
 CHART_WIDTH_PX = 1400

@@ -236,14 +236,14 @@ def build_html(
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Russell 2000 Technical Screen — {run_date}</title>
+<title>{config.UNIVERSE_LABEL} Technical Screen — {run_date}</title>
 </head>
 <body style="margin:0;padding:0;background:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#c9d1d9;">
 
   <!-- Header -->
   <div style="background:#161b22;border-bottom:1px solid #30363d;padding:20px 24px;">
     <div style="max-width:700px;margin:0 auto;">
-      <div style="font-size:20px;font-weight:bold;color:#c9d1d9;">Russell 2000 Technical Screen</div>
+      <div style="font-size:20px;font-weight:bold;color:#c9d1d9;">{config.UNIVERSE_LABEL} Technical Screen</div>
       <div style="color:#8b949e;font-size:13px;margin-top:4px;">{now_str}</div>
       <div style="margin-top:12px;display:inline-flex;gap:20px;">
         <div style="color:#8b949e;font-size:12px;">Screened <strong style="color:#c9d1d9;">{screened:,}</strong></div>
@@ -306,7 +306,7 @@ def send_email(
 
     html = build_html(top_picks, run_date, stats, macro_results=macro_results)
     n = len(top_picks)
-    subject = f"Stock Screen: {run_date} | Top {n} Russell 2000 Setups"
+    subject = f"Stock Screen: {run_date} | Top {n} Setups (R2000 + S&P 500)"
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject

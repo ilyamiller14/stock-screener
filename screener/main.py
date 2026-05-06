@@ -1,12 +1,12 @@
 """
-Main orchestrator for the Russell 2000 Technical Screener.
+Main orchestrator for the Russell 2000 + S&P 500 Technical Screener.
 
 Pipeline:
-  1. Fetch tickers (IWM holdings or cache)
+  1. Fetch tickers (IWM + IVV holdings, deduped; cache fallback)
   2. Download OHLCV data (yfinance, 2-year lookback)
-  3. Compute technical indicators for each ticker
-  4. Score and rank (hard filters → composite score → top 20)
-  5. Generate charts for top 15
+  3. Compute technical indicators for each ticker (RS measured vs SPY)
+  4. Score and rank (hard filters → composite score → top N)
+  5. Generate charts for top picks
   6. Write results/latest.json + results/history/DATE.json
   7. Send daily email (skipped with --dry-run)
 
@@ -26,7 +26,7 @@ from typing import Any
 
 from . import config
 from .charts import generate_all_charts
-from .data_fetcher import fetch_all_ohlcv, fetch_benchmark, get_russell2000_tickers
+from .data_fetcher import fetch_all_ohlcv, fetch_benchmark, get_universe_tickers
 from .emailer import send_email
 from .indicators import compute_all
 from .scorer import rank_stocks
@@ -183,10 +183,10 @@ def write_results(results: dict[str, Any], run_date: str) -> None:
 
 def main(dry_run: bool = False) -> int:
     run_date = datetime.now().strftime("%Y-%m-%d")
-    logger.info("=== Russell 2000 Screener — %s ===", run_date)
+    logger.info("=== %s Screener — %s ===", config.UNIVERSE_LABEL, run_date)
 
     # 1. Get tickers
-    tickers = get_russell2000_tickers()
+    tickers = get_universe_tickers()
     if not tickers:
         logger.error("No tickers loaded — aborting")
         return 1
@@ -243,7 +243,7 @@ def main(dry_run: bool = False) -> int:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Russell 2000 Technical Screener")
+    parser = argparse.ArgumentParser(description="Russell 2000 + S&P 500 Technical Screener")
     parser.add_argument("--dry-run", action="store_true", help="Skip sending email")
     args = parser.parse_args()
     sys.exit(main(dry_run=args.dry_run))
