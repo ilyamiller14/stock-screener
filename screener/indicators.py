@@ -18,6 +18,7 @@ import pandas_ta as ta
 from scipy import stats
 
 from . import config
+from .indicator_helpers import is_valid_vcp, squeeze_score
 
 logger = logging.getLogger(__name__)
 
@@ -265,7 +266,7 @@ def compute_volume_analysis(df: pd.DataFrame) -> dict[str, Any]:
     if len(up_days) > 0:
         upvol_ratio = float(up_days["above_avg_vol"].sum() / len(up_days))
     else:
-        upvol_ratio = 0.5
+        upvol_ratio = 0.0  # No up-days = no credit (was 0.5 — free half-score)
 
     return {
         "avg_volume_20d": int(avg_vol_20),
@@ -474,8 +475,11 @@ def compute_vcp(df: pd.DataFrame) -> dict[str, Any]:
 
     vcp_score = tighten_score + tight_ratio_score + atr_score + vol_score
 
-    # VCP detected if score > 40 and at least 2 tightening contractions
-    vcp_detected = vcp_score >= 40.0 and tightening_count >= 1 and len(contractions) >= 2
+    vcp_detected = is_valid_vcp(
+        vcp_score=vcp_score,
+        tightening_count=tightening_count,
+        n_contractions=len(contractions),
+    )
 
     return {
         "vcp_detected":     bool(vcp_detected),
@@ -523,13 +527,15 @@ def compute_squeeze(df: pd.DataFrame) -> dict[str, Any]:
     if bb is None or bb.empty:
         return default
 
-    bb_upper_col = [c for c in bb.columns if c.startswith("BBU_")]
-    bb_lower_col = [c for c in bb.columns if c.startswith("BBL_")]
+    bb_upper_col  = [c for c in bb.columns if c.startswith("BBU_")]
+    bb_lower_col  = [c for c in bb.columns if c.startswith("BBL_")]
+    bb_middle_col = [c for c in bb.columns if c.startswith("BBM_")]
     if not bb_upper_col or not bb_lower_col:
         return default
 
     bb_upper = bb[bb_upper_col[0]]
     bb_lower = bb[bb_lower_col[0]]
+    bb_middle = bb[bb_middle_col[0]] if bb_middle_col else (bb_upper + bb_lower) / 2
 
     # Keltner Channel (20, 1.5x ATR)
     kc_mid = ta.ema(close, length=20)
@@ -566,21 +572,23 @@ def compute_squeeze(df: pd.DataFrame) -> dict[str, Any]:
                 squeeze_fired = True
                 break
 
-    # Squeeze score: longer squeezes build more energy
-    if squeeze_on:
-        # Currently squeezing — reward duration (6+ bars = building energy)
-        squeeze_score = _clamp(squeeze_bars * 5.0, 0.0, 80.0)
-    elif squeeze_fired:
-        # Just fired — this is the actionable signal
-        squeeze_score = 100.0
-    else:
-        squeeze_score = 0.0
+    # Direction check: is the breakout/coil bullish (price above bb middle)?
+    last_close = float(close.iloc[-1])
+    last_middle = float(bb_middle.iloc[-1]) if not pd.isna(bb_middle.iloc[-1]) else last_close
+    bullish_direction = last_close >= last_middle
+
+    sq_score = squeeze_score(
+        squeeze_on=squeeze_on,
+        squeeze_fired=squeeze_fired,
+        squeeze_bars=squeeze_bars,
+        bullish_direction=bullish_direction,
+    )
 
     return {
         "squeeze_on":    squeeze_on,
         "squeeze_fired": squeeze_fired,
         "squeeze_bars":  squeeze_bars,
-        "squeeze_score": round(squeeze_score, 1),
+        "squeeze_score": round(sq_score, 1),
     }
 
 

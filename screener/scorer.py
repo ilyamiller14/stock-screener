@@ -14,7 +14,6 @@ import logging
 from typing import Any
 
 import numpy as np
-import yfinance as yf
 
 from . import config
 
@@ -29,14 +28,22 @@ def passes_hard_filters(ind: dict[str, Any]) -> bool:
     avg_vol = ind.get("avg_volume_20d", 0)
     ema200  = ind.get("ema200", None)
     slope_pos = ind.get("ema200_slope_positive", False)
+    adx     = ind.get("adx_14", 0.0)
+    dist_hi = ind.get("dist_from_52w_high_pct", 100.0)
 
     if close < config.MIN_PRICE:
         return False
     if avg_vol < config.MIN_AVG_VOLUME:
         return False
+    if close * avg_vol < config.MIN_DOLLAR_VOLUME:
+        return False
     if ema200 is None or close <= ema200:
         return False
     if not slope_pos:
+        return False
+    if adx < config.MIN_ADX:
+        return False
+    if dist_hi > config.MAX_DIST_FROM_52W_HIGH_PCT:
         return False
     return True
 
@@ -89,9 +96,9 @@ def _score_trend(ind: dict[str, Any]) -> float:
     # EMA alignment: binary 0/100
     ema_align_score = 100.0 if ind.get("ema_aligned", False) else 0.0
 
-    # EMA_200 slope: normalise daily % slope (0.04% per day is good)
+    # EMA_200 slope: graduated — saturates at 0.5%/day, not 0.04%/day
     slope = ind.get("ema200_slope", 0.0)
-    ema200_slope_score = _clamp(slope * 2500.0)  # 0.04 → 100
+    ema200_slope_score = _clamp(slope * 200.0)  # 0.5%/day → 100
 
     # Distance from 52W high: closer is better
     dist = ind.get("dist_from_52w_high_pct", 100.0)
@@ -119,23 +126,28 @@ def _score_rs(ind: dict[str, Any]) -> float:
 
 
 def _score_volume(ind: dict[str, Any]) -> float:
-    # OBV slope: normalised, positive → high score
+    # OBV slope: positive → high score; neutral = 50
     obv_slope = ind.get("obv_slope_norm", 0.0)
     obv_score = _clamp((obv_slope + 10.0) * 5.0)  # -10..+10 → 0..100
 
-    # CMF: map -1..1 → 0..100
+    # CMF: shifted floor — negative CMF (distribution) gets ~0; neutral ~20; +0.8 → 100
     cmf = ind.get("cmf_20", 0.0)
-    cmf_score = _clamp((cmf + 1.0) / 2.0 * 100.0)
+    cmf_score = _clamp((cmf + 0.2) * 100.0)
 
-    # Up-day volume ratio: 0..1 → 0..100
-    upvol = ind.get("upvol_ratio", 0.5)
+    # Up-day volume ratio: 0..1 → 0..100. Default 0 (no credit) when no up-day data.
+    upvol = ind.get("upvol_ratio", 0.0)
     upvol_score = _clamp(upvol * 100.0)
+
+    # Today's volume vs 20d avg — captures actual breakout volume
+    vol_ratio = ind.get("volume_ratio", 1.0)
+    vol_ratio_score = _clamp(50.0 + (vol_ratio - 1.0) * 50.0)  # 1.0 → 50, 2.0 → 100
 
     w = config.VOLUME_SUB_WEIGHTS
     return (
-        obv_score   * w["obv_slope"]
-        + cmf_score   * w["cmf"]
-        + upvol_score * w["upvol_ratio"]
+        obv_score        * w["obv_slope"]
+        + cmf_score        * w["cmf"]
+        + upvol_score      * w["upvol_ratio"]
+        + vol_ratio_score  * w["volume_ratio"]
     )
 
 
@@ -144,13 +156,14 @@ def _score_momentum(ind: dict[str, Any], close: float) -> float:
     rsi = ind.get("rsi_14", 50.0)
     rsi_score = _clamp(100.0 - abs(rsi - config.RSI_IDEAL) * config.RSI_SCORE_DECAY)
 
-    # MACD histogram: positive and expanding
+    # MACD histogram: graduated. hist as % of price → score
+    # hist=0 → 50, hist=+0.5% of price → 100, hist=-0.5% of price → 0
     macd_hist = ind.get("macd_hist", 0.0)
     if close > 0:
-        hist_norm = macd_hist / close * 10000.0  # normalise to price
+        hist_pct = macd_hist / close * 100.0  # in % of price
     else:
-        hist_norm = 0.0
-    macd_hist_score = _clamp((hist_norm + 5.0) * 10.0)  # -5..+5 → 0..100
+        hist_pct = 0.0
+    macd_hist_score = _clamp(50.0 + hist_pct * 100.0)
 
     # MACD crossover recency
     sessions_ago = ind.get("macd_crossover_sessions_ago", 999)
@@ -171,12 +184,14 @@ def _score_momentum(ind: dict[str, Any], close: float) -> float:
 
 
 def _score_stage2(ind: dict[str, Any]) -> float:
-    """Full Weinstein Stage 2 check: EMA aligned, near 52W high, OBV rising, ADX trending."""
-    ema_ok  = ind.get("ema_aligned", False)
-    near_hh = ind.get("near_52w_high", False)
-    obv_ok  = ind.get("obv_trend", "flat") == "rising"
-    adx_ok  = ind.get("adx_trending", False)
-    return 100.0 if (ema_ok and near_hh and obv_ok and adx_ok) else 0.0
+    """Graduated Weinstein Stage 2 score: 25 points per condition met (max 100)."""
+    conditions = [
+        ind.get("ema_aligned", False),
+        ind.get("near_52w_high", False),
+        ind.get("obv_trend", "flat") == "rising",
+        ind.get("adx_trending", False),
+    ]
+    return float(sum(conditions)) * 25.0
 
 
 def _score_pattern(ind: dict[str, Any]) -> float:
@@ -325,6 +340,7 @@ def fetch_sector_info(tickers: list[str]) -> dict[str, dict[str, str]]:
 
     # Fetch only unknown tickers from yfinance
     if tickers_to_fetch:
+        import yfinance as yf
         logger.info("Fetching sector info for %d uncached tickers...", len(tickers_to_fetch))
         for ticker in tickers_to_fetch:
             try:

@@ -39,6 +39,9 @@ MIN_DATA_ROWS = 200      # Minimum bars required for a ticker to be processed
 # ── Hard filter gate (all must pass to enter scoring) ─────────────────────────
 MIN_PRICE = 2.0                   # No penny stocks
 MIN_AVG_VOLUME = 100_000          # 100k shares/day minimum liquidity
+MIN_DOLLAR_VOLUME = 20_000_000    # $20M/day minimum — keeps thin micro-caps out
+MIN_ADX = 20.0                    # ADX < 20 = no real trend; reject for Stage 2
+MAX_DIST_FROM_52W_HIGH_PCT = 25.0 # Stage 2 picks must be within 25% of 52w high
 MIN_EMA200_SLOPE_SESSIONS = 20    # Rolling window for EMA_200 slope calc
 EMA200_SLOPE_THRESHOLD = 0.0      # Slope must be > 0 (upward trend)
 
@@ -128,9 +131,10 @@ RS_SUB_WEIGHTS = {
 }
 
 VOLUME_SUB_WEIGHTS = {
-    "obv_slope":          0.35,
-    "cmf":                0.35,
-    "upvol_ratio":        0.30,
+    "obv_slope":          0.25,
+    "cmf":                0.30,
+    "upvol_ratio":        0.20,
+    "volume_ratio":       0.25,  # today's vol vs 20d avg — captures breakout volume
 }
 
 MOMENTUM_SUB_WEIGHTS = {
@@ -158,9 +162,6 @@ ADX_SCALE = 2.0          # adx * ADX_SCALE → raw score (capped at 100)
 
 # Distance from 52W high: score 100 at the high, 0 at 25% below
 DIST_52W_HIGH_SCALE = 4.0  # score = 100 - distance_pct * DIST_52W_HIGH_SCALE
-
-# OBV slope normalization: slope as % of price, scaled up
-OBV_SLOPE_SCALE = 1000.0
 
 # ── Email settings ─────────────────────────────────────────────────────────────
 GMAIL_USER = os.environ.get("GMAIL_USER", "")
