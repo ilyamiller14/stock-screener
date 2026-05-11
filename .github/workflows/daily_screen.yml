@@ -2,10 +2,13 @@ name: Daily Technical Screen
 
 on:
   schedule:
-    # Target: email arrives by ~6:30 AM ET
-    # GitHub Actions cron delays 30-60 min, run takes ~5 min
-    # Schedule at 5:00 AM ET = 09:00 UTC (EDT) / 10:00 UTC (EST)
-    - cron: "0 9 * * 1-5"
+    # Target: email arrives well before market open (9:30 AM ET).
+    # GitHub Actions delays scheduled workflows under load; top-of-the-hour
+    # cron slots are the worst offenders (e.g. 2026-05-11 saw a 3h11m delay
+    # at 09:00 UTC). Picking an odd minute well off the hour shortens the
+    # queue significantly, and starting earlier absorbs whatever delay remains.
+    # 07:17 UTC = 3:17 AM EDT / 2:17 AM EST.
+    - cron: "17 7 * * 1-5"
   workflow_dispatch: # Manual trigger from Actions tab
 
 permissions:
