@@ -49,7 +49,7 @@ jobs:
         run: |
           git config user.name  "GitHub Actions"
           git config user.email "actions@github.com"
-          git add -f results/latest.json results/charts/ results/history/ || true
+          git add -f results/latest.json results/charts/ results/history/ results/sector_cache.json || true
           # Only commit if there are staged changes
           git diff --staged --quiet || git commit -m "Screener results: $(date +%Y-%m-%d)"
           git push || true

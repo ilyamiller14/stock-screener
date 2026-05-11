@@ -1,0 +1,1027 @@
+{
+  "AAOI": {
+    "company_name": "Applied Optoelectronics, Inc.",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "ABX": {
+    "company_name": "Abacus Global Management, Inc.",
+    "industry": "Insurance - Life",
+    "sector": "Financial Services"
+  },
+  "ACTG": {
+    "company_name": "Acacia Research Corporation",
+    "industry": "Business Equipment & Supplies",
+    "sector": "Industrials"
+  },
+  "ADEA": {
+    "company_name": "Adeia Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "ADM": {
+    "company_name": "Archer-Daniels-Midland Company",
+    "industry": "Farm Products",
+    "sector": "Consumer Defensive"
+  },
+  "ADTN": {
+    "company_name": "ADTRAN Holdings, Inc.",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "AEHR": {
+    "company_name": "Aehr Test Systems, Inc.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "AEIS": {
+    "company_name": "Advanced Energy Industries, Inc.",
+    "industry": "Electrical Equipment & Parts",
+    "sector": "Industrials"
+  },
+  "AGX": {
+    "company_name": "Argan, Inc.",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "AKAM": {
+    "company_name": "Akamai Technologies, Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "ALMS": {
+    "company_name": "Alumis Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "ALNT": {
+    "company_name": "Allient Inc.",
+    "industry": "Electronic Components",
+    "sector": "Technology"
+  },
+  "AMLX": {
+    "company_name": "Amylyx Pharmaceuticals, Inc.",
+    "industry": "Drug Manufacturers - Specialty & Generic",
+    "sector": "Healthcare"
+  },
+  "AMPX": {
+    "company_name": "Amprius Technologies, Inc.",
+    "industry": "Electrical Equipment & Parts",
+    "sector": "Industrials"
+  },
+  "ANAB": {
+    "company_name": "AnaptysBio, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "APEI": {
+    "company_name": "American Public Education, Inc.",
+    "industry": "Education & Training Services",
+    "sector": "Consumer Defensive"
+  },
+  "ARWR": {
+    "company_name": "Arrowhead Pharmaceuticals, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "ASC": {
+    "company_name": "Ardmore Shipping Corporation",
+    "industry": "Marine Shipping",
+    "sector": "Industrials"
+  },
+  "ASIX": {
+    "company_name": "AdvanSix Inc.",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "ATEN": {
+    "company_name": "A10 Networks, Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "ATEX": {
+    "company_name": "Anterix Inc.",
+    "industry": "Telecom Services",
+    "sector": "Communication Services"
+  },
+  "BCAX": {
+    "company_name": "Bicara Therapeutics Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "BE": {
+    "company_name": "Bloom Energy Corporation",
+    "industry": "Electrical Equipment & Parts",
+    "sector": "Industrials"
+  },
+  "BLX": {
+    "company_name": "Banco Latinoamericano de Comercio Exterior, S. A.",
+    "industry": "Banks - Regional",
+    "sector": "Financial Services"
+  },
+  "BORR": {
+    "company_name": "Borr Drilling Limited",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "BTU": {
+    "company_name": "Peabody Energy Corporation",
+    "industry": "Thermal Coal",
+    "sector": "Energy"
+  },
+  "BVS": {
+    "company_name": "Bioventus Inc.",
+    "industry": "Medical Devices",
+    "sector": "Healthcare"
+  },
+  "CAPR": {
+    "company_name": "Capricor Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "CARE": {
+    "company_name": "Carter Bankshares, Inc.",
+    "industry": "Banks - Regional",
+    "sector": "Financial Services"
+  },
+  "CASY": {
+    "company_name": "Casey's General Stores, Inc.",
+    "industry": "Specialty Retail",
+    "sector": "Consumer Cyclical"
+  },
+  "CBOE": {
+    "company_name": "Cboe Global Markets, Inc.",
+    "industry": "Financial Data & Stock Exchanges",
+    "sector": "Financial Services"
+  },
+  "CC": {
+    "company_name": "The Chemours Company",
+    "industry": "Specialty Chemicals",
+    "sector": "Basic Materials"
+  },
+  "CELC": {
+    "company_name": "Celcuity Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "CENX": {
+    "company_name": "Century Aluminum Company",
+    "industry": "Aluminum",
+    "sector": "Basic Materials"
+  },
+  "CFFN": {
+    "company_name": "Capitol Federal Financial, Inc.",
+    "industry": "Banks - Regional",
+    "sector": "Financial Services"
+  },
+  "CGON": {
+    "company_name": "CG Oncology, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "CLMT": {
+    "company_name": "Calumet, Inc.",
+    "industry": "Specialty Chemicals",
+    "sector": "Basic Materials"
+  },
+  "CPRX": {
+    "company_name": "Catalyst Pharmaceuticals, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "CRC": {
+    "company_name": "California Resources Corporation",
+    "industry": "Oil & Gas E&P",
+    "sector": "Energy"
+  },
+  "CSCO": {
+    "company_name": "Cisco Systems, Inc.",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "CSGS": {
+    "company_name": "CSG Systems International, Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "CSTM": {
+    "company_name": "Constellium SE",
+    "industry": "Aluminum",
+    "sector": "Basic Materials"
+  },
+  "CTRI": {
+    "company_name": "Centuri Holdings, Inc.",
+    "industry": "Utilities - Regulated Gas",
+    "sector": "Utilities"
+  },
+  "DAN": {
+    "company_name": "Dana Incorporated",
+    "industry": "Auto Parts",
+    "sector": "Consumer Cyclical"
+  },
+  "DAVE": {
+    "company_name": "Dave Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "DAWN": {
+    "company_name": "Day One Biopharmaceuticals, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "DBRG": {
+    "company_name": "DigitalBridge Group, Inc.",
+    "industry": "Asset Management",
+    "sector": "Financial Services"
+  },
+  "DFTX": {
+    "company_name": "Definium Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "DHC": {
+    "company_name": "Diversified Healthcare Trust",
+    "industry": "REIT - Healthcare Facilities",
+    "sector": "Real Estate"
+  },
+  "DHT": {
+    "company_name": "DHT Holdings, Inc.",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "DNTH": {
+    "company_name": "Dianthus Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "DOCN": {
+    "company_name": "DigitalOcean Holdings, Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "DSGN": {
+    "company_name": "Design Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "EB": {
+    "company_name": "Eventbrite, Inc.",
+    "industry": "Internet Content & Information",
+    "sector": "Communication Services"
+  },
+  "ECPG": {
+    "company_name": "Encore Capital Group, Inc.",
+    "industry": "Credit Services",
+    "sector": "Financial Services"
+  },
+  "ECVT": {
+    "company_name": "Ecovyst Inc.",
+    "industry": "Specialty Chemicals",
+    "sector": "Basic Materials"
+  },
+  "EGY": {
+    "company_name": "VAALCO Energy, Inc.",
+    "industry": "Oil & Gas E&P",
+    "sector": "Energy"
+  },
+  "ELVN": {
+    "company_name": "Enliven Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "ERAS": {
+    "company_name": "Erasca, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "ESE": {
+    "company_name": "ESCO Technologies Inc.",
+    "industry": "Scientific & Technical Instruments",
+    "sector": "Technology"
+  },
+  "ESOA": {
+    "company_name": "Energy Services of America Corporation",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "EVC": {
+    "company_name": "Entravision Communications Corporation",
+    "industry": "Advertising Agencies",
+    "sector": "Communication Services"
+  },
+  "EWCZ": {
+    "company_name": "European Wax Center, Inc.",
+    "industry": "Household & Personal Products",
+    "sector": "Consumer Defensive"
+  },
+  "EWTX": {
+    "company_name": "Edgewise Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "FCFS": {
+    "company_name": "FirstCash Holdings, Inc.",
+    "industry": "Credit Services",
+    "sector": "Financial Services"
+  },
+  "FET": {
+    "company_name": "Forum Energy Technologies, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "FIGS": {
+    "company_name": "FIGS, Inc.",
+    "industry": "Apparel Manufacturing",
+    "sector": "Consumer Cyclical"
+  },
+  "FLNG": {
+    "company_name": "FLEX LNG Ltd.",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "FN": {
+    "company_name": "Fabrinet",
+    "industry": "Electronic Components",
+    "sector": "Technology"
+  },
+  "FOLD": {
+    "company_name": "Amicus Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "FORM": {
+    "company_name": "FormFactor, Inc.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "FRGE": {
+    "company_name": "Forge Global Holdings, Inc.",
+    "industry": "Capital Markets",
+    "sector": "Financial Services"
+  },
+  "FSLY": {
+    "company_name": "Fastly, Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "GCT": {
+    "company_name": "GigaCloud Technology Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "GHM": {
+    "company_name": "Graham Corporation",
+    "industry": "Specialty Industrial Machinery",
+    "sector": "Industrials"
+  },
+  "GLDD": {
+    "company_name": "Great Lakes Dredge & Dock Corporation",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "GLNG": {
+    "company_name": "Golar LNG Limited",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "GPRE": {
+    "company_name": "Green Plains Inc.",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "GSAT": {
+    "company_name": "Globalstar, Inc.",
+    "industry": "Telecom Services",
+    "sector": "Communication Services"
+  },
+  "HLF": {
+    "company_name": "Herbalife Ltd.",
+    "industry": "Packaged Foods",
+    "sector": "Consumer Defensive"
+  },
+  "HLX": {
+    "company_name": "Helix Energy Solutions Group, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "HP": {
+    "company_name": "Helmerich & Payne, Inc.",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "HPE": {
+    "company_name": "Hewlett Packard Enterprise Company",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "HSHP": {
+    "company_name": "Himalaya Shipping Ltd.",
+    "industry": "Marine Shipping",
+    "sector": "Industrials"
+  },
+  "ICHR": {
+    "company_name": "Ichor Holdings, Ltd.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "IMKTA": {
+    "company_name": "Ingles Markets, Incorporated",
+    "industry": "Grocery Stores",
+    "sector": "Consumer Defensive"
+  },
+  "INSW": {
+    "company_name": "International Seaways, Inc.",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "IPI": {
+    "company_name": "Intrepid Potash, Inc.",
+    "industry": "Agricultural Inputs",
+    "sector": "Basic Materials"
+  },
+  "IRM": {
+    "company_name": "Iron Mountain Incorporated",
+    "industry": "REIT - Specialty",
+    "sector": "Real Estate"
+  },
+  "KGS": {
+    "company_name": "Kodiak Gas Services, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "KLIC": {
+    "company_name": "Kulicke and Soffa Industries, Inc.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "KOP": {
+    "company_name": "Koppers Holdings Inc.",
+    "industry": "Specialty Chemicals",
+    "sector": "Basic Materials"
+  },
+  "KW": {
+    "company_name": "Kennedy-Wilson Holdings, Inc.",
+    "industry": "Real Estate Services",
+    "sector": "Real Estate"
+  },
+  "LASR": {
+    "company_name": "nLIGHT, Inc.",
+    "industry": "Semiconductors",
+    "sector": "Technology"
+  },
+  "LBRT": {
+    "company_name": "Liberty Energy Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "LBRX": {
+    "company_name": "LB Pharmaceuticals Inc",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "LGN": {
+    "company_name": "Legence Corp.",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "LINC": {
+    "company_name": "Lincoln Educational Services Corporation",
+    "industry": "Education & Training Services",
+    "sector": "Consumer Defensive"
+  },
+  "LIND": {
+    "company_name": "Lindblad Expeditions Holdings, Inc.",
+    "industry": "Travel Services",
+    "sector": "Consumer Cyclical"
+  },
+  "LNTH": {
+    "company_name": "Lantheus Holdings, Inc.",
+    "industry": "Drug Manufacturers - Specialty & Generic",
+    "sector": "Healthcare"
+  },
+  "LXU": {
+    "company_name": "LSB Industries, Inc.",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "MAMA": {
+    "company_name": "Mama's Creations, Inc.",
+    "industry": "Packaged Foods",
+    "sector": "Consumer Defensive"
+  },
+  "MATX": {
+    "company_name": "Matson, Inc.",
+    "industry": "Marine Shipping",
+    "sector": "Industrials"
+  },
+  "MCRI": {
+    "company_name": "Monarch Casino & Resort, Inc.",
+    "industry": "Resorts & Casinos",
+    "sector": "Consumer Cyclical"
+  },
+  "MIAX": {
+    "company_name": "Miami International Holdings, Inc.",
+    "industry": "Capital Markets",
+    "sector": "Financial Services"
+  },
+  "MITK": {
+    "company_name": "Mitek Systems, Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "MOD": {
+    "company_name": "Modine Manufacturing Company",
+    "industry": "Auto Parts",
+    "sector": "Consumer Cyclical"
+  },
+  "MPC": {
+    "company_name": "Marathon Petroleum Corporation",
+    "industry": "Oil & Gas Refining & Marketing",
+    "sector": "Energy"
+  },
+  "MYRG": {
+    "company_name": "MYR Group Inc.",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "NAT": {
+    "company_name": "Nordic American Tankers Limited",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "NATR": {
+    "company_name": "Nature's Sunshine Products, Inc.",
+    "industry": "Packaged Foods",
+    "sector": "Consumer Defensive"
+  },
+  "NBR": {
+    "company_name": "Nabors Industries Ltd.",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "NE": {
+    "company_name": "Noble Corporation plc",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "NESR": {
+    "company_name": "National Energy Services Reunited Corp.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "NPO": {
+    "company_name": "Enpro Inc.",
+    "industry": "Specialty Industrial Machinery",
+    "sector": "Industrials"
+  },
+  "NTCT": {
+    "company_name": "NetScout Systems, Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "NXDT": {
+    "company_name": "NexPoint Diversified Real Estate Trust",
+    "industry": "REIT - Diversified",
+    "sector": "Real Estate"
+  },
+  "OIS": {
+    "company_name": "Oil States International, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "ONTF": {
+    "company_name": "ON24, Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "ORKA": {
+    "company_name": "Oruka Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "OUT": {
+    "company_name": "OUTFRONT Media Inc.",
+    "industry": "REIT - Specialty",
+    "sector": "Real Estate"
+  },
+  "PAHC": {
+    "company_name": "Phibro Animal Health Corporation",
+    "industry": "Drug Manufacturers - Specialty & Generic",
+    "sector": "Healthcare"
+  },
+  "PARR": {
+    "company_name": "Par Pacific Holdings, Inc.",
+    "industry": "Oil & Gas Refining & Marketing",
+    "sector": "Energy"
+  },
+  "PBF": {
+    "company_name": "PBF Energy Inc.",
+    "industry": "Oil & Gas Refining & Marketing",
+    "sector": "Energy"
+  },
+  "PBI": {
+    "company_name": "Pitney Bowes Inc.",
+    "industry": "Integrated Freight & Logistics",
+    "sector": "Industrials"
+  },
+  "PEB": {
+    "company_name": "Pebblebrook Hotel Trust",
+    "industry": "REIT - Hotel & Motel",
+    "sector": "Real Estate"
+  },
+  "PGC": {
+    "company_name": "Peapack-Gladstone Financial Corporation",
+    "industry": "Banks - Regional",
+    "sector": "Financial Services"
+  },
+  "PHIN": {
+    "company_name": "PHINIA Inc.",
+    "industry": "Auto Parts",
+    "sector": "Consumer Cyclical"
+  },
+  "PKE": {
+    "company_name": "Park Aerospace Corp.",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "PKST": {
+    "company_name": "Peakstone Realty Trust",
+    "industry": "REIT - Office",
+    "sector": "Real Estate"
+  },
+  "PL": {
+    "company_name": "Planet Labs PBC",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "PLAB": {
+    "company_name": "Photronics, Inc.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "PLOW": {
+    "company_name": "Douglas Dynamics, Inc.",
+    "industry": "Auto Parts",
+    "sector": "Consumer Cyclical"
+  },
+  "POWL": {
+    "company_name": "Powell Industries, Inc.",
+    "industry": "Electrical Equipment & Parts",
+    "sector": "Industrials"
+  },
+  "PPTA": {
+    "company_name": "Perpetua Resources Corp.",
+    "industry": "Other Precious Metals & Mining",
+    "sector": "Basic Materials"
+  },
+  "PRAA": {
+    "company_name": "PRA Group, Inc.",
+    "industry": "Credit Services",
+    "sector": "Financial Services"
+  },
+  "PSTL": {
+    "company_name": "Postal Realty Trust, Inc.",
+    "industry": "REIT - Office",
+    "sector": "Real Estate"
+  },
+  "PTEN": {
+    "company_name": "Patterson-UTI Energy, Inc.",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "PUMP": {
+    "company_name": "ProPetro Holding Corp.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "PVLA": {
+    "company_name": "Palvella Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "RCAT": {
+    "company_name": "Red Cat Holdings, Inc.",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "RELL": {
+    "company_name": "Richardson Electronics, Ltd.",
+    "industry": "Electronic Components",
+    "sector": "Technology"
+  },
+  "RELY": {
+    "company_name": "Remitly Global, Inc.",
+    "industry": "Software - Infrastructure",
+    "sector": "Technology"
+  },
+  "REX": {
+    "company_name": "REX American Resources Corporation",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "RIG": {
+    "company_name": "Transocean Ltd.",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "RLAY": {
+    "company_name": "Relay Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "RSI": {
+    "company_name": "Rush Street Interactive, Inc.",
+    "industry": "Gambling",
+    "sector": "Consumer Cyclical"
+  },
+  "RYAM": {
+    "company_name": "Rayonier Advanced Materials Inc.",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "SATL": {
+    "company_name": "Satellogic Inc.",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "SATS": {
+    "company_name": "EchoStar Corporation",
+    "industry": "Telecom Services",
+    "sector": "Communication Services"
+  },
+  "SB": {
+    "company_name": "Safe Bulkers, Inc.",
+    "industry": "Marine Shipping",
+    "sector": "Industrials"
+  },
+  "SDRL": {
+    "company_name": "Seadrill Limited",
+    "industry": "Oil & Gas Drilling",
+    "sector": "Energy"
+  },
+  "SEI": {
+    "company_name": "Solaris Energy Infrastructure, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "SENEA": {
+    "company_name": "Seneca Foods Corporation",
+    "industry": "Packaged Foods",
+    "sector": "Consumer Defensive"
+  },
+  "SGHC": {
+    "company_name": "Super Group (SGHC) Limited",
+    "industry": "Gambling",
+    "sector": "Consumer Cyclical"
+  },
+  "SLAB": {
+    "company_name": "Silicon Laboratories Inc.",
+    "industry": "Semiconductors",
+    "sector": "Technology"
+  },
+  "SLDB": {
+    "company_name": "Solid Biosciences Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "SLS": {
+    "company_name": "SELLAS Life Sciences Group, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "SPB": {
+    "company_name": "Spectrum Brands Holdings, Inc.",
+    "industry": "Household & Personal Products",
+    "sector": "Consumer Defensive"
+  },
+  "SPHR": {
+    "company_name": "Sphere Entertainment Co.",
+    "industry": "Entertainment",
+    "sector": "Communication Services"
+  },
+  "SSP": {
+    "company_name": "The E.W. Scripps Company",
+    "industry": "Broadcasting",
+    "sector": "Communication Services"
+  },
+  "SSRM": {
+    "company_name": "SSR Mining Inc.",
+    "industry": "Gold",
+    "sector": "Basic Materials"
+  },
+  "STGW": {
+    "company_name": "Stagwell Inc.",
+    "industry": "Advertising Agencies",
+    "sector": "Communication Services"
+  },
+  "STKL": {
+    "company_name": "SunOpta Inc.",
+    "industry": "Beverages - Non-Alcoholic",
+    "sector": "Consumer Defensive"
+  },
+  "STLD": {
+    "company_name": "Steel Dynamics, Inc.",
+    "industry": "Steel",
+    "sector": "Basic Materials"
+  },
+  "STRL": {
+    "company_name": "Sterling Infrastructure, Inc.",
+    "industry": "Engineering & Construction",
+    "sector": "Industrials"
+  },
+  "SWBI": {
+    "company_name": "Smith & Wesson Brands, Inc.",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "SYRE": {
+    "company_name": "Spyre Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "TALK": {
+    "company_name": "Talkspace, Inc.",
+    "industry": "Health Information Services",
+    "sector": "Healthcare"
+  },
+  "TDAY": {
+    "company_name": "USA TODAY Co., Inc.",
+    "industry": "Publishing",
+    "sector": "Communication Services"
+  },
+  "TE": {
+    "company_name": "T1 Energy Inc.",
+    "industry": "Electrical Equipment & Parts",
+    "sector": "Industrials"
+  },
+  "TERN": {
+    "company_name": "Terns Pharmaceuticals, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "THR": {
+    "company_name": "Thermon Group Holdings, Inc.",
+    "industry": "Specialty Industrial Machinery",
+    "sector": "Industrials"
+  },
+  "TK": {
+    "company_name": "Teekay Corporation Ltd.",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "TNGX": {
+    "company_name": "Tango Therapeutics, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "TNK": {
+    "company_name": "Teekay Tankers Ltd.",
+    "industry": "Oil & Gas Midstream",
+    "sector": "Energy"
+  },
+  "TOI": {
+    "company_name": "The Oncology Institute, Inc.",
+    "industry": "Medical Care Facilities",
+    "sector": "Healthcare"
+  },
+  "TPH": {
+    "company_name": "Tri Pointe Homes, Inc.",
+    "industry": "Residential Construction",
+    "sector": "Consumer Cyclical"
+  },
+  "TRN": {
+    "company_name": "Trinity Industries, Inc.",
+    "industry": "Railroads",
+    "sector": "Industrials"
+  },
+  "TROX": {
+    "company_name": "Tronox Holdings plc",
+    "industry": "Chemicals",
+    "sector": "Basic Materials"
+  },
+  "TTMI": {
+    "company_name": "TTM Technologies, Inc.",
+    "industry": "Electronic Components",
+    "sector": "Technology"
+  },
+  "TWST": {
+    "company_name": "Twist Bioscience Corporation",
+    "industry": "Diagnostics & Research",
+    "sector": "Healthcare"
+  },
+  "TXN": {
+    "company_name": "Texas Instruments Incorporated",
+    "industry": "Semiconductors",
+    "sector": "Technology"
+  },
+  "TYRA": {
+    "company_name": "Tyra Biosciences, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "UAMY": {
+    "company_name": "United States Antimony Corporation",
+    "industry": "Other Industrial Metals & Mining",
+    "sector": "Basic Materials"
+  },
+  "UCTT": {
+    "company_name": "Ultra Clean Holdings, Inc.",
+    "industry": "Semiconductor Equipment & Materials",
+    "sector": "Technology"
+  },
+  "UFCS": {
+    "company_name": "United Fire Group, Inc.",
+    "industry": "Insurance - Property & Casualty",
+    "sector": "Financial Services"
+  },
+  "UNFI": {
+    "company_name": "United Natural Foods, Inc.",
+    "industry": "Food Distribution",
+    "sector": "Consumer Defensive"
+  },
+  "UTI": {
+    "company_name": "Universal Technical Institute, Inc.",
+    "industry": "Education & Training Services",
+    "sector": "Consumer Defensive"
+  },
+  "UVE": {
+    "company_name": "Universal Insurance Holdings, Inc.",
+    "industry": "Insurance - Property & Casualty",
+    "sector": "Financial Services"
+  },
+  "VAL": {
+    "company_name": "Valaris Limited",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "VIAV": {
+    "company_name": "Viavi Solutions Inc.",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "VICR": {
+    "company_name": "Vicor Corporation",
+    "industry": "Electronic Components",
+    "sector": "Technology"
+  },
+  "VIR": {
+    "company_name": "Vir Biotechnology, Inc.",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "VRE": {
+    "company_name": "Veris Residential, Inc.",
+    "industry": "REIT - Residential",
+    "sector": "Real Estate"
+  },
+  "VSAT": {
+    "company_name": "Viasat, Inc.",
+    "industry": "Communication Equipment",
+    "sector": "Technology"
+  },
+  "VTOL": {
+    "company_name": "Bristow Group Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "VVX": {
+    "company_name": "V2X, Inc.",
+    "industry": "Aerospace & Defense",
+    "sector": "Industrials"
+  },
+  "WLFC": {
+    "company_name": "Willis Lease Finance Corporation",
+    "industry": "Rental & Leasing Services",
+    "sector": "Industrials"
+  },
+  "WTI": {
+    "company_name": "W&T Offshore, Inc.",
+    "industry": "Oil & Gas E&P",
+    "sector": "Energy"
+  },
+  "WTTR": {
+    "company_name": "Select Water Solutions, Inc.",
+    "industry": "Oil & Gas Equipment & Services",
+    "sector": "Energy"
+  },
+  "WULF": {
+    "company_name": "TeraWulf Inc.",
+    "industry": "Capital Markets",
+    "sector": "Financial Services"
+  },
+  "XOMA": {
+    "company_name": "XOMA Royalty Corporation",
+    "industry": "Biotechnology",
+    "sector": "Healthcare"
+  },
+  "YOU": {
+    "company_name": "Clear Secure, Inc.",
+    "industry": "Software - Application",
+    "sector": "Technology"
+  },
+  "ZD": {
+    "company_name": "Ziff Davis, Inc.",
+    "industry": "Advertising Agencies",
+    "sector": "Communication Services"
+  }
+}
