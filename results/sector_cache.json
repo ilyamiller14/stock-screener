@@ -1023,5 +1023,45 @@
     "company_name": "Ziff Davis, Inc.",
     "industry": "Advertising Agencies",
     "sector": "Communication Services"
+  },
+  "OPLN": {
+    "company_name": "OPENLANE, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto & Truck Dealerships"
+  },
+  "VRSN": {
+    "company_name": "VeriSign, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "CVSA": {
+    "company_name": "Covista Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Education & Training Services"
+  },
+  "TWO": {
+    "company_name": "Two Harbors Investment Corp.",
+    "sector": "Real Estate",
+    "industry": "REIT - Mortgage"
+  },
+  "TRGP": {
+    "company_name": "Targa Resources Corp.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream"
+  },
+  "CWAN": {
+    "company_name": "Clearwater Analytics Holdings, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "GNW": {
+    "company_name": "Genworth Financial, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
+  },
+  "NVDA": {
+    "company_name": "NVIDIA Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductors"
   }
 }
