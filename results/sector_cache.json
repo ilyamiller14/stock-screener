@@ -1063,5 +1063,30 @@
     "company_name": "NVIDIA Corporation",
     "sector": "Technology",
     "industry": "Semiconductors"
+  },
+  "ALKS": {
+    "company_name": "Alkermes plc",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "AVGO": {
+    "company_name": "Broadcom Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "TGTX": {
+    "company_name": "TG Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "EXTR": {
+    "company_name": "Extreme Networks, Inc.",
+    "sector": "Technology",
+    "industry": "Communication Equipment"
+  },
+  "CON": {
+    "company_name": "Concentra Group Holdings Parent, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
   }
 }
