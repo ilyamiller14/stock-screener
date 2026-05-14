@@ -1088,5 +1088,20 @@
     "company_name": "Concentra Group Holdings Parent, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Care Facilities"
+  },
+  "GVA": {
+    "company_name": "Granite Construction Incorporated",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction"
+  },
+  "EBAY": {
+    "company_name": "eBay Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Internet Retail"
+  },
+  "FFIV": {
+    "company_name": "F5, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
   }
 }
