@@ -1193,5 +1193,15 @@
     "company_name": "Assurant, Inc.",
     "sector": "Financial Services",
     "industry": "Insurance - Property & Casualty"
+  },
+  "MRX": {
+    "company_name": "Marex Group plc",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "BHE": {
+    "company_name": "Benchmark Electronics, Inc.",
+    "sector": "Technology",
+    "industry": "Electronic Components"
   }
 }
