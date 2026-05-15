@@ -780,6 +780,47 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+def compute_trend_cleanliness(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Measure how 'clean' the recent trend is:
+      - r2_log_60d:            R² of OLS regression of log(close) vs session index
+      - outlier_bar_count_60d: count of bars with |daily_return| > 4σ of 60d distribution
+    """
+    default = {"r2_log_60d": 0.0, "outlier_bar_count_60d": 0}
+    if len(df) < 30:
+        return default
+
+    closes = df["Close"].values.astype(float)
+    win = min(60, len(df) - 1)
+    sub = closes[-win - 1:]
+    if (sub <= 0).any():
+        return default
+
+    x = np.arange(len(sub))
+    y = np.log(sub)
+    try:
+        _, _, r_value, _, _ = stats.linregress(x, y)
+        r2 = float(r_value ** 2)
+        if not np.isfinite(r2):
+            r2 = 0.0
+    except Exception:
+        r2 = 0.0
+
+    rets = np.diff(sub) / sub[:-1]
+    std = float(np.std(rets, ddof=1))
+    # Only count outliers if std is measurably positive (> 1e-6)
+    # to avoid numerical edge cases with perfect monotonic trends
+    if std > 1e-6:
+        outlier_count = int(np.sum(np.abs(rets) > 4.0 * std))
+    else:
+        outlier_count = 0
+
+    return {
+        "r2_log_60d":            round(r2, 3),
+        "outlier_bar_count_60d": outlier_count,
+    }
+
+
 # ── Support / Resistance for individual stocks ───────────────────────────────
 
 def compute_support_resistance(df: pd.DataFrame) -> dict[str, Any]:
@@ -912,6 +953,7 @@ def compute_all(
         indicators.update(compute_squeeze(df))
         indicators.update(compute_extension(df))
         indicators.update(compute_recent_move_metrics(df))
+        indicators.update(compute_trend_cleanliness(df))
         indicators.update(compute_support_resistance(df))
 
         return indicators

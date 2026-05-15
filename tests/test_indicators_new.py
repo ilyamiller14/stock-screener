@@ -109,3 +109,34 @@ class TestRecentMoveMetrics:
         df = _make_df(closes)
         result = compute_recent_move_metrics(df)
         assert 4.0 < result["vol_60d"] < 6.0
+
+
+class TestTrendCleanliness:
+    def test_r2_perfect_uptrend(self):
+        from screener.indicators import compute_trend_cleanliness
+        closes = 100 * np.exp(np.linspace(0, 0.6, 200))
+        df = _make_df(closes)
+        result = compute_trend_cleanliness(df)
+        assert result["r2_log_60d"] > 0.95
+
+    def test_r2_flat_series(self):
+        from screener.indicators import compute_trend_cleanliness
+        rng = np.random.default_rng(seed=7)
+        closes = 100 + rng.normal(0, 0.001, 200)
+        df = _make_df(closes)
+        result = compute_trend_cleanliness(df)
+        assert result["r2_log_60d"] < 0.5
+
+    def test_outlier_bar_count_clean(self):
+        from screener.indicators import compute_trend_cleanliness
+        closes = 100 * np.exp(np.linspace(0, 0.3, 200))
+        df = _make_df(closes)
+        result = compute_trend_cleanliness(df)
+        assert result["outlier_bar_count_60d"] == 0
+
+    def test_outlier_bar_count_with_spike(self):
+        from screener.indicators import compute_trend_cleanliness
+        closes = [100.0] * 199 + [115.0]
+        df = _make_df(closes)
+        result = compute_trend_cleanliness(df)
+        assert result["outlier_bar_count_60d"] >= 1
