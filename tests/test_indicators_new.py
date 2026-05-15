@@ -223,3 +223,22 @@ class TestRSLine:
         bdf = _make_df(bench_closes)
         result = compute_rs_line(tdf, bdf)
         assert result["rs_line_at_50d_high"] is False
+
+
+class TestPullbackVolume:
+    def test_dryup_when_pullback_has_low_volume(self):
+        from screener.indicators import compute_pullback_volume_ratio
+        n = 30
+        closes = np.concatenate([np.full(20, 100.0), [100, 99, 98, 97, 98, 100, 101, 102, 103, 105]])
+        volumes = np.ones(n) * 1_000_000
+        volumes[21:24] = 300_000
+        df = _make_df(closes, volumes=volumes)
+        result = compute_pullback_volume_ratio(df)
+        assert result["pullback_vol_ratio"] < 0.6
+
+    def test_no_pullback_returns_neutral(self):
+        from screener.indicators import compute_pullback_volume_ratio
+        closes = list(np.linspace(100, 130, 30))
+        df = _make_df(closes)
+        result = compute_pullback_volume_ratio(df)
+        assert result["pullback_vol_ratio"] == 1.0

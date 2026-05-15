@@ -353,6 +353,55 @@ def compute_volume_analysis(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+def compute_pullback_volume_ratio(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    During the most recent down-cluster (>=3 consecutive down days) in the last
+    10 sessions, compute average volume / 20-day average volume.
+    Returns 1.0 (neutral) if no pullback is found.
+    """
+    default = {"pullback_vol_ratio": 1.0}
+    if len(df) < 25:
+        return default
+    closes = df["Close"].values.astype(float)
+    volumes = df["Volume"].values.astype(float)
+    avg_vol_20 = float(np.mean(volumes[-20:]))
+    if avg_vol_20 <= 0:
+        return default
+
+    tail = 10
+    if len(closes) < tail + 1:
+        return default
+    diffs = np.diff(closes[-tail - 1:])
+    down_mask = diffs < 0
+
+    best_run = None
+    i = len(down_mask) - 1
+    while i >= 0:
+        if down_mask[i]:
+            j = i
+            while j > 0 and down_mask[j - 1]:
+                j -= 1
+            if i - j + 1 >= 3:
+                best_run = (j, i)
+                break
+            i = j - 1
+        else:
+            i -= 1
+
+    if best_run is None:
+        return default
+
+    base = len(closes) - tail
+    abs_start = base + best_run[0] + 1
+    abs_end = base + best_run[1] + 1
+    pullback_volumes = volumes[abs_start:abs_end + 1]
+    if pullback_volumes.size == 0:
+        return default
+
+    ratio = float(np.mean(pullback_volumes) / avg_vol_20)
+    return {"pullback_vol_ratio": round(ratio, 3)}
+
+
 # ── Relative Strength vs benchmark ───────────────────────────────────────────
 
 def compute_relative_strength(
@@ -1102,6 +1151,7 @@ def compute_all(
         indicators.update(compute_obv(df))
         indicators.update(compute_cmf(df))
         indicators.update(compute_volume_analysis(df))
+        indicators.update(compute_pullback_volume_ratio(df))
         indicators.update(compute_relative_strength(df, benchmark_df))
         indicators.update(compute_ibd_rs(df, benchmark_df))
         indicators.update(compute_rs_line(df, benchmark_df))
