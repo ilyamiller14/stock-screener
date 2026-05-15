@@ -867,6 +867,89 @@ def compute_trend_cleanliness(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+def compute_pivot_proximity(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Identify the most recent 3-8 week consolidation (base) and compute
+    distance from its pivot (the high of the base).
+
+    Algorithm:
+      1. Look at the last 60 sessions.
+      2. Scan backward from the end, looking for regions of 15-40 bars
+         where the price range (high-low)/high is <= 15%.
+      3. Accept the first (most recent) such region found.
+      4. Pivot = max_high of the region. dist_from_pivot_pct = (last - pivot)/pivot*100.
+
+    Returns defaults (pivot=0, dist=99) if no valid base found.
+    """
+    default = {
+        "pivot_price": 0.0,
+        "dist_from_pivot_pct": 99.0,
+        "base_depth_pct": 0.0,
+        "base_length_days": 0,
+    }
+    if len(df) < 30:
+        return default
+
+    sub = df.tail(min(60, len(df))).copy()
+    highs = sub["High"].values.astype(float)
+    lows  = sub["Low"].values.astype(float)
+    closes = sub["Close"].values.astype(float)
+    n = len(sub)
+    last = float(closes[-1])
+    if last <= 0:
+        return default
+
+    # Scan backward from end, looking for tight consolidation regions
+    best = None
+    for end_idx in range(n - 1, 14, -1):  # end_idx must leave room for min length
+        for length in range(40, 14, -1):  # prefer longer consolidations
+            start_idx = end_idx - length
+            if start_idx < 0:
+                continue
+
+            # Check if this region has tight consolidation
+            region_high = float(np.max(highs[start_idx:end_idx + 1]))
+            region_low = float(np.min(lows[start_idx:end_idx + 1]))
+
+            if region_high <= 0:
+                continue
+
+            rng_pct = (region_high - region_low) / region_high
+            if rng_pct > 0.15:
+                continue
+
+            # Additional filter: check that it's not just a smooth trend
+            # Count how many bars touch the region high or low (within 0.5%)
+            region_high_5 = region_high * 0.995
+            region_low_5 = region_low * 1.005
+            touch_count = 0
+            for i in range(start_idx, end_idx + 1):
+                if highs[i] >= region_high_5 or lows[i] <= region_low_5:
+                    touch_count += 1
+            # For a consolidation, at least 30% of bars should touch the extremes
+            if touch_count >= length * 0.3:
+                # Found a valid consolidation
+                best = (start_idx, end_idx, region_high, region_low, length)
+                break  # Take the first (most recent) valid region
+
+        if best is not None:
+            break
+
+    if best is None:
+        return default
+
+    start_idx, end_idx, p_high, p_low, length = best
+    base_depth_pct = (p_high - p_low) / p_high * 100 if p_high > 0 else 0.0
+    dist_from_pivot_pct = (last - p_high) / p_high * 100 if p_high > 0 else 99.0
+
+    return {
+        "pivot_price":         round(float(p_high), 4),
+        "dist_from_pivot_pct": round(float(dist_from_pivot_pct), 2),
+        "base_depth_pct":      round(float(base_depth_pct), 2),
+        "base_length_days":    int(length),
+    }
+
+
 # ── Support / Resistance for individual stocks ───────────────────────────────
 
 def compute_support_resistance(df: pd.DataFrame) -> dict[str, Any]:
@@ -1000,6 +1083,7 @@ def compute_all(
         indicators.update(compute_extension(df))
         indicators.update(compute_recent_move_metrics(df))
         indicators.update(compute_trend_cleanliness(df))
+        indicators.update(compute_pivot_proximity(df))
         indicators.update(compute_support_resistance(df))
 
         return indicators

@@ -165,3 +165,36 @@ class TestRobustADX:
         df = _make_df(closes)
         result = compute_adx(df)
         assert abs(result["adx_robust"] - result["adx_14"]) < 5.0
+
+
+class TestPivotProximity:
+    def test_finds_recent_consolidation(self):
+        from screener.indicators import compute_pivot_proximity
+        rise = list(np.linspace(80, 100, 30))
+        base = [98.0, 96.0, 99.0, 95.0, 100.0, 97.0, 96.0, 99.0, 98.0, 100.0,
+                97.0, 95.0, 99.0, 98.0, 96.0, 100.0, 99.0, 97.0, 96.0, 100.0]
+        closes = rise + base
+        df = _make_df(closes, highs=closes)
+        result = compute_pivot_proximity(df)
+        assert result["pivot_price"] == pytest.approx(100.0, abs=2.0)
+        assert abs(result["dist_from_pivot_pct"]) < 5.0
+        assert 15 <= result["base_length_days"] <= 40
+
+    def test_no_valid_base_returns_zero(self):
+        from screener.indicators import compute_pivot_proximity
+        closes = list(np.linspace(50, 100, 200))
+        df = _make_df(closes, highs=closes)
+        result = compute_pivot_proximity(df)
+        assert result["pivot_price"] == 0.0
+        assert result["dist_from_pivot_pct"] == 99.0
+
+    def test_extended_past_pivot(self):
+        from screener.indicators import compute_pivot_proximity
+        base = [95.0, 100.0, 96.0, 99.0, 100.0, 95.0, 98.0, 100.0, 97.0, 99.0,
+                95.0, 100.0, 96.0, 99.0, 100.0, 95.0, 98.0, 100.0, 97.0, 99.0]
+        breakout = list(np.linspace(101, 115, 10))
+        closes = [80.0] * 30 + base + breakout
+        df = _make_df(closes, highs=closes)
+        result = compute_pivot_proximity(df)
+        assert result["pivot_price"] == pytest.approx(100.0, abs=2.0)
+        assert result["dist_from_pivot_pct"] > 10.0
