@@ -103,14 +103,7 @@ def _build_results_json(
             "low_52w":      pick.get("low_52w", 0.0),
             "dist_from_52w_high_pct": pick.get("dist_from_52w_high_pct", 0.0),
             "composite_score": pick.get("composite_score", 0.0),
-            "score_breakdown": {
-                "trend_score":      pick.get("trend_score", 0.0),
-                "rs_score":         pick.get("rs_score", 0.0),
-                "volume_score":     pick.get("volume_score", 0.0),
-                "momentum_score":   pick.get("momentum_score", 0.0),
-                "pattern_score":    pick.get("pattern_score", 0.0),
-                "extension_penalty": pick.get("extension_penalty", 1.0),
-            },
+            "score_breakdown": pick.get("score_breakdown", {}),
             "indicators": {
                 "ema_21":     pick.get("ema21", 0.0),
                 "ema_50":     pick.get("ema50", 0.0),
