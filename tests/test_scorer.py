@@ -9,6 +9,12 @@ Tests for screener.scorer — covers the post-audit scoring fixes:
 """
 from __future__ import annotations
 
+import pytest
+
+pytestmark = pytest.mark.skip(
+    reason="v1 scorer tests — superseded by test_scorer_v2.py (Task 12 of v2 redesign)"
+)
+
 from screener import config, scorer
 
 
