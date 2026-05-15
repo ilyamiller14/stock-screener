@@ -75,6 +75,31 @@ def compute_ema_alignment(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+def compute_ema200_rising_sessions(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Count consecutive trailing sessions where EMA_200 is non-decreasing.
+    Computes EMA_200 inline if not already present in the DataFrame.
+
+    Returns {"ema200_rising_sessions": int}.
+    """
+    close = df["Close"].squeeze()
+    if "EMA_200" in df.columns:
+        ema200 = df["EMA_200"]
+    else:
+        ema200 = ta.ema(close, length=200)
+    if ema200 is None or ema200.dropna().empty:
+        return {"ema200_rising_sessions": 0}
+    ema_clean = ema200.dropna()
+    diffs = ema_clean.diff().fillna(0).values
+    count = 0
+    for v in diffs[::-1]:
+        if v >= 0:
+            count += 1
+        else:
+            break
+    return {"ema200_rising_sessions": int(count)}
+
+
 # ── 52-week stats ──────────────────────────────────────────────────────────────
 
 def compute_52w_stats(df: pd.DataFrame) -> dict[str, Any]:
@@ -780,6 +805,7 @@ def compute_all(
             indicators["change_pct"] = 0.0
 
         indicators.update(compute_ema_alignment(df))
+        indicators.update(compute_ema200_rising_sessions(df))
         indicators.update(compute_52w_stats(df))
         indicators.update(compute_rsi(df))
         indicators.update(compute_macd(df))
