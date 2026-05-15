@@ -38,7 +38,7 @@ def _bar(pct: float, color: str, label: str) -> str:
         <td style="width:120px;background:#21262d;border-radius:3px;height:8px;vertical-align:middle;">
           <div style="width:{pct:.0f}%;background:{color};border-radius:3px;height:8px;"></div>
         </td>
-        <td style="color:#c9d1d9;font-size:10px;padding-left:5px;">{pct:.0f}</td>
+        <td style="color:#c9d1d9;font-size:10px;padding-left:5px;">{pct:.1f}</td>
       </tr>"""
 
 
@@ -70,6 +70,17 @@ def _squeeze_badge(squeeze_on: bool, squeeze_fired: bool) -> str:
     return ''
 
 
+def _penalty_row(triggers: list[str], multiplier: float) -> str:
+    """Render a row listing triggered penalties + multiplier. Empty string when no triggers."""
+    if not triggers:
+        return ''
+    pretty = ', '.join(triggers)
+    return f"""
+      <div style="background:#2d1a1a;border:1px solid #6e3030;border-radius:6px;padding:6px 10px;margin-bottom:10px;font-size:11px;color:#f0a0a0;">
+        <strong style="color:#ff6b6b;">Penalties (× {multiplier:.2f}):</strong> {pretty}
+      </div>"""
+
+
 def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
     ticker        = pick["ticker"]
     company       = pick.get("company_name", ticker)
@@ -77,15 +88,22 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
     close         = pick.get("close", 0.0)
     change_pct    = pick.get("change_pct", 0.0)
     score         = pick.get("composite_score", 0.0)
-    trend_s       = pick.get("trend_score", 0.0)
-    rs_s          = pick.get("rs_score", 0.0)
-    vol_s         = pick.get("volume_score", 0.0)
-    mom_s         = pick.get("momentum_score", 0.0)
-    pattern_s     = pick.get("pattern_score", 0.0)
+
+    # v2 score breakdown (nested). v1 picks lack score_breakdown — defaults to {}.
+    sb            = pick.get("score_breakdown", {})
+    trend_s       = sb.get("trend_strength",     pick.get("trend_score", 0.0))
+    cleanliness_s = sb.get("trend_cleanliness",  0.0)
+    rs_s          = sb.get("rs",                 pick.get("rs_score", 0.0))
+    base_s        = sb.get("base_setup",         pick.get("pattern_score", 0.0))
+    volume_s      = sb.get("volume_profile",     pick.get("volume_score", 0.0))
+    pen_triggers  = sb.get("penalty_triggered",  [])
+    pen_mult      = sb.get("penalty_multiplier", 1.0)
+
     ibd_rs        = pick.get("ibd_rs_percentile", 0.0)
-    adx           = pick.get("adx_14", 0.0)
-    rsi           = pick.get("rsi_14", 50.0)
-    cmf           = pick.get("cmf_20", 0.0)
+    adx_robust    = pick.get("adx_robust",     pick.get("adx_14", 0.0))
+    r2_60         = pick.get("r2_log_60d",     0.0)
+    conc_60       = pick.get("concentration_60d", 0.0)
+    base_depth    = pick.get("base_depth_pct", 0.0)
     obv_trend     = pick.get("obv_trend", "flat").capitalize()
     dist_high     = pick.get("dist_from_52w_high_pct", 0.0)
     is_stage2     = pick.get("ema_aligned", False) and pick.get("near_52w_high", False)
@@ -125,23 +143,24 @@ def _stock_card(rank: int, pick: dict[str, Any], run_date: str) -> str:
         </div>
       </div>
 
-      <!-- Score bars -->
+      <!-- Score bars (v2 categories) -->
       <table style="border-collapse:collapse;margin-bottom:10px;">
-        {_bar(trend_s,   "#238636", "Trend")}
-        {_bar(rs_s,      "#58a6ff", "Rel. Strength")}
-        {_bar(vol_s,     "#bc8cff", "Volume")}
-        {_bar(mom_s,     "#e3b341", "Momentum")}
-        {_bar(pattern_s, "#f0883e", "Pattern")}
+        {_bar(trend_s,       "#238636", "Trend Strength")}
+        {_bar(cleanliness_s, "#3fb950", "Trend Cleanliness")}
+        {_bar(rs_s,          "#58a6ff", "Rel. Strength")}
+        {_bar(base_s,        "#f0883e", "Base &amp; Setup")}
+        {_bar(volume_s,      "#bc8cff", "Volume Profile")}
       </table>
+      {_penalty_row(pen_triggers, pen_mult)}
 
       <!-- Key metrics -->
       <table style="border-collapse:collapse;background:#0d1117;border-radius:6px;width:100%;margin-bottom:12px;table-layout:fixed;">
         <tr>
-          {_metric("IBD RS", f"{ibd_rs:.0f}")}
-          {_metric("ADX", f"{adx:.1f}")}
-          {_metric("RSI 14", f"{rsi:.1f}")}
-          {_metric("CMF", f"{cmf:+.2f}")}
-          {_metric("OBV", obv_trend)}
+          {_metric("IBD RS",   f"{ibd_rs:.0f}")}
+          {_metric("ADX",      f"{adx_robust:.1f}")}
+          {_metric("R² 60d",   f"{r2_60:.2f}")}
+          {_metric("Conc.",    f"{conc_60:.0f}%")}
+          {_metric("OBV",      obv_trend)}
           {_metric("vs 52W Hi", f"{dist_high:.1f}%")}
         </tr>
       </table>
