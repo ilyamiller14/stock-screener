@@ -157,8 +157,10 @@ def _build_results_json(
         })
 
     return {
-        "run_date":      run_date,
-        "run_timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "run_date":         run_date,
+        "run_timestamp":    datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "scorer_version":   config.SCORER_VERSION,
+        "scorer_revised_at": config.SCORER_REVISED_AT,
         "screened_count":   stats.get("screened_count", 0),
         "qualifying_count": stats.get("qualifying_count", 0),
         "top_picks":        picks_out,
