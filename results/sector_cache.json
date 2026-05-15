@@ -1188,5 +1188,10 @@
     "company_name": "BGC Group, Inc.",
     "sector": "Financial Services",
     "industry": "Capital Markets"
+  },
+  "AIZ": {
+    "company_name": "Assurant, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
   }
 }
