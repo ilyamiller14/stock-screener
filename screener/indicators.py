@@ -693,6 +693,93 @@ def compute_extension(df: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+# ── Climactic / gap / concentration / reversal / volatility metrics ───────────
+
+def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
+    """
+    Climactic / gap / concentration / reversal / volatility metrics used by
+    Tier 1 (hard rejects) and Tier 3 (penalty multipliers).
+    """
+    default = {
+        "max_1d_move_120d": 0.0,
+        "max_gap_120d": 0.0,
+        "concentration_60d": 0.0,
+        "dist_from_5d_high_pct": 0.0,
+        "dist_from_10d_high_pct": 0.0,
+        "dist_from_20d_high_pct": 0.0,
+        "vol_60d": 0.0,
+    }
+    if len(df) < 30:
+        return default
+
+    closes = df["Close"].values.astype(float)
+    opens  = df["Open"].values.astype(float)
+    highs  = df["High"].values.astype(float)
+    n = len(df)
+    last = float(closes[-1])
+    if last <= 0:
+        return default
+
+    lookback = min(config.GAP_LOOKBACK_DAYS, n - 1)
+    max_1d = 0.0
+    max_gap = 0.0
+    for i in range(n - lookback, n):
+        if i < 1:
+            continue
+        prev_c = closes[i - 1]
+        if prev_c > 0:
+            move = (closes[i] - prev_c) / prev_c * 100
+            if move > max_1d:
+                max_1d = float(move)
+            gap = (opens[i] - prev_c) / prev_c * 100
+            if gap > max_gap:
+                max_gap = float(gap)
+
+    win60 = min(60, n - 1)
+    if win60 >= 5:
+        c0 = closes[-win60 - 1]
+        ret_60 = (last / c0 - 1) * 100 if c0 > 0 else 0.0
+        if ret_60 > 0.1:
+            max_60 = 0.0
+            for i in range(n - win60, n):
+                if i < 1:
+                    continue
+                prev_c = closes[i - 1]
+                if prev_c > 0:
+                    move = (closes[i] - prev_c) / prev_c * 100
+                    if move > max_60:
+                        max_60 = float(move)
+            concentration = max_60 / ret_60 * 100
+        else:
+            concentration = 0.0
+    else:
+        concentration = 0.0
+
+    def _dist_high(k: int) -> float:
+        if n < k:
+            return 0.0
+        peak = float(np.max(highs[-k:]))
+        if peak <= 0:
+            return 0.0
+        return (peak - last) / peak * 100
+
+    if win60 >= 5:
+        rets = np.diff(closes[-win60 - 1:]) / closes[-win60 - 1:-1] * 100
+        vol_60 = float(np.std(rets, ddof=1))
+    else:
+        vol_60 = 0.0
+
+    return {
+        "max_1d_move_120d":       round(max_1d, 2),
+        "max_gap_120d":           round(max_gap, 2),
+        "concentration_60d":      round(concentration, 1),
+        "dist_from_5d_high_pct":  round(_dist_high(5), 2),
+        "dist_from_10d_high_pct": round(_dist_high(10), 2),
+        "dist_from_20d_high_pct": round(_dist_high(20), 2),
+        "vol_60d":                round(vol_60, 2),
+    }
+
+
 # ── Support / Resistance for individual stocks ───────────────────────────────
 
 def compute_support_resistance(df: pd.DataFrame) -> dict[str, Any]:
@@ -824,6 +911,7 @@ def compute_all(
         indicators.update(compute_vcp(df))
         indicators.update(compute_squeeze(df))
         indicators.update(compute_extension(df))
+        indicators.update(compute_recent_move_metrics(df))
         indicators.update(compute_support_resistance(df))
 
         return indicators
