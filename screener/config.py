@@ -37,24 +37,49 @@ BATCH_SIZE = 100         # Tickers per yfinance batch call
 MIN_DATA_ROWS = 200      # Minimum bars required for a ticker to be processed
 
 # ── Hard filter gate (all must pass to enter scoring) ─────────────────────────
-MIN_PRICE = 2.0                   # No penny stocks
-MIN_AVG_VOLUME = 100_000          # 100k shares/day minimum liquidity
-MIN_DOLLAR_VOLUME = 20_000_000    # $20M/day minimum — keeps thin micro-caps out
+MIN_PRICE = 10.0                  # No penny stocks
+MIN_AVG_VOLUME = 300_000          # 300k shares/day minimum liquidity
+MIN_DOLLAR_VOLUME = 25_000_000    # $25M/day minimum — keeps thin micro-caps out
 MIN_ADX = 20.0                    # ADX < 20 = no real trend; reject for Stage 2
 MAX_DIST_FROM_52W_HIGH_PCT = 25.0 # Stage 2 picks must be within 25% of 52w high
 MIN_EMA200_SLOPE_SESSIONS = 20    # Rolling window for EMA_200 slope calc
 EMA200_SLOPE_THRESHOLD = 0.0      # Slope must be > 0 (upward trend)
+MIN_PCT_ABOVE_52W_LOW = 30.0      # NEW — Minervini criterion 8
+MIN_EMA200_RISING_SESSIONS = 22   # NEW — Minervini criterion 6 (1 trading month)
+
+# ── Climactic / exhaustion hard rejects ───────────────────────────────────────
+HARD_REJECT_1D_MOVE_PCT = 25.0    # Single-day close-to-close ≥ 25% → reject
+HARD_REJECT_GAP_PCT = 20.0        # Overnight gap ≥ 20% → reject
+HARD_REJECT_VOL_60D_PCT = 8.0     # 60d stdev of daily returns ≥ 8% → reject
+EXTENSION_LOOKBACK_DAYS = 180     # Lookback window for hard-reject scans
 
 # ── Extension / gap-up filter ─────────────────────────────────────────────────
 EXTENSION_ATR_MILD = 4.0          # 4x ATR above EMA21 → mild penalty starts
 EXTENSION_ATR_HEAVY = 6.0         # 6x ATR → heavy penalty
 EXTENSION_ATR_REJECT = 10.0       # 10x ATR → near-zero score
 EXTENSION_EMA50_WARN_PCT = 20.0   # >20% above EMA50 → fallback penalty
-GAP_LOOKBACK_DAYS = 20            # Scan last 20 days for large gaps
+GAP_LOOKBACK_DAYS = 120           # Scan last 120 days for large gaps
 GAP_LARGE_PCT = 15.0              # Single-day gap >15% = suspect
-DIST_52W_LOW_MILD_PCT = 100.0     # >100% above 52W low → mild penalty starts
-DIST_52W_LOW_HEAVY_PCT = 200.0    # >200% above 52W low → heavy penalty
-DIST_52W_LOW_REJECT_PCT = 350.0   # >350% above 52W low → near-reject
+DIST_52W_LOW_MILD_PCT = 60.0      # >60% above 52W low → mild penalty starts
+DIST_52W_LOW_HEAVY_PCT = 120.0    # >120% above 52W low → heavy penalty
+DIST_52W_LOW_REJECT_PCT = 250.0   # >250% above 52W low → near-reject
+
+# ── Climactic single-bar penalty bands ────────────────────────────────────────
+CLIMACTIC_1D_MILD_PCT = 10.0
+CLIMACTIC_1D_HEAVY_PCT = 15.0
+CLIMACTIC_1D_SEVERE_PCT = 20.0
+
+# ── Exhaustion gap penalty bands (in addition to existing GAP_LARGE_PCT) ──────
+GAP_PENALTY_MILD_PCT = 10.0
+GAP_PENALTY_HEAVY_PCT = 15.0
+
+# ── Rally concentration penalty bands ─────────────────────────────────────────
+CONCENTRATION_60D_MILD_PCT = 35.0
+CONCENTRATION_60D_SEVERE_PCT = 60.0
+
+# ── Recent reversal penalty bands ─────────────────────────────────────────────
+REVERSAL_5D_MILD_PCT = 3.0
+REVERSAL_5D_HEAVY_PCT = 7.0
 
 # ── Selection output ───────────────────────────────────────────────────────────
 # Universe roughly doubled when S&P 500 was added (~2400 tickers vs ~1900).
@@ -109,45 +134,50 @@ MACRO_CHART_HEIGHT_PX = 600
 
 # ── Scoring weights (must sum to 1.0) ─────────────────────────────────────────
 CATEGORY_WEIGHTS = {
-    "trend":    0.30,
-    "rs":       0.25,
-    "volume":   0.15,
-    "momentum": 0.15,
-    "pattern":  0.15,  # VCP + Squeeze + Stage 2
+    "trend_strength":    0.25,
+    "trend_cleanliness": 0.15,
+    "rs":                0.25,
+    "base_setup":        0.20,
+    "volume_profile":    0.15,
 }
 
-# Sub-weights within each category (must sum to 1.0)
-TREND_SUB_WEIGHTS = {
-    "ema_alignment":        0.30,
-    "ema200_slope":         0.25,
-    "dist_from_52w_high":   0.25,
-    "adx":                  0.20,
+TREND_STRENGTH_SUB_WEIGHTS = {
+    "ema_alignment":          0.20,
+    "ema200_slope_sustained": 0.30,
+    "ema50_above_ema200":     0.20,
+    "dist_from_52w_high":     0.10,
+    "adx_robust":             0.20,
+}
+
+TREND_CLEANLINESS_SUB_WEIGHTS = {
+    "r2_log_60d":        0.60,
+    "outlier_bar_ratio": 0.40,
 }
 
 RS_SUB_WEIGHTS = {
-    "ibd_rs_percentile": 0.50,  # IBD-style quarter-weighted RS
-    "rs_3m_percentile":  0.30,
-    "rs_6m_percentile":  0.20,
+    "ibd_rs_percentile": 0.65,
+    "rs_3m_percentile":  0.20,
+    "rs_6m_percentile":  0.10,
+    "rs_12m_percentile": 0.05,
+}
+RS_LINE_NEW_HIGH_BONUS = 10.0
+
+BASE_SETUP_SUB_WEIGHTS = {
+    "vcp_guarded":     0.40,
+    "pivot_proximity": 0.30,
+    "squeeze":         0.30,
 }
 
-VOLUME_SUB_WEIGHTS = {
-    "obv_slope":          0.25,
-    "cmf":                0.30,
-    "upvol_ratio":        0.20,
-    "volume_ratio":       0.25,  # today's vol vs 20d avg — captures breakout volume
+VOLUME_PROFILE_SUB_WEIGHTS = {
+    "obv_slope":           0.20,
+    "cmf":                 0.25,
+    "pullback_vol_dryup":  0.25,
+    "breakout_day_volume": 0.30,
 }
 
-MOMENTUM_SUB_WEIGHTS = {
-    "rsi":             0.50,
-    "macd_hist":       0.30,
-    "macd_crossover":  0.20,
-}
-
-PATTERN_SUB_WEIGHTS = {
-    "vcp":     0.40,  # VCP quality score
-    "squeeze": 0.35,  # Keltner/BB squeeze
-    "stage2":  0.25,  # Full Weinstein Stage 2
-}
+# Legacy aliases so any remaining import paths don't crash. Removed in a future cleanup.
+TREND_SUB_WEIGHTS = TREND_STRENGTH_SUB_WEIGHTS
+VOLUME_SUB_WEIGHTS = VOLUME_PROFILE_SUB_WEIGHTS
 
 # RSI scoring: 60 is ideal (bullish momentum, not overbought)
 RSI_IDEAL = 60.0
@@ -179,3 +209,11 @@ GITHUB_RAW_BASE = os.environ.get(
     "https://raw.githubusercontent.com/OWNER/stock-screener/main"
 )
 DASHBOARD_URL = os.environ.get("DASHBOARD_URL", "https://stock-screener-7gb.pages.dev")
+
+# ── Scorer version (embedded in latest.json for telling runs apart) ───────────
+SCORER_VERSION = "2.0"
+SCORER_REVISED_AT = "2026-05-15"
+
+# ── VCP guard: reject if any bar moved more than this in 120-day lookback ─────
+VCP_GUARD_MAX_BAR_PCT = 12.0
+VCP_GUARD_MAX_GAP_PCT = 10.0
