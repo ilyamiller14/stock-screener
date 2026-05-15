@@ -1103,5 +1103,30 @@
     "company_name": "F5, Inc.",
     "sector": "Technology",
     "industry": "Software - Infrastructure"
+  },
+  "WRBY": {
+    "company_name": "Warby Parker Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "DVA": {
+    "company_name": "DaVita Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
+  },
+  "MCW": {
+    "company_name": "Mister Car Wash, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Auto & Truck Dealerships"
+  },
+  "IBKR": {
+    "company_name": "Interactive Brokers Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "BLBD": {
+    "company_name": "Blue Bird Corporation",
+    "sector": "Industrials",
+    "industry": "Farm & Heavy Construction Machinery"
   }
 }
