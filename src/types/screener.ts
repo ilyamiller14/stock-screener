@@ -1,9 +1,22 @@
 export interface ScoreBreakdown {
-  trend_score: number
-  rs_score: number
-  volume_score: number
-  momentum_score: number
-  pattern_score: number
+  // v2 fields
+  trend_strength?: number
+  trend_cleanliness?: number
+  rs?: number
+  base_setup?: number
+  volume_profile?: number
+  raw_setup_score?: number
+  penalty_multiplier?: number
+  penalty_triggered?: string[]
+  composite_score?: number
+
+  // legacy v1 fields (for historical entries)
+  trend_score?: number
+  rs_score?: number
+  volume_score?: number
+  momentum_score?: number
+  pattern_score?: number
+  extension_penalty?: number
 }
 
 export interface Indicators {

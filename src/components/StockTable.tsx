@@ -33,9 +33,9 @@ function getValue(pick: TopPick, key: string): number | string {
   if (key === 'close')   return pick.close
   if (key === 'change_pct') return pick.change_pct
   if (key === 'composite_score') return pick.composite_score
-  if (key === 'trend_score')     return pick.score_breakdown.trend_score
-  if (key === 'rs_score')        return pick.score_breakdown.rs_score
-  if (key === 'pattern_score')   return pick.score_breakdown.pattern_score
+  if (key === 'trend_score')     return pick.score_breakdown.trend_strength ?? pick.score_breakdown.trend_score ?? 0
+  if (key === 'rs_score')        return pick.score_breakdown.rs            ?? pick.score_breakdown.rs_score    ?? 0
+  if (key === 'pattern_score')   return pick.score_breakdown.base_setup    ?? pick.score_breakdown.pattern_score ?? 0
   if (key === 'ibd_rs_percentile') return pick.indicators.ibd_rs_percentile
   if (key === 'adx_14')          return pick.indicators.adx_14
   if (key === 'rsi_14')          return pick.indicators.rsi_14
@@ -113,9 +113,9 @@ export function StockTable({ picks }: Props) {
                   {pick.composite_score.toFixed(1)}
                 </td>
                 <td className="stock-table__td stock-table__td--right">{pick.indicators.ibd_rs_percentile.toFixed(0)}</td>
-                <td className="stock-table__td stock-table__td--right">{pick.score_breakdown.trend_score.toFixed(0)}</td>
-                <td className="stock-table__td stock-table__td--right" style={{ color: pick.score_breakdown.pattern_score >= 50 ? '#f0883e' : '#8b949e' }}>
-                  {pick.score_breakdown.pattern_score.toFixed(0)}
+                <td className="stock-table__td stock-table__td--right">{(pick.score_breakdown.trend_strength ?? pick.score_breakdown.trend_score ?? 0).toFixed(0)}</td>
+                <td className="stock-table__td stock-table__td--right" style={{ color: (pick.score_breakdown.base_setup ?? pick.score_breakdown.pattern_score ?? 0) >= 50 ? '#f0883e' : '#8b949e' }}>
+                  {(pick.score_breakdown.base_setup ?? pick.score_breakdown.pattern_score ?? 0).toFixed(0)}
                 </td>
                 <td className="stock-table__td stock-table__td--right">{pick.indicators.adx_14.toFixed(1)}</td>
                 <td className="stock-table__td stock-table__td--right">{pick.indicators.rsi_14.toFixed(1)}</td>

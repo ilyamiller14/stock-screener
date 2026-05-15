@@ -58,11 +58,11 @@ export function StockCard({ pick }: Props) {
       </div>
 
       <div className="stock-card__bars">
-        <ScoreBar score={score_breakdown.trend_score}    color="#238636" />
-        <ScoreBar score={score_breakdown.rs_score}       color="#58a6ff" />
-        <ScoreBar score={score_breakdown.volume_score}   color="#bc8cff" />
-        <ScoreBar score={score_breakdown.momentum_score} color="#e3b341" />
-        <ScoreBar score={score_breakdown.pattern_score}  color="#f0883e" />
+        <ScoreBar score={score_breakdown.trend_strength ?? score_breakdown.trend_score ?? 0}    color="#238636" />
+        <ScoreBar score={score_breakdown.rs             ?? score_breakdown.rs_score    ?? 0}    color="#58a6ff" />
+        <ScoreBar score={score_breakdown.volume_profile ?? score_breakdown.volume_score ?? 0}   color="#bc8cff" />
+        <ScoreBar score={score_breakdown.base_setup     ?? score_breakdown.momentum_score ?? 0} color="#e3b341" />
+        <ScoreBar score={score_breakdown.trend_cleanliness ?? score_breakdown.pattern_score ?? 0} color="#f0883e" />
       </div>
 
       <div className="stock-card__metrics">
