@@ -1,12 +1,14 @@
 """
 Score and rank all stocks in the universe (Russell 2000 + S&P 500).
 
-Pipeline:
-1. Apply hard filter gate (discard non-qualifying stocks)
+v2 Pipeline:
+1. Tier 1 — qualify.qualifies(ind) → hard gate (no graduated penalty)
 2. Compute RS percentiles across qualifying universe (vs SPY benchmark)
-3. Score each qualifying stock (0–100 composite)
-4. Apply sector diversification cap
-5. Return top N picks
+3. Tier 2 — setup_score.compute_setup_score(ind) → 5 weighted categories
+4. Tier 3 — penalties.compute_penalty_multiplier(ind) → multiplicative penalties
+5. Composite = raw_setup_score * penalty_multiplier
+6. Apply sector diversification cap
+7. Return top N picks
 """
 from __future__ import annotations
 
@@ -16,36 +18,9 @@ from typing import Any
 import numpy as np
 
 from . import config
+from . import qualify, setup_score, penalties
 
 logger = logging.getLogger(__name__)
-
-
-# ── Hard filter gate ──────────────────────────────────────────────────────────
-
-def passes_hard_filters(ind: dict[str, Any]) -> bool:
-    """Return True if the stock passes all Stage 2 prerequisite filters."""
-    close   = ind.get("close", 0.0)
-    avg_vol = ind.get("avg_volume_20d", 0)
-    ema200  = ind.get("ema200", None)
-    slope_pos = ind.get("ema200_slope_positive", False)
-    adx     = ind.get("adx_14", 0.0)
-    dist_hi = ind.get("dist_from_52w_high_pct", 100.0)
-
-    if close < config.MIN_PRICE:
-        return False
-    if avg_vol < config.MIN_AVG_VOLUME:
-        return False
-    if close * avg_vol < config.MIN_DOLLAR_VOLUME:
-        return False
-    if ema200 is None or close <= ema200:
-        return False
-    if not slope_pos:
-        return False
-    if adx < config.MIN_ADX:
-        return False
-    if dist_hi > config.MAX_DIST_FROM_52W_HIGH_PCT:
-        return False
-    return True
 
 
 # ── RS percentile computation ─────────────────────────────────────────────────
@@ -85,210 +60,46 @@ def compute_rs_percentiles(
     }
 
 
-# ── Sub-score helpers ─────────────────────────────────────────────────────────
+# ── v2 Orchestrator ───────────────────────────────────────────────────────────
 
-def _clamp(val: float, lo: float = 0.0, hi: float = 100.0) -> float:
-    return max(lo, min(hi, val))
-
-
-def _score_trend(ind: dict[str, Any]) -> float:
-    # EMA alignment: binary 0/100
-    ema_align_score = 100.0 if ind.get("ema_aligned", False) else 0.0
-
-    # EMA_200 slope: graduated — saturates at 0.5%/day, not 0.04%/day
-    slope = ind.get("ema200_slope", 0.0)
-    ema200_slope_score = _clamp(slope * 200.0)  # 0.5%/day → 100
-
-    # Distance from 52W high: closer is better
-    dist = ind.get("dist_from_52w_high_pct", 100.0)
-    dist_score = _clamp(100.0 - dist * config.DIST_52W_HIGH_SCALE)
-
-    # ADX: scale by ADX_SCALE
-    adx = ind.get("adx_14", 0.0)
-    adx_score = _clamp(adx * config.ADX_SCALE)
-
-    w = config.TREND_SUB_WEIGHTS
-    return (
-        ema_align_score    * w["ema_alignment"]
-        + ema200_slope_score * w["ema200_slope"]
-        + dist_score         * w["dist_from_52w_high"]
-        + adx_score          * w["adx"]
-    )
-
-
-def _score_rs(ind: dict[str, Any]) -> float:
-    ibd = ind.get("ibd_rs_percentile", 50.0)
-    p3m = ind.get("rs_3m_percentile", 50.0)
-    p6m = ind.get("rs_6m_percentile", 50.0)
-    w = config.RS_SUB_WEIGHTS
-    return ibd * w["ibd_rs_percentile"] + p3m * w["rs_3m_percentile"] + p6m * w["rs_6m_percentile"]
-
-
-def _score_volume(ind: dict[str, Any]) -> float:
-    # OBV slope: positive → high score; neutral = 50
-    obv_slope = ind.get("obv_slope_norm", 0.0)
-    obv_score = _clamp((obv_slope + 10.0) * 5.0)  # -10..+10 → 0..100
-
-    # CMF: shifted floor — negative CMF (distribution) gets ~0; neutral ~20; +0.8 → 100
-    cmf = ind.get("cmf_20", 0.0)
-    cmf_score = _clamp((cmf + 0.2) * 100.0)
-
-    # Up-day volume ratio: 0..1 → 0..100. Default 0 (no credit) when no up-day data.
-    upvol = ind.get("upvol_ratio", 0.0)
-    upvol_score = _clamp(upvol * 100.0)
-
-    # Today's volume vs 20d avg — captures actual breakout volume
-    vol_ratio = ind.get("volume_ratio", 1.0)
-    vol_ratio_score = _clamp(50.0 + (vol_ratio - 1.0) * 50.0)  # 1.0 → 50, 2.0 → 100
-
-    w = config.VOLUME_SUB_WEIGHTS
-    return (
-        obv_score        * w["obv_slope"]
-        + cmf_score        * w["cmf"]
-        + upvol_score      * w["upvol_ratio"]
-        + vol_ratio_score  * w["volume_ratio"]
-    )
-
-
-def _score_momentum(ind: dict[str, Any], close: float) -> float:
-    # RSI: ideal is 60, penalise deviation
-    rsi = ind.get("rsi_14", 50.0)
-    rsi_score = _clamp(100.0 - abs(rsi - config.RSI_IDEAL) * config.RSI_SCORE_DECAY)
-
-    # MACD histogram: graduated. hist as % of price → score
-    # hist=0 → 50, hist=+0.5% of price → 100, hist=-0.5% of price → 0
-    macd_hist = ind.get("macd_hist", 0.0)
-    if close > 0:
-        hist_pct = macd_hist / close * 100.0  # in % of price
-    else:
-        hist_pct = 0.0
-    macd_hist_score = _clamp(50.0 + hist_pct * 100.0)
-
-    # MACD crossover recency
-    sessions_ago = ind.get("macd_crossover_sessions_ago", 999)
-    if sessions_ago <= config.MACD_CROSSOVER_MAX_SESSIONS:
-        crossover_score = 100.0
-    elif sessions_ago >= config.MACD_CROSSOVER_DECAY_SESSIONS:
-        crossover_score = 0.0
-    else:
-        decay_range = config.MACD_CROSSOVER_DECAY_SESSIONS - config.MACD_CROSSOVER_MAX_SESSIONS
-        crossover_score = (1.0 - (sessions_ago - config.MACD_CROSSOVER_MAX_SESSIONS) / decay_range) * 100.0
-
-    w = config.MOMENTUM_SUB_WEIGHTS
-    return (
-        rsi_score        * w["rsi"]
-        + macd_hist_score  * w["macd_hist"]
-        + crossover_score  * w["macd_crossover"]
-    )
-
-
-def _score_stage2(ind: dict[str, Any]) -> float:
-    """Graduated Weinstein Stage 2 score: 25 points per condition met (max 100)."""
-    conditions = [
-        ind.get("ema_aligned", False),
-        ind.get("near_52w_high", False),
-        ind.get("obv_trend", "flat") == "rising",
-        ind.get("adx_trending", False),
-    ]
-    return float(sum(conditions)) * 25.0
-
-
-def _score_pattern(ind: dict[str, Any]) -> float:
+def compute_composite(ind: dict[str, Any]) -> dict[str, Any]:
     """
-    Pattern quality score: VCP + Keltner/BB Squeeze + Stage 2.
-    Rewards stocks with identifiable base patterns and volatility contraction.
+    v2 composite scorer. Pipeline:
+      1. qualify.qualifies(ind) → if fail, return qualifies=False, score=0
+      2. setup_score.compute_setup_score(ind) → 5 categories + raw_setup_score
+      3. penalties.compute_penalty_multiplier(ind) → multiplier + triggers
+      4. composite = raw_setup_score * multiplier
     """
-    vcp_score     = _clamp(ind.get("vcp_score", 0.0))
-    squeeze_score = _clamp(ind.get("squeeze_score", 0.0))
-    stage2_score  = _score_stage2(ind)
-
-    w = config.PATTERN_SUB_WEIGHTS
-    return (
-        vcp_score     * w["vcp"]
-        + squeeze_score * w["squeeze"]
-        + stage2_score  * w["stage2"]
-    )
-
-
-def _extension_penalty_multiplier(ind: dict[str, Any]) -> float:
-    """
-    Penalise extended stocks (too far above moving averages or large gap-ups).
-
-    Returns a multiplier 0.05–1.0 applied to the composite score.
-    Uses ATR-based distance from EMA21 as the primary metric, with
-    percentage-based fallbacks for EMA50 extension and large gaps.
-    """
-    atr_mult = ind.get("extension_atr_multiple", 0.0)
-    ema50_ext = ind.get("extension_ema50_pct", 0.0)
-    max_gap = ind.get("max_gap_pct", 0.0)
-
-    multiplier = 1.0
-
-    # ATR-based penalty (primary)
-    if atr_mult >= config.EXTENSION_ATR_REJECT:
-        multiplier = min(multiplier, 0.10)
-    elif atr_mult >= config.EXTENSION_ATR_HEAVY:
-        frac = (atr_mult - config.EXTENSION_ATR_HEAVY) / (config.EXTENSION_ATR_REJECT - config.EXTENSION_ATR_HEAVY)
-        multiplier = min(multiplier, 0.50 - frac * 0.40)
-    elif atr_mult >= config.EXTENSION_ATR_MILD:
-        frac = (atr_mult - config.EXTENSION_ATR_MILD) / (config.EXTENSION_ATR_HEAVY - config.EXTENSION_ATR_MILD)
-        multiplier = min(multiplier, 0.85 - frac * 0.35)
-
-    # EMA50 percentage fallback
-    if ema50_ext >= config.EXTENSION_EMA50_WARN_PCT:
-        pct_penalty = max(0.30, 1.0 - (ema50_ext - config.EXTENSION_EMA50_WARN_PCT) * 0.02)
-        multiplier = min(multiplier, pct_penalty)
-
-    # Large gap penalty
-    if max_gap >= config.GAP_LARGE_PCT:
-        gap_penalty = max(0.60, 1.0 - (max_gap - config.GAP_LARGE_PCT) * 0.02)
-        multiplier = min(multiplier, gap_penalty)
-
-    # Distance from 52W low penalty — penalise stocks that have already made huge moves
-    pct_above_low = ind.get("pct_above_52w_low", 0.0)
-    if pct_above_low >= config.DIST_52W_LOW_REJECT_PCT:
-        multiplier = min(multiplier, 0.15)
-    elif pct_above_low >= config.DIST_52W_LOW_HEAVY_PCT:
-        frac = (pct_above_low - config.DIST_52W_LOW_HEAVY_PCT) / (config.DIST_52W_LOW_REJECT_PCT - config.DIST_52W_LOW_HEAVY_PCT)
-        multiplier = min(multiplier, 0.50 - frac * 0.35)
-    elif pct_above_low >= config.DIST_52W_LOW_MILD_PCT:
-        frac = (pct_above_low - config.DIST_52W_LOW_MILD_PCT) / (config.DIST_52W_LOW_HEAVY_PCT - config.DIST_52W_LOW_MILD_PCT)
-        multiplier = min(multiplier, 0.85 - frac * 0.35)
-
-    return max(0.05, multiplier)
-
-
-def compute_composite_score(ind: dict[str, Any]) -> dict[str, float]:
-    """Return composite score and per-category breakdown."""
-    close = ind.get("close", 1.0)
-
-    trend_s    = _score_trend(ind)
-    rs_s       = _score_rs(ind)
-    volume_s   = _score_volume(ind)
-    momentum_s = _score_momentum(ind, close)
-    pattern_s  = _score_pattern(ind)
-
-    w = config.CATEGORY_WEIGHTS
-    composite = (
-        trend_s    * w["trend"]
-        + rs_s       * w["rs"]
-        + volume_s   * w["volume"]
-        + momentum_s * w["momentum"]
-        + pattern_s  * w["pattern"]
-    )
-
-    # Extension penalty: penalise stocks too far above moving averages
-    ext_mult = _extension_penalty_multiplier(ind)
-    composite = composite * ext_mult
-
+    ok, reason = qualify.qualifies(ind)
+    if not ok:
+        return {
+            "qualifies":          False,
+            "fail_reason":        reason,
+            "composite_score":    0.0,
+            "raw_setup_score":    0.0,
+            "trend_strength":     0.0,
+            "trend_cleanliness":  0.0,
+            "rs":                 0.0,
+            "base_setup":         0.0,
+            "volume_profile":     0.0,
+            "penalty_multiplier": 1.0,
+            "penalty_triggered":  [],
+        }
+    scores = setup_score.compute_setup_score(ind)
+    pen = penalties.compute_penalty_multiplier(ind)
+    composite = scores["raw_setup_score"] * pen["final_multiplier"]
     return {
-        "composite_score":  round(composite, 1),
-        "trend_score":      round(trend_s, 1),
-        "rs_score":         round(rs_s, 1),
-        "volume_score":     round(volume_s, 1),
-        "momentum_score":   round(momentum_s, 1),
-        "pattern_score":    round(pattern_s, 1),
-        "extension_penalty": round(ext_mult, 3),
+        "qualifies":          True,
+        "fail_reason":        "",
+        "composite_score":    round(composite, 1),
+        "raw_setup_score":    scores["raw_setup_score"],
+        "trend_strength":     scores["trend_strength"],
+        "trend_cleanliness":  scores["trend_cleanliness"],
+        "rs":                 scores["rs"],
+        "base_setup":         scores["base_setup"],
+        "volume_profile":     scores["volume_profile"],
+        "penalty_multiplier": pen["final_multiplier"],
+        "penalty_triggered":  pen["triggered"],
     }
 
 
@@ -375,46 +186,57 @@ def rank_stocks(
     all_indicators: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """
-    Full pipeline: filter → percentile → score → diversify → top N.
-
-    Returns:
-        (top_picks, stats_dict)
-        top_picks: list of enriched indicator dicts for top N stocks
-        stats_dict: run statistics (screened_count, qualifying_count, etc.)
+    Full v2 pipeline: Tier 1 gate → RS percentiles → Tier 2 score → Tier 3 penalty
+    → sector cap → top N.
     """
     screened_count = len(all_indicators)
     logger.info("Screening %d tickers...", screened_count)
 
-    # 1. Hard filter gate
-    qualifying = [ind for ind in all_indicators if passes_hard_filters(ind)]
+    # 1. Tier 1 — qualification gate
+    qualifying: list[dict[str, Any]] = []
+    for ind in all_indicators:
+        ok, _ = qualify.qualifies(ind)
+        if ok:
+            qualifying.append(ind)
     qualifying_count = len(qualifying)
-    logger.info("Qualifying (passed hard filters): %d", qualifying_count)
-
+    logger.info("Qualifying (passed Tier 1): %d", qualifying_count)
     if qualifying_count == 0:
         return [], {"screened_count": screened_count, "qualifying_count": 0}
 
     # 2. RS percentiles within qualifying universe
     percentiles = compute_rs_percentiles(qualifying)
     for ind in qualifying:
-        ticker = ind["ticker"]
-        ind.update(percentiles.get(ticker, {"rs_3m_percentile": 50.0, "rs_6m_percentile": 50.0, "ibd_rs_percentile": 50.0}))
+        ind.update(percentiles.get(ind["ticker"], {
+            "rs_3m_percentile": 50.0, "rs_6m_percentile": 50.0,
+            "rs_12m_percentile": 50.0, "ibd_rs_percentile": 50.0,
+        }))
 
-    # 3. Composite score
+    # 3. Tier 2 + Tier 3 → composite
     for ind in qualifying:
-        scores = compute_composite_score(ind)
-        ind.update(scores)
+        comp = compute_composite(ind)
+        ind.update({
+            "composite_score": comp["composite_score"],
+            "raw_setup_score": comp["raw_setup_score"],
+            "score_breakdown": {
+                "trend_strength":     comp["trend_strength"],
+                "trend_cleanliness":  comp["trend_cleanliness"],
+                "rs":                 comp["rs"],
+                "base_setup":         comp["base_setup"],
+                "volume_profile":     comp["volume_profile"],
+                "raw_setup_score":    comp["raw_setup_score"],
+                "penalty_multiplier": comp["penalty_multiplier"],
+                "penalty_triggered":  comp["penalty_triggered"],
+                "composite_score":    comp["composite_score"],
+            },
+        })
 
-    # 4. Sort descending by composite score
+    # 4. Sort by composite score (desc)
     qualifying.sort(key=lambda x: x.get("composite_score", 0.0), reverse=True)
 
-    # 5. Sector diversification: take top N, capping per sector
-    # Fetch sector info for top 30 candidates only
+    # 5. Sector diversification (preserve existing logic)
     candidate_tickers = [i["ticker"] for i in qualifying[:30]]
     logger.info("Fetching sector info for %d candidates...", len(candidate_tickers))
     sector_info = fetch_sector_info(candidate_tickers)
-
-    # Check if sector lookup succeeded — if most sectors are "Unknown",
-    # skip diversification to avoid capping all picks at MAX_PICKS_PER_SECTOR
     known_sectors = sum(1 for v in sector_info.values() if v["sector"] != "Unknown")
     use_sector_cap = known_sectors >= len(sector_info) * 0.5
     if not use_sector_cap:
@@ -430,7 +252,7 @@ def rank_stocks(
         if len(top_picks) >= config.TOP_N:
             break
         ticker = ind["ticker"]
-        meta   = sector_info.get(ticker, {"sector": "Unknown", "company_name": ticker, "industry": "Unknown"})
+        meta = sector_info.get(ticker, {"sector": "Unknown", "company_name": ticker, "industry": "Unknown"})
         sector = meta["sector"]
         if use_sector_cap and sector != "Unknown":
             if sector_counts.get(sector, 0) >= config.MAX_PICKS_PER_SECTOR:
@@ -441,8 +263,7 @@ def rank_stocks(
 
     logger.info("Top picks selected: %d", len(top_picks))
 
-    stats = {
+    return top_picks, {
         "screened_count":   screened_count,
         "qualifying_count": qualifying_count,
     }
-    return top_picks, stats
