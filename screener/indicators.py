@@ -14,8 +14,12 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
 from scipy import stats
+
+try:
+    import pandas_ta as ta
+except ImportError:
+    ta = None
 
 from . import config
 from .indicator_helpers import is_valid_vcp, squeeze_score
@@ -77,8 +81,10 @@ def compute_ema_alignment(df: pd.DataFrame) -> dict[str, Any]:
 
 def compute_ema200_rising_sessions(df: pd.DataFrame) -> dict[str, Any]:
     """
-    Count consecutive trailing sessions where EMA_200 is non-decreasing.
-    Computes EMA_200 inline if not already present in the DataFrame.
+    Count consecutive trailing sessions where EMA_200 is strictly rising.
+    Uses df['EMA_200'] if present (set by compute_emas in the live pipeline);
+    otherwise computes EMA_200 inline via pandas .ewm() — this fallback is
+    only used in tests, since compute_all always calls compute_emas first.
 
     Returns {"ema200_rising_sessions": int}.
     """
@@ -86,14 +92,14 @@ def compute_ema200_rising_sessions(df: pd.DataFrame) -> dict[str, Any]:
     if "EMA_200" in df.columns:
         ema200 = df["EMA_200"]
     else:
-        ema200 = ta.ema(close, length=200)
+        ema200 = close.ewm(span=200, adjust=False).mean()
     if ema200 is None or ema200.dropna().empty:
         return {"ema200_rising_sessions": 0}
     ema_clean = ema200.dropna()
     diffs = ema_clean.diff().fillna(0).values
     count = 0
     for v in diffs[::-1]:
-        if v >= 0:
+        if v > 0:  # Strictly positive: only count actual increases
             count += 1
         else:
             break

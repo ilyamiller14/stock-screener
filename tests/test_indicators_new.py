@@ -8,13 +8,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-# Check if pandas_ta is available (known issue on Python 3.14)
-try:
-    import pandas_ta as ta
-    pandas_ta_available = True
-except ImportError:
-    pandas_ta_available = False
-
 
 def _make_df(closes, opens=None, highs=None, lows=None, volumes=None):
     """Build a minimal OHLCV DataFrame from a list of closes."""
@@ -33,7 +26,6 @@ def _make_df(closes, opens=None, highs=None, lows=None, volumes=None):
 
 # ── ema200_rising_sessions ────────────────────────────────────────────────────
 
-@pytest.mark.skipif(not pandas_ta_available, reason="pandas_ta not available (Python 3.14 numba issue)")
 class TestEma200RisingSessions:
     def test_rising_for_full_window(self):
         from screener.indicators import compute_ema200_rising_sessions
