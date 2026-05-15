@@ -140,3 +140,28 @@ class TestTrendCleanliness:
         df = _make_df(closes)
         result = compute_trend_cleanliness(df)
         assert result["outlier_bar_count_60d"] >= 1
+
+
+# ── ADX (including robust variant) ────────────────────────────────────────────
+
+class TestRobustADX:
+    def test_robust_adx_lower_than_naive_on_spiky_series(self):
+        pytest.importorskip("pandas_ta")
+        from screener.indicators import compute_adx
+        n = 100
+        closes = [100.0] * n
+        highs = [100.5] * n
+        lows = [99.5] * n
+        highs[80] = 150.0
+        df = _make_df(closes, highs=highs, lows=lows)
+        result = compute_adx(df)
+        assert "adx_robust" in result
+        assert result["adx_robust"] <= result["adx_14"]
+
+    def test_robust_adx_matches_naive_on_smooth_series(self):
+        pytest.importorskip("pandas_ta")
+        from screener.indicators import compute_adx
+        closes = list(np.linspace(100, 130, 200))
+        df = _make_df(closes)
+        result = compute_adx(df)
+        assert abs(result["adx_robust"] - result["adx_14"]) < 5.0

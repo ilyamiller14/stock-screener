@@ -189,9 +189,18 @@ def compute_macd(df: pd.DataFrame) -> dict[str, Any]:
 # ── ADX ───────────────────────────────────────────────────────────────────────
 
 def compute_adx(df: pd.DataFrame, period: int = 14) -> dict[str, Any]:
-    adx_df = ta.adx(df["High"].squeeze(), df["Low"].squeeze(), df["Close"].squeeze(), length=period)
+    """
+    Standard pandas_ta ADX(14), plus a 'robust' variant that drops the top 2
+    True-Range bars from the last (period + 14) bars before recomputing.
+    Robust ADX is less inflated by single spike bars.
+    """
+    high = df["High"].squeeze()
+    low  = df["Low"].squeeze()
+    close = df["Close"].squeeze()
+
+    adx_df = ta.adx(high, low, close, length=period)
     if adx_df is None or adx_df.empty:
-        return {"adx_14": 0.0, "adx_trending": False}
+        return {"adx_14": 0.0, "adx_robust": 0.0, "adx_dmp": 0.0, "adx_dmn": 0.0, "adx_trending": False}
 
     adx_col = [c for c in adx_df.columns if c.startswith("ADX_")]
     dmp_col = [c for c in adx_df.columns if c.startswith("DMP_")]
@@ -207,8 +216,45 @@ def compute_adx(df: pd.DataFrame, period: int = 14) -> dict[str, Any]:
     dmp_val = _last_col(dmp_col)
     dmn_val = _last_col(dmn_col)
 
+    # Robust ADX: cap the top 2 True-Range bars over the last (period + 14) bars
+    window = period + 14
+    if len(df) > window + 5:
+        tr_high = high.values
+        tr_low  = low.values
+        tr_close = close.values
+        prev_close = np.concatenate([[tr_close[0]], tr_close[:-1]])
+        tr = np.maximum.reduce([
+            tr_high - tr_low,
+            np.abs(tr_high - prev_close),
+            np.abs(tr_low - prev_close),
+        ])
+        tail = tr[-window:].copy()
+        top2 = np.argsort(tail)[-2:]
+        mean_tr = float(np.mean(np.delete(tail, top2)))
+        high_robust = high.copy().values.astype(float)
+        low_robust = low.copy().values.astype(float)
+        for offset in top2:
+            idx = len(df) - window + int(offset)
+            high_robust[idx] = float(tr_close[idx]) + mean_tr / 2
+            low_robust[idx] = float(tr_close[idx]) - mean_tr / 2
+        adx_df_r = ta.adx(
+            pd.Series(high_robust, index=high.index),
+            pd.Series(low_robust, index=low.index),
+            close, length=period,
+        )
+        if adx_df_r is not None and not adx_df_r.empty:
+            ar_col = [c for c in adx_df_r.columns if c.startswith("ADX_")]
+            adx_robust = float(adx_df_r[ar_col[0]].iloc[-1]) if ar_col else adx_val
+            if np.isnan(adx_robust):
+                adx_robust = adx_val
+        else:
+            adx_robust = adx_val
+    else:
+        adx_robust = adx_val
+
     return {
         "adx_14":      round(adx_val, 2),
+        "adx_robust":  round(adx_robust, 2),
         "adx_dmp":     round(dmp_val, 2),
         "adx_dmn":     round(dmn_val, 2),
         "adx_trending": adx_val > 20.0 and dmp_val > dmn_val,
