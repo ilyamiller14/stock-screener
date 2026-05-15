@@ -1128,5 +1128,65 @@
     "company_name": "Blue Bird Corporation",
     "sector": "Industrials",
     "industry": "Farm & Heavy Construction Machinery"
+  },
+  "BK": {
+    "company_name": "The Bank of New York Mellon Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified"
+  },
+  "HAL": {
+    "company_name": "Halliburton Company",
+    "sector": "Energy",
+    "industry": "Oil & Gas Equipment & Services"
+  },
+  "JBL": {
+    "company_name": "Jabil Inc.",
+    "sector": "Technology",
+    "industry": "Electronic Components"
+  },
+  "AAPL": {
+    "company_name": "Apple Inc.",
+    "sector": "Technology",
+    "industry": "Consumer Electronics"
+  },
+  "STT": {
+    "company_name": "State Street Corporation",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "ENS": {
+    "company_name": "EnerSys",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts"
+  },
+  "BTSG": {
+    "company_name": "BrightSpring Health Services, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "CNO": {
+    "company_name": "CNO Financial Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
+  },
+  "NUE": {
+    "company_name": "Nucor Corporation",
+    "sector": "Basic Materials",
+    "industry": "Steel"
+  },
+  "ON": {
+    "company_name": "ON Semiconductor Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "KN": {
+    "company_name": "Knowles Corporation",
+    "sector": "Technology",
+    "industry": "Electronic Components"
+  },
+  "BGC": {
+    "company_name": "BGC Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
   }
 }
