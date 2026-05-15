@@ -358,7 +358,7 @@ def compute_volume_analysis(df: pd.DataFrame) -> dict[str, Any]:
 def compute_relative_strength(
     ticker_df: pd.DataFrame,
     benchmark_df: pd.DataFrame,
-    periods: tuple[int, ...] = (63, 126),
+    periods: tuple[int, ...] = (63, 126, 252),
 ) -> dict[str, Any]:
     """
     Compute raw RS as ticker return / benchmark return over each period.
@@ -437,6 +437,32 @@ def compute_ibd_rs(
     ibd_rs_raw = t_weighted - b_weighted
 
     return {"ibd_rs_raw": round(ibd_rs_raw, 6)}
+
+
+# ── RS Line (Relative Strength Line) ─────────────────────────────────────────
+
+def compute_rs_line(
+    ticker_df: pd.DataFrame,
+    benchmark_df: pd.DataFrame,
+) -> dict[str, Any]:
+    """
+    Compute the Relative Strength line (ticker_close / benchmark_close, rebased)
+    and check whether it is at a new 50-session high.
+    """
+    default = {"rs_line_at_50d_high": False}
+    t = ticker_df["Close"].squeeze()
+    b = benchmark_df["Close"].squeeze()
+    aligned = pd.concat([t, b], axis=1, join="inner").dropna()
+    if len(aligned) < 60:
+        return default
+    aligned.columns = ["t", "b"]
+    rs_line = aligned["t"] / aligned["b"]
+    if rs_line.iloc[0] != 0:
+        rs_line = rs_line / rs_line.iloc[0]
+    tail = rs_line.tail(50)
+    if tail.empty:
+        return default
+    return {"rs_line_at_50d_high": bool(rs_line.iloc[-1] >= tail.max())}
 
 
 # ── VCP Detection (Volatility Contraction Pattern) ───────────────────────────
@@ -1078,6 +1104,7 @@ def compute_all(
         indicators.update(compute_volume_analysis(df))
         indicators.update(compute_relative_strength(df, benchmark_df))
         indicators.update(compute_ibd_rs(df, benchmark_df))
+        indicators.update(compute_rs_line(df, benchmark_df))
         indicators.update(compute_vcp(df))
         indicators.update(compute_squeeze(df))
         indicators.update(compute_extension(df))

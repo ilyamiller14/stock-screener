@@ -53,14 +53,11 @@ def passes_hard_filters(ind: dict[str, Any]) -> bool:
 def compute_rs_percentiles(
     all_indicators: list[dict[str, Any]],
 ) -> dict[str, dict[str, float]]:
-    """
-    Compute RS percentiles for each stock within the qualifying universe.
-    Includes standard 3m/6m RS and IBD-style quarter-weighted RS.
-    """
-    tickers    = [i["ticker"] for i in all_indicators]
-    rs_3m_raw  = np.array([i.get("rs_raw_63d", 0.0) for i in all_indicators])
-    rs_6m_raw  = np.array([i.get("rs_raw_126d", 0.0) for i in all_indicators])
-    ibd_rs_raw = np.array([i.get("ibd_rs_raw", 0.0) for i in all_indicators])
+    tickers     = [i["ticker"] for i in all_indicators]
+    rs_3m_raw   = np.array([i.get("rs_raw_63d",  0.0) for i in all_indicators])
+    rs_6m_raw   = np.array([i.get("rs_raw_126d", 0.0) for i in all_indicators])
+    rs_12m_raw  = np.array([i.get("rs_raw_252d", 0.0) for i in all_indicators])
+    ibd_rs_raw  = np.array([i.get("ibd_rs_raw",  0.0) for i in all_indicators])
 
     n = len(tickers)
     if n == 0:
@@ -74,12 +71,14 @@ def compute_rs_percentiles(
 
     p3m  = _percentile_ranks(rs_3m_raw)
     p6m  = _percentile_ranks(rs_6m_raw)
+    p12m = _percentile_ranks(rs_12m_raw)
     pibd = _percentile_ranks(ibd_rs_raw)
 
     return {
         tickers[i]: {
             "rs_3m_percentile":  round(float(p3m[i]),  1),
             "rs_6m_percentile":  round(float(p6m[i]),  1),
+            "rs_12m_percentile": round(float(p12m[i]), 1),
             "ibd_rs_percentile": round(float(pibd[i]), 1),
         }
         for i in range(n)

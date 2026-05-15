@@ -198,3 +198,28 @@ class TestPivotProximity:
         result = compute_pivot_proximity(df)
         assert result["pivot_price"] == pytest.approx(100.0, abs=2.0)
         assert result["dist_from_pivot_pct"] > 10.0
+
+
+class TestRSLine:
+    def test_rs_line_at_new_high(self):
+        from screener.indicators import compute_rs_line
+        n = 200
+        ticker_closes = 100 * np.exp(np.linspace(0, 0.5, n))
+        bench_closes  = 100 * np.exp(np.linspace(0, 0.1, n))
+        tdf = _make_df(ticker_closes)
+        bdf = _make_df(bench_closes)
+        result = compute_rs_line(tdf, bdf)
+        assert result["rs_line_at_50d_high"] is True
+
+    def test_rs_line_below_recent_high(self):
+        from screener.indicators import compute_rs_line
+        n = 200
+        ticker_closes = np.concatenate([
+            100 * np.exp(np.linspace(0, 0.5, 150)),
+            165 + np.linspace(0, -10, 50),
+        ])
+        bench_closes = 100 * np.exp(np.linspace(0, 0.3, 200))
+        tdf = _make_df(ticker_closes)
+        bdf = _make_df(bench_closes)
+        result = compute_rs_line(tdf, bdf)
+        assert result["rs_line_at_50d_high"] is False
