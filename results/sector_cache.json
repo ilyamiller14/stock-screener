@@ -1203,5 +1203,25 @@
     "company_name": "Benchmark Electronics, Inc.",
     "sector": "Technology",
     "industry": "Electronic Components"
+  },
+  "AESI": {
+    "company_name": "Atlas Energy Solutions Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Equipment & Services"
+  },
+  "CVS": {
+    "company_name": "CVS Health Corporation",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
+  },
+  "VSH": {
+    "company_name": "Vishay Intertechnology, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "FIX": {
+    "company_name": "Comfort Systems USA, Inc.",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction"
   }
 }
