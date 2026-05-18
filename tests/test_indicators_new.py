@@ -242,3 +242,48 @@ class TestPullbackVolume:
         df = _make_df(closes)
         result = compute_pullback_volume_ratio(df)
         assert result["pullback_vol_ratio"] == 1.0
+
+
+# ── v2.1 additions ───────────────────────────────────────────────────────────
+
+class TestMaxRange120d:
+    def test_max_range_120d_detects_wide_intraday_bar(self):
+        """CPRX-style: bar with huge intraday range but only modest close-to-close move."""
+        from screener.indicators import compute_recent_move_metrics
+        n = 200
+        closes = [100.0] * n + [107.0]
+        highs  = [100.5] * n + [120.0]
+        lows   = [99.5]  * n + [98.0]
+        opens  = [100.0] * n + [100.0]
+        df = _make_df(closes, opens=opens, highs=highs, lows=lows)
+        result = compute_recent_move_metrics(df)
+        # Range pct = (120 - 98) / 100 (prev close) = 22%
+        assert result["max_range_120d"] == pytest.approx(22.0, abs=0.5)
+
+    def test_max_range_120d_quiet_series(self):
+        from screener.indicators import compute_recent_move_metrics
+        closes = [100.0] * 200
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        assert result["max_range_120d"] < 2.0
+
+
+class TestConcentrationWindows:
+    def test_concentration_20d_window(self):
+        """Concentration over a 20-day window catches recent climactic clusters."""
+        from screener.indicators import compute_recent_move_metrics
+        # 180 quiet bars, then 12 flat + 1 +8% bar + 7 flat
+        closes = [100.0] * 180 + [100.0] * 12 + [108.0] + [108.0] * 7
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        # 20d return ~8%, biggest 1d ~8% → ~100% concentration
+        assert result["concentration_20d"] > 80.0
+
+    def test_concentration_120d_window(self):
+        """Concentration over 120d catches CWAN-style mid-window spikes."""
+        from screener.indicators import compute_recent_move_metrics
+        # Quiet 80 + flat 20 + spike + flat 99 → 120-day window contains the spike
+        closes = [100.0] * 80 + [100.0] * 20 + [108.0] + [108.0] * 99
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        assert result["concentration_120d"] > 80.0

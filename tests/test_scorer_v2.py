@@ -64,7 +64,8 @@ class TestV2CompositeScore:
         assert out["composite_score"] < 50.0
 
     def test_reversing_stock_penalized(self):
-        out = scorer.compute_composite(_clean_trend_ind(dist_from_5d_high_pct=8.0))
+        # v2.1: heavy threshold is now 10% (was 7%). Use 11 to trigger heavy.
+        out = scorer.compute_composite(_clean_trend_ind(dist_from_5d_high_pct=11.0))
         assert out["qualifies"] is True
         assert "reversal_heavy" in out["penalty_triggered"]
 
@@ -74,3 +75,59 @@ class TestRanking:
         clean  = scorer.compute_composite(_clean_trend_ind())
         warned = scorer.compute_composite(_clean_trend_ind(max_1d_move_120d=15.0))
         assert clean["composite_score"] > warned["composite_score"]
+
+
+# ── v2.1 regression tests for 2026-05-18 audit findings ──────────────────────
+
+class TestV21CWANRegression:
+    """CWAN slipped through v2.0: 8.4% gap + post-news drift read as a clean VCP base.
+    These signatures should now be caught."""
+
+    def test_cwan_like_concentration_120d_fires(self):
+        """120d concentration 47% (CWAN actual) must trigger penalty."""
+        out = scorer.compute_composite(_clean_trend_ind(
+            concentration_20d=15.0,
+            concentration_60d=25.0,
+            concentration_120d=47.0,
+        ))
+        assert "concentration_mild" in out["penalty_triggered"]
+
+
+class TestV21CPRXRegression:
+    """CPRX slipped through v2.0: cluster of 6.6-6.9% bars + 19.2% intraday range."""
+
+    def test_cprx_like_climactic_at_new_8pct_threshold(self):
+        out = scorer.compute_composite(_clean_trend_ind(max_1d_move_120d=8.5))
+        assert "climactic_mild" in out["penalty_triggered"]
+
+    def test_cprx_like_wide_range_bar_fires_wswr(self):
+        """A 19.2% intraday-range bar (CPRX April 27) triggers wswr_mild."""
+        out = scorer.compute_composite(_clean_trend_ind(max_range_120d=19.2))
+        assert "wswr_mild" in out["penalty_triggered"]
+
+    def test_cprx_like_20d_concentration_fires(self):
+        """37% concentration_20d (CPRX actual) catches recent climactic cluster."""
+        out = scorer.compute_composite(_clean_trend_ind(
+            concentration_20d=37.0,
+            concentration_60d=25.0,
+            concentration_120d=19.0,
+        ))
+        assert "concentration_mild" in out["penalty_triggered"]
+
+
+class TestV21ENSRegression:
+    """ENS in v2.0: clean Stage-2 grind (raw 68.4) cut to 41 because pct_above_52w_low ~130%
+    tripped the OLD 120% heavy threshold. v2.1 raises to 200% — 130% is now only mild."""
+
+    def test_ens_like_not_heavy_penalized(self):
+        out = scorer.compute_composite(_clean_trend_ind(pct_above_52w_low=130.0))
+        assert "52w_low_heavy" not in out["penalty_triggered"]
+        assert out["penalty_multiplier"] >= 0.80
+
+
+class TestV21BTSGRegression:
+    """BTSG: 91% above 52w low should not penalize at all under v2.1 (mild raised 60→100)."""
+
+    def test_btsg_like_no_penalty_at_91pct_above_low(self):
+        out = scorer.compute_composite(_clean_trend_ind(pct_above_52w_low=91.0))
+        assert not any(t.startswith("52w_low") for t in out["penalty_triggered"])

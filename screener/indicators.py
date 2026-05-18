@@ -824,7 +824,10 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     default = {
         "max_1d_move_120d": 0.0,
         "max_gap_120d": 0.0,
+        "max_range_120d": 0.0,
+        "concentration_20d": 0.0,
         "concentration_60d": 0.0,
+        "concentration_120d": 0.0,
         "dist_from_5d_high_pct": 0.0,
         "dist_from_10d_high_pct": 0.0,
         "dist_from_20d_high_pct": 0.0,
@@ -836,6 +839,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     closes = df["Close"].values.astype(float)
     opens  = df["Open"].values.astype(float)
     highs  = df["High"].values.astype(float)
+    lows   = df["Low"].values.astype(float)
     n = len(df)
     last = float(closes[-1])
     if last <= 0:
@@ -844,6 +848,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     lookback = min(config.GAP_LOOKBACK_DAYS, n - 1)
     max_1d = 0.0
     max_gap = 0.0
+    max_range = 0.0
     for i in range(n - lookback, n):
         if i < 1:
             continue
@@ -855,26 +860,31 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
             gap = (opens[i] - prev_c) / prev_c * 100
             if gap > max_gap:
                 max_gap = float(gap)
+            rng = (highs[i] - lows[i]) / prev_c * 100
+            if rng > max_range:
+                max_range = float(rng)
 
-    win60 = min(60, n - 1)
-    if win60 >= 5:
-        c0 = closes[-win60 - 1]
-        ret_60 = (last / c0 - 1) * 100 if c0 > 0 else 0.0
-        if ret_60 > 0.1:
-            max_60 = 0.0
-            for i in range(n - win60, n):
-                if i < 1:
-                    continue
-                prev_c = closes[i - 1]
-                if prev_c > 0:
-                    move = (closes[i] - prev_c) / prev_c * 100
-                    if move > max_60:
-                        max_60 = float(move)
-            concentration = max_60 / ret_60 * 100
-        else:
-            concentration = 0.0
-    else:
-        concentration = 0.0
+    def _concentration(win: int) -> float:
+        """Single biggest 1d gain in window / total return over window, as percent."""
+        w = min(win, n - 1)
+        if w < 5:
+            return 0.0
+        c0 = closes[-w - 1]
+        if c0 <= 0:
+            return 0.0
+        ret = (last / c0 - 1) * 100
+        if ret <= 0.1:
+            return 0.0
+        max_move = 0.0
+        for j in range(n - w, n):
+            if j < 1:
+                continue
+            prev = closes[j - 1]
+            if prev > 0:
+                m = (closes[j] - prev) / prev * 100
+                if m > max_move:
+                    max_move = float(m)
+        return max_move / ret * 100
 
     def _dist_high(k: int) -> float:
         if n < k:
@@ -884,6 +894,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
             return 0.0
         return (peak - last) / peak * 100
 
+    win60 = min(60, n - 1)
     if win60 >= 5:
         rets = np.diff(closes[-win60 - 1:]) / closes[-win60 - 1:-1] * 100
         vol_60 = float(np.std(rets, ddof=1))
@@ -893,7 +904,10 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     return {
         "max_1d_move_120d":       round(max_1d, 2),
         "max_gap_120d":           round(max_gap, 2),
-        "concentration_60d":      round(concentration, 1),
+        "max_range_120d":         round(max_range, 2),
+        "concentration_20d":      round(_concentration(20), 1),
+        "concentration_60d":      round(_concentration(60), 1),
+        "concentration_120d":     round(_concentration(120), 1),
         "dist_from_5d_high_pct":  round(_dist_high(5), 2),
         "dist_from_10d_high_pct": round(_dist_high(10), 2),
         "dist_from_20d_high_pct": round(_dist_high(20), 2),

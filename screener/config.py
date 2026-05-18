@@ -60,12 +60,12 @@ EXTENSION_ATR_REJECT = 10.0       # 10x ATR → near-zero score
 EXTENSION_EMA50_WARN_PCT = 20.0   # >20% above EMA50 → fallback penalty
 GAP_LOOKBACK_DAYS = 120           # Scan last 120 days for large gaps
 GAP_LARGE_PCT = 15.0              # Single-day gap >15% = suspect
-DIST_52W_LOW_MILD_PCT = 60.0      # >60% above 52W low → mild penalty starts
-DIST_52W_LOW_HEAVY_PCT = 120.0    # >120% above 52W low → heavy penalty
-DIST_52W_LOW_REJECT_PCT = 250.0   # >250% above 52W low → near-reject
+DIST_52W_LOW_MILD_PCT = 100.0     # v2.1: 60→100 — true leaders run 60-100% above 52w low, not over-extended
+DIST_52W_LOW_HEAVY_PCT = 200.0    # v2.1: 120→200
+DIST_52W_LOW_REJECT_PCT = 400.0   # v2.1: 250→400
 
 # ── Climactic single-bar penalty bands ────────────────────────────────────────
-CLIMACTIC_1D_MILD_PCT = 10.0
+CLIMACTIC_1D_MILD_PCT = 8.0       # v2.1: 10→8 — clustered 6-8% bars (CPRX) are climactic
 CLIMACTIC_1D_HEAVY_PCT = 15.0
 CLIMACTIC_1D_SEVERE_PCT = 20.0
 
@@ -73,13 +73,20 @@ CLIMACTIC_1D_SEVERE_PCT = 20.0
 GAP_PENALTY_MILD_PCT = 10.0
 GAP_PENALTY_HEAVY_PCT = 15.0
 
-# ── Rally concentration penalty bands ─────────────────────────────────────────
-CONCENTRATION_60D_MILD_PCT = 35.0
-CONCENTRATION_60D_SEVERE_PCT = 60.0
+# ── Rally concentration penalty bands (applied to MAX of 20/60/120-day windows) ──
+CONCENTRATION_MILD_PCT = 35.0     # max(conc_20d, conc_60d, conc_120d) ≥ 35
+CONCENTRATION_SEVERE_PCT = 60.0
+# Legacy aliases (kept so any external readers don't crash):
+CONCENTRATION_60D_MILD_PCT = CONCENTRATION_MILD_PCT
+CONCENTRATION_60D_SEVERE_PCT = CONCENTRATION_SEVERE_PCT
+
+# ── Wide-spread wide-range bar (intraday H-L vs prev_close) penalty bands ─────
+WSWR_RANGE_MILD_PCT = 15.0        # NEW v2.1 — 15% intraday range = warning
+WSWR_RANGE_HEAVY_PCT = 22.0       # 22%+ = textbook climactic (CPRX April 27 was 19.2%)
 
 # ── Recent reversal penalty bands ─────────────────────────────────────────────
-REVERSAL_5D_MILD_PCT = 3.0
-REVERSAL_5D_HEAVY_PCT = 7.0
+REVERSAL_5D_MILD_PCT = 5.0        # v2.1: 3→5 — 3% pullback is normal noise
+REVERSAL_5D_HEAVY_PCT = 10.0      # v2.1: 7→10
 
 # ── Selection output ───────────────────────────────────────────────────────────
 # Universe roughly doubled when S&P 500 was added (~2400 tickers vs ~1900).
@@ -163,9 +170,12 @@ RS_SUB_WEIGHTS = {
 RS_LINE_NEW_HIGH_BONUS = 10.0
 
 BASE_SETUP_SUB_WEIGHTS = {
+    # v2.1 rebalance: pivot_proximity over-strict (returns ~0 for most Stage-2 advances
+    # that aren't sitting AT a tight base right now). Weight reduced 0.30→0.10,
+    # squeeze takes its place at 0.50. Total still sums to 1.0.
     "vcp_guarded":     0.40,
-    "pivot_proximity": 0.30,
-    "squeeze":         0.30,
+    "pivot_proximity": 0.10,
+    "squeeze":         0.50,
 }
 
 VOLUME_PROFILE_SUB_WEIGHTS = {
@@ -215,5 +225,5 @@ SCORER_VERSION = "2.0"
 SCORER_REVISED_AT = "2026-05-15"
 
 # ── VCP guard: reject if any bar moved more than this in 120-day lookback ─────
-VCP_GUARD_MAX_BAR_PCT = 12.0
-VCP_GUARD_MAX_GAP_PCT = 10.0
+VCP_GUARD_MAX_BAR_PCT = 8.0       # v2.1: 12→8 — CWAN's 8% bar was reading as "clean" base
+VCP_GUARD_MAX_GAP_PCT = 7.0       # v2.1: 10→7 — CWAN's 8.4% gap slipped under the old 10% bar

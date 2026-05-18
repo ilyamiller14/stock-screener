@@ -47,14 +47,31 @@ def compute_penalty_multiplier(ind: dict[str, Any]) -> dict[str, Any]:
         multipliers["exhaustion_gap"] = 0.80
         triggered.append("exhaustion_gap_mild")
 
-    # 3. Rally concentration
-    conc = ind.get("concentration_60d", 0.0)
-    if conc >= config.CONCENTRATION_60D_SEVERE_PCT:
+    # 3. Rally concentration — v2.1: use MAX of 20/60/120-day windows so that
+    # a recent climactic cluster (CPRX) or a mid-window spike (CWAN) can't hide
+    # in a single window where they get diluted.
+    conc = max(
+        ind.get("concentration_20d",  0.0),
+        ind.get("concentration_60d",  0.0),
+        ind.get("concentration_120d", 0.0),
+    )
+    if conc >= config.CONCENTRATION_SEVERE_PCT:
         multipliers["concentration"] = 0.30
         triggered.append("concentration_severe")
-    elif conc >= config.CONCENTRATION_60D_MILD_PCT:
+    elif conc >= config.CONCENTRATION_MILD_PCT:
         multipliers["concentration"] = 0.60
         triggered.append("concentration_mild")
+
+    # 3b. Wide-spread wide-range bar (NEW v2.1). Intraday H-L vs prev close.
+    # CPRX April 27 was 19.2% range — that's textbook climactic action even
+    # though close-to-close was only +6.9%.
+    rng = ind.get("max_range_120d", 0.0)
+    if rng >= config.WSWR_RANGE_HEAVY_PCT:
+        multipliers["wswr"] = 0.40
+        triggered.append("wswr_heavy")
+    elif rng >= config.WSWR_RANGE_MILD_PCT:
+        multipliers["wswr"] = 0.75
+        triggered.append("wswr_mild")
 
     # 4. Recent reversal
     rev = ind.get("dist_from_5d_high_pct", 0.0)
