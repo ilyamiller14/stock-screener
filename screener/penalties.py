@@ -82,6 +82,17 @@ def compute_penalty_multiplier(ind: dict[str, Any]) -> dict[str, Any]:
         multipliers["reversal"] = 0.70
         triggered.append("reversal_mild")
 
+    # 4b. Stale rally — v2.2 catches CSGS-style post-news drift where 1y return
+    # was driven by a months-old spike and recent 60d is essentially flat.
+    # Note: default rally_freshness_pct=100 means "fresh / no penalty".
+    freshness = ind.get("rally_freshness_pct", 100.0)
+    if freshness <= config.STALE_RALLY_HEAVY_PCT:
+        multipliers["stale_rally"] = 0.40
+        triggered.append("stale_rally_heavy")
+    elif freshness <= config.STALE_RALLY_MILD_PCT:
+        multipliers["stale_rally"] = 0.70
+        triggered.append("stale_rally_mild")
+
     # 5. 52w-low extension
     above = ind.get("pct_above_52w_low", 0.0)
     if above >= config.DIST_52W_LOW_REJECT_PCT:

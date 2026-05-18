@@ -299,3 +299,40 @@ class TestConcentrationWindows:
         df = _make_df(closes)
         result = compute_recent_move_metrics(df)
         assert result["concentration_20d"] == 0.0
+
+
+class TestRallyFreshness:
+    """rally_freshness_pct = recent_60d_return / total_252d_return * 100
+
+    Detects post-news drift patterns where most of the 1-year gain happened
+    long ago (CSGS: spike 136d ago, last 60d basically flat → freshness ~4%)
+    vs. healthy ongoing climbs (HPE: 60d return is a meaningful slice of 1y).
+    """
+
+    def test_fresh_rally_high_score(self):
+        """Steady linear climber: 60d return is a large fraction of 1y return."""
+        from screener.indicators import compute_recent_move_metrics
+        # Linear ramp from 100 to 150 over 252 sessions
+        closes = list(np.linspace(100.0, 150.0, 252))
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        # Last 60d gain ~12 points / 252d gain 50 points = ~24%
+        assert result["rally_freshness_pct"] >= 15.0
+
+    def test_stale_rally_low_score(self):
+        """CSGS-style post-news drift: 1y rally was an old spike, recent 60d flat."""
+        from screener.indicators import compute_recent_move_metrics
+        # 90 quiet bars at 60, +15 bar to 70, 160 quiet bars near 70 → 1y return ~17%, 60d return ~0
+        closes = [60.0] * 90 + [70.0] + [70.0] * 160
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        assert result["rally_freshness_pct"] < 10.0
+
+    def test_freshness_returns_default_when_no_1y_rally(self):
+        """If 1y return is small or negative, freshness is meaningless → return default 100."""
+        from screener.indicators import compute_recent_move_metrics
+        closes = [100.0] * 252
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        # No meaningful denominator → default 100 (= "fresh enough, don't penalize")
+        assert result["rally_freshness_pct"] == 100.0

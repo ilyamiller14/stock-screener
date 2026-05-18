@@ -88,6 +88,13 @@ WSWR_RANGE_HEAVY_PCT = 22.0       # 22%+ = textbook climactic (CPRX April 27 was
 REVERSAL_5D_MILD_PCT = 5.0        # v2.1: 3→5 — 3% pullback is normal noise
 REVERSAL_5D_HEAVY_PCT = 10.0      # v2.1: 7→10
 
+# ── Stale-rally penalty (v2.2 — catches CSGS-style post-news drift) ───────────
+# rally_freshness_pct = recent_60d_return / 1y_return * 100
+# Low values = the rally is old; the stock is at 52w high due to a months-old
+# event, not current strength. Threshold is on rally_freshness (lower=worse).
+STALE_RALLY_MILD_PCT = 15.0       # ≤15% of 1y return came from last 60d → stale
+STALE_RALLY_HEAVY_PCT = 5.0       # ≤5% → very stale (CSGS at ~4%)
+
 # ── Selection output ───────────────────────────────────────────────────────────
 # Universe roughly doubled when S&P 500 was added (~2400 tickers vs ~1900).
 # Bumping TOP_N + per-sector cap to allow more breadth without losing focus.

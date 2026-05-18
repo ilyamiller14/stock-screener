@@ -131,3 +131,20 @@ class TestV21BTSGRegression:
     def test_btsg_like_no_penalty_at_91pct_above_low(self):
         out = scorer.compute_composite(_clean_trend_ind(pct_above_52w_low=91.0))
         assert not any(t.startswith("52w_low") for t in out["penalty_triggered"])
+
+
+class TestV22CSGSRegression:
+    """CSGS slipped through v2.1: +14.4% gap on Oct 29 (136 days ago) was outside
+    the 120d max_gap window. Last 30d stdev 0.10%, sitting at 52w high.
+    1y return ~33%, last 60d return ~1.3% → freshness ~4%."""
+
+    def test_csgs_like_stale_rally_fires(self):
+        """Freshness ~4% should trigger heavy penalty."""
+        out = scorer.compute_composite(_clean_trend_ind(rally_freshness_pct=4.0))
+        assert "stale_rally_heavy" in out["penalty_triggered"]
+        assert out["penalty_multiplier"] <= 0.50
+
+    def test_healthy_climber_freshness_not_penalized(self):
+        """HPE-style: 60d return is ~25% of 1y return → freshness ≥15, no penalty."""
+        out = scorer.compute_composite(_clean_trend_ind(rally_freshness_pct=25.0))
+        assert not any(t.startswith("stale_rally") for t in out["penalty_triggered"])

@@ -832,6 +832,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
         "dist_from_10d_high_pct": 0.0,
         "dist_from_20d_high_pct": 0.0,
         "vol_60d": 0.0,
+        "rally_freshness_pct": 100.0,
     }
     if len(df) < 30:
         return default
@@ -907,6 +908,21 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
     else:
         vol_60 = 0.0
 
+    # Rally freshness: what fraction of the long-window return came in the last 60d?
+    # Catches post-news drift patterns (CSGS-style): a stock at 52w high because of
+    # a single spike 6+ months ago, with no recent momentum.
+    rally_freshness = 100.0  # default: "no penalty"
+    long_win = min(252, n - 1)
+    if long_win >= 100 and win60 >= 5:
+        c_long = closes[-long_win - 1]
+        c60    = closes[-win60 - 1]
+        if c_long > 0 and c60 > 0:
+            ret_long = (last / c_long - 1) * 100
+            ret_60d  = (last / c60    - 1) * 100
+            # Only meaningful when there IS a long-window rally to attribute
+            if ret_long >= 10.0:
+                rally_freshness = max(0.0, ret_60d / ret_long * 100)
+
     return {
         "max_1d_move_120d":       round(max_1d, 2),
         "max_gap_120d":           round(max_gap, 2),
@@ -918,6 +934,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
         "dist_from_10d_high_pct": round(_dist_high(10), 2),
         "dist_from_20d_high_pct": round(_dist_high(20), 2),
         "vol_60d":                round(vol_60, 2),
+        "rally_freshness_pct":    round(rally_freshness, 1),
     }
 
 

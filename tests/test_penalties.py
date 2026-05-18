@@ -16,6 +16,7 @@ def _ind(**overrides):
         "pct_above_52w_low": 50.0,
         "extension_atr_multiple": 1.0,
         "extension_ema50_pct": 5.0,
+        "rally_freshness_pct": 100.0,
     }
     base.update(overrides)
     return base
@@ -148,6 +149,33 @@ class TestExtensionPenalties:
 
 
 # ── Composition / floor ───────────────────────────────────────────────────────
+
+class TestStaleRallyPenalty:
+    """v2.2: CSGS-style post-news drift detector.
+    Stock at 52w high but recent 60d is flat = the rally is stale."""
+
+    def test_stale_rally_mild_at_15pct_freshness(self):
+        """rally_freshness_pct ≤ 15 fires mild."""
+        out = penalties.compute_penalty_multiplier(_ind(rally_freshness_pct=12.0))
+        assert "stale_rally_mild" in out["triggered"]
+        assert out["final_multiplier"] < 1.0
+
+    def test_stale_rally_heavy_at_5pct_freshness(self):
+        """rally_freshness_pct ≤ 5 fires heavy."""
+        out = penalties.compute_penalty_multiplier(_ind(rally_freshness_pct=3.0))
+        assert "stale_rally_heavy" in out["triggered"]
+        assert out["final_multiplier"] <= 0.50
+
+    def test_fresh_rally_no_penalty(self):
+        """Healthy active climber should not trigger stale_rally."""
+        out = penalties.compute_penalty_multiplier(_ind(rally_freshness_pct=30.0))
+        assert not any(t.startswith("stale_rally") for t in out["triggered"])
+
+    def test_no_long_rally_no_penalty(self):
+        """Default rally_freshness_pct=100 (no 1y rally) should not penalize."""
+        out = penalties.compute_penalty_multiplier(_ind(rally_freshness_pct=100.0))
+        assert not any(t.startswith("stale_rally") for t in out["triggered"])
+
 
 class TestComposition:
     def test_multiple_triggers_take_minimum(self):
