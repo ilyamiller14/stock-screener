@@ -287,3 +287,15 @@ class TestConcentrationWindows:
         df = _make_df(closes)
         result = compute_recent_move_metrics(df)
         assert result["concentration_120d"] > 80.0
+
+    def test_concentration_zero_when_total_return_under_5pct(self):
+        """ATEN-style false positive guard: one big bar then sideways → low total return.
+        Concentration should NOT compute on small denominators — that's healthy
+        consolidation, not climactic action."""
+        from screener.indicators import compute_recent_move_metrics
+        # Stock with one +10% bar in last 20 sessions but otherwise sideways
+        # 20d total return = ~4% (under 5% guard) → concentration_20d should be 0
+        closes = [100.0] * 180 + [100.0] * 5 + [110.0] + [104.0] * 14
+        df = _make_df(closes)
+        result = compute_recent_move_metrics(df)
+        assert result["concentration_20d"] == 0.0

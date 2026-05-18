@@ -865,7 +865,13 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
                 max_range = float(rng)
 
     def _concentration(win: int) -> float:
-        """Single biggest 1d gain in window / total return over window, as percent."""
+        """Single biggest 1d gain in window / total return over window, as percent.
+
+        Returns 0 if the window's total return is below 5% — small-denominator
+        windows produce meaningless 200%+ ratios that flag healthy post-rally
+        consolidation as 'climactic'. We only meaningfully measure concentration
+        when there's a substantive rally to attribute.
+        """
         w = min(win, n - 1)
         if w < 5:
             return 0.0
@@ -873,7 +879,7 @@ def compute_recent_move_metrics(df: pd.DataFrame) -> dict[str, Any]:
         if c0 <= 0:
             return 0.0
         ret = (last / c0 - 1) * 100
-        if ret <= 0.1:
+        if ret < 5.0:
             return 0.0
         max_move = 0.0
         for j in range(n - w, n):
