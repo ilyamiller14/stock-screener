@@ -1223,5 +1223,45 @@
     "company_name": "Comfort Systems USA, Inc.",
     "sector": "Industrials",
     "industry": "Engineering & Construction"
+  },
+  "MS": {
+    "company_name": "Morgan Stanley",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "NJR": {
+    "company_name": "New Jersey Resources Corporation",
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Gas"
+  },
+  "APLE": {
+    "company_name": "Apple Hospitality REIT, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "MSGE": {
+    "company_name": "Madison Square Garden Entertainment Corp.",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "CRWD": {
+    "company_name": "CrowdStrike Holdings, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "OSCR": {
+    "company_name": "Oscar Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
+  },
+  "SMTC": {
+    "company_name": "Semtech Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "SANM": {
+    "company_name": "Sanmina Corporation",
+    "sector": "Technology",
+    "industry": "Electronic Components"
   }
 }
