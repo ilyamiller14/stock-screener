@@ -1263,5 +1263,35 @@
     "company_name": "Sanmina Corporation",
     "sector": "Technology",
     "industry": "Electronic Components"
+  },
+  "POWI": {
+    "company_name": "Power Integrations, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "ROG": {
+    "company_name": "Rogers Corporation",
+    "sector": "Technology",
+    "industry": "Electronic Components"
+  },
+  "VCTR": {
+    "company_name": "Victory Capital Holdings, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "ARCB": {
+    "company_name": "ArcBest Corporation",
+    "sector": "Industrials",
+    "industry": "Trucking"
+  },
+  "PDFS": {
+    "company_name": "PDF Solutions, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "CORZ": {
+    "company_name": "Core Scientific, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
   }
 }
