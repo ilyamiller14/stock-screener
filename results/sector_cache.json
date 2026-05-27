@@ -1293,5 +1293,35 @@
     "company_name": "Core Scientific, Inc.",
     "sector": "Technology",
     "industry": "Software - Infrastructure"
+  },
+  "MPWR": {
+    "company_name": "Monolithic Power Systems, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "PFG": {
+    "company_name": "Principal Financial Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "ORA": {
+    "company_name": "Ormat Technologies, Inc.",
+    "sector": "Utilities",
+    "industry": "Utilities - Renewable"
+  },
+  "HST": {
+    "company_name": "Host Hotels & Resorts, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "RHP": {
+    "company_name": "Ryman Hospitality Properties, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "CECO": {
+    "company_name": "CECO Environmental Corp.",
+    "sector": "Industrials",
+    "industry": "Pollution & Treatment Controls"
   }
 }
