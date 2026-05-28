@@ -1323,5 +1323,20 @@
     "company_name": "CECO Environmental Corp.",
     "sector": "Industrials",
     "industry": "Pollution & Treatment Controls"
+  },
+  "PANW": {
+    "company_name": "Palo Alto Networks, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "RMBS": {
+    "company_name": "Rambus Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "COHU": {
+    "company_name": "Cohu, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials"
   }
 }
