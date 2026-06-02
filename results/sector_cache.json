@@ -1338,5 +1338,40 @@
     "company_name": "Cohu, Inc.",
     "sector": "Technology",
     "industry": "Semiconductor Equipment & Materials"
+  },
+  "DGII": {
+    "company_name": "Digi International Inc.",
+    "sector": "Technology",
+    "industry": "Communication Equipment"
+  },
+  "CMP": {
+    "company_name": "Compass Minerals International, Inc.",
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining"
+  },
+  "AIP": {
+    "company_name": "Arteris, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "CNC": {
+    "company_name": "Centene Corporation",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
+  },
+  "AAMI": {
+    "company_name": "Acadian Asset Management Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "LRCX": {
+    "company_name": "Lam Research Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials"
+  },
+  "SHLS": {
+    "company_name": "Shoals Technologies Group, Inc.",
+    "sector": "Technology",
+    "industry": "Solar"
   }
 }
