@@ -1373,5 +1373,35 @@
     "company_name": "Shoals Technologies Group, Inc.",
     "sector": "Technology",
     "industry": "Solar"
+  },
+  "RLJ": {
+    "company_name": "RLJ Lodging Trust",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "GS": {
+    "company_name": "The Goldman Sachs Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "BEN": {
+    "company_name": "Franklin Resources, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "CAT": {
+    "company_name": "Caterpillar Inc.",
+    "sector": "Industrials",
+    "industry": "Farm & Heavy Construction Machinery"
+  },
+  "MCHP": {
+    "company_name": "Microchip Technology Incorporated",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "WERN": {
+    "company_name": "Werner Enterprises, Inc.",
+    "sector": "Industrials",
+    "industry": "Trucking"
   }
 }
