@@ -1403,5 +1403,40 @@
     "company_name": "Werner Enterprises, Inc.",
     "sector": "Industrials",
     "industry": "Trucking"
+  },
+  "C": {
+    "company_name": "Citigroup Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified"
+  },
+  "SNEX": {
+    "company_name": "StoneX Group Inc.",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "MTRN": {
+    "company_name": "Materion Corporation",
+    "sector": "Basic Materials",
+    "industry": "Other Industrial Metals & Mining"
+  },
+  "JBHT": {
+    "company_name": "J.B. Hunt Transport Services, Inc.",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics"
+  },
+  "ODFL": {
+    "company_name": "Old Dominion Freight Line, Inc.",
+    "sector": "Industrials",
+    "industry": "Trucking"
+  },
+  "AXGN": {
+    "company_name": "Axogen, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "MAR": {
+    "company_name": "Marriott International, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Lodging"
   }
 }
