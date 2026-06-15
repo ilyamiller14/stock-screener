@@ -1438,5 +1438,60 @@
     "company_name": "Marriott International, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Lodging"
+  },
+  "CSX": {
+    "company_name": "CSX Corporation",
+    "sector": "Industrials",
+    "industry": "Railroads"
+  },
+  "MAC": {
+    "company_name": "The Macerich Company",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "HUM": {
+    "company_name": "Humana Inc.",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
+  },
+  "SHO": {
+    "company_name": "Sunstone Hotel Investors, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "KRG": {
+    "company_name": "Kite Realty Group Trust",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "VLY": {
+    "company_name": "Valley National Bancorp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "FRT": {
+    "company_name": "Federal Realty Investment Trust",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "FBP": {
+    "company_name": "First BanCorp.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "CAKE": {
+    "company_name": "The Cheesecake Factory Incorporated",
+    "sector": "Consumer Cyclical",
+    "industry": "Restaurants"
+  },
+  "FFBC": {
+    "company_name": "First Financial Bancorp.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "BFH": {
+    "company_name": "Bread Financial Holdings, Inc.",
+    "sector": "Financial Services",
+    "industry": "Credit Services"
   }
 }
