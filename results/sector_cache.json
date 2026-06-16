@@ -1493,5 +1493,75 @@
     "company_name": "Bread Financial Holdings, Inc.",
     "sector": "Financial Services",
     "industry": "Credit Services"
+  },
+  "IVT": {
+    "company_name": "InvenTrust Properties Corp.",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "CXW": {
+    "company_name": "CoreCivic, Inc.",
+    "sector": "Industrials",
+    "industry": "Security & Protection Services"
+  },
+  "KLAC": {
+    "company_name": "KLA Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials"
+  },
+  "ACMR": {
+    "company_name": "ACM Research, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials"
+  },
+  "MEC": {
+    "company_name": "Mayville Engineering Company, Inc.",
+    "sector": "Industrials",
+    "industry": "Metal Fabrication"
+  },
+  "SPG": {
+    "company_name": "Simon Property Group, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "TXG": {
+    "company_name": "10x Genomics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "RIOT": {
+    "company_name": "Riot Platforms, Inc.",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "CRDO": {
+    "company_name": "Credo Technology Group Holding Ltd",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "PECO": {
+    "company_name": "Phillips Edison & Company, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "BNL": {
+    "company_name": "Broadstone Net Lease, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Diversified"
+  },
+  "GH": {
+    "company_name": "Guardant Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "SKT": {
+    "company_name": "Tanger Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "LTH": {
+    "company_name": "Life Time Group Holdings, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Leisure"
   }
 }
