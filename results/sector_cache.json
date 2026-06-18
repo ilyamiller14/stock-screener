@@ -1563,5 +1563,15 @@
     "company_name": "Life Time Group Holdings, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Leisure"
+  },
+  "WSFS": {
+    "company_name": "WSFS Financial Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "AMAT": {
+    "company_name": "Applied Materials, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductor Equipment & Materials"
   }
 }
