@@ -1573,5 +1573,25 @@
     "company_name": "Applied Materials, Inc.",
     "sector": "Technology",
     "industry": "Semiconductor Equipment & Materials"
+  },
+  "DRH": {
+    "company_name": "DiamondRock Hospitality Company",
+    "sector": "Real Estate",
+    "industry": "REIT - Hotel & Motel"
+  },
+  "ENVA": {
+    "company_name": "Enova International, Inc.",
+    "sector": "Financial Services",
+    "industry": "Credit Services"
+  },
+  "GL": {
+    "company_name": "Globe Life Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
+  },
+  "IEX": {
+    "company_name": "IDEX Corporation",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery"
   }
 }
