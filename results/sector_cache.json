@@ -1593,5 +1593,10 @@
     "company_name": "IDEX Corporation",
     "sector": "Industrials",
     "industry": "Specialty Industrial Machinery"
+  },
+  "BJRI": {
+    "company_name": "BJ's Restaurants, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Restaurants"
   }
 }
