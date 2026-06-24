@@ -1598,5 +1598,20 @@
     "company_name": "BJ's Restaurants, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Restaurants"
+  },
+  "LGND": {
+    "company_name": "Ligand Pharmaceuticals Incorporated",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "AMRX": {
+    "company_name": "Amneal Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "ACA": {
+    "company_name": "Arcosa, Inc.",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction"
   }
 }
