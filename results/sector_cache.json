@@ -1613,5 +1613,15 @@
     "company_name": "Arcosa, Inc.",
     "sector": "Industrials",
     "industry": "Engineering & Construction"
+  },
+  "WTS": {
+    "company_name": "Watts Water Technologies, Inc.",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery"
+  },
+  "WSM": {
+    "company_name": "Williams-Sonoma, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail"
   }
 }
