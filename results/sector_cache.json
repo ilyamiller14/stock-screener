@@ -1623,5 +1623,10 @@
     "company_name": "Williams-Sonoma, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Specialty Retail"
+  },
+  "KRYS": {
+    "company_name": "Krystal Biotech, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
