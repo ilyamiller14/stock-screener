@@ -1628,5 +1628,15 @@
     "company_name": "Krystal Biotech, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "PSMT": {
+    "company_name": "PriceSmart, Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Discount Stores"
+  },
+  "MRCY": {
+    "company_name": "Mercury Systems, Inc.",
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense"
   }
 }
