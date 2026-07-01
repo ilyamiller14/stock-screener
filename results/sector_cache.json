@@ -1638,5 +1638,10 @@
     "company_name": "Mercury Systems, Inc.",
     "sector": "Industrials",
     "industry": "Aerospace & Defense"
+  },
+  "CATY": {
+    "company_name": "Cathay General Bancorp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
   }
 }
