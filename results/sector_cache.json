@@ -1643,5 +1643,20 @@
     "company_name": "Cathay General Bancorp",
     "sector": "Financial Services",
     "industry": "Banks - Regional"
+  },
+  "URGN": {
+    "company_name": "UroGen Pharma Ltd.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "PLXS": {
+    "company_name": "Plexus Corp.",
+    "sector": "Technology",
+    "industry": "Electronic Components"
+  },
+  "TROW": {
+    "company_name": "T. Rowe Price Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
   }
 }
