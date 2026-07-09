@@ -1658,5 +1658,35 @@
     "company_name": "T. Rowe Price Group, Inc.",
     "sector": "Financial Services",
     "industry": "Asset Management"
+  },
+  "PTGX": {
+    "company_name": "Protagonist Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "CURB": {
+    "company_name": "Curbline Properties Corp.",
+    "sector": "Real Estate",
+    "industry": "REIT - Retail"
+  },
+  "DNLI": {
+    "company_name": "Denali Therapeutics Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "UMBF": {
+    "company_name": "UMB Financial Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "LXP": {
+    "company_name": "LXP Industrial Trust",
+    "sector": "Real Estate",
+    "industry": "REIT - Industrial"
+  },
+  "AXSM": {
+    "company_name": "Axsome Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
