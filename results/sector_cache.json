@@ -1688,5 +1688,20 @@
     "company_name": "Axsome Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "GWW": {
+    "company_name": "W.W. Grainger, Inc.",
+    "sector": "Industrials",
+    "industry": "Industrial Distribution"
+  },
+  "FITB": {
+    "company_name": "Fifth Third Bancorp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "BANC": {
+    "company_name": "Banc of California, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
   }
 }
