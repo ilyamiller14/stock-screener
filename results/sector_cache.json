@@ -1703,5 +1703,10 @@
     "company_name": "Banc of California, Inc.",
     "sector": "Financial Services",
     "industry": "Banks - Regional"
+  },
+  "UNH": {
+    "company_name": "UnitedHealth Group Incorporated",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
   }
 }
