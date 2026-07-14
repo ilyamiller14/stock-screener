@@ -1708,5 +1708,15 @@
     "company_name": "UnitedHealth Group Incorporated",
     "sector": "Healthcare",
     "industry": "Healthcare Plans"
+  },
+  "HWC": {
+    "company_name": "Hancock Whitney Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "BUSE": {
+    "company_name": "First Busey Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
   }
 }
