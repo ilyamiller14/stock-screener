@@ -1718,5 +1718,55 @@
     "company_name": "First Busey Corporation",
     "sector": "Financial Services",
     "industry": "Banks - Regional"
+  },
+  "BATRK": {
+    "company_name": "Atlanta Braves Holdings, Inc.",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "INDV": {
+    "company_name": "Indivior Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "CTVA": {
+    "company_name": "Corteva, Inc.",
+    "sector": "Basic Materials",
+    "industry": "Agricultural Inputs"
+  },
+  "PSNL": {
+    "company_name": "Personalis, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "LAUR": {
+    "company_name": "Laureate Education, Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Education & Training Services"
+  },
+  "CFG": {
+    "company_name": "Citizens Financial Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "TRVI": {
+    "company_name": "Trevi Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "SKWD": {
+    "company_name": "Skyward Specialty Insurance Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
+  },
+  "EBC": {
+    "company_name": "Eastern Bankshares, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "GOLF": {
+    "company_name": "Acushnet Holdings Corp.",
+    "sector": "Consumer Cyclical",
+    "industry": "Leisure"
   }
 }
