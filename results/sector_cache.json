@@ -1768,5 +1768,35 @@
     "company_name": "Acushnet Holdings Corp.",
     "sector": "Consumer Cyclical",
     "industry": "Leisure"
+  },
+  "RF": {
+    "company_name": "Regions Financial Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "PNC": {
+    "company_name": "The PNC Financial Services Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "MTB": {
+    "company_name": "M&T Bank Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "CDP": {
+    "company_name": "COPT Defense Properties",
+    "sector": "Real Estate",
+    "industry": "REIT - Office"
+  },
+  "VLO": {
+    "company_name": "Valero Energy Corporation",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing"
+  },
+  "BAC": {
+    "company_name": "Bank of America Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Diversified"
   }
 }
