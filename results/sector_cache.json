@@ -1798,5 +1798,30 @@
     "company_name": "Bank of America Corporation",
     "sector": "Financial Services",
     "industry": "Banks - Diversified"
+  },
+  "EIX": {
+    "company_name": "Edison International",
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric"
+  },
+  "WELL": {
+    "company_name": "Welltower Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Healthcare Facilities"
+  },
+  "FULT": {
+    "company_name": "Fulton Financial Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "USB": {
+    "company_name": "U.S. Bancorp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "PRU": {
+    "company_name": "Prudential Financial, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
   }
 }
