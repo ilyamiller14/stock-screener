@@ -1823,5 +1823,15 @@
     "company_name": "Prudential Financial, Inc.",
     "sector": "Financial Services",
     "industry": "Insurance - Life"
+  },
+  "PSX": {
+    "company_name": "Phillips 66",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing"
+  },
+  "ALL": {
+    "company_name": "The Allstate Corporation",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
   }
 }
