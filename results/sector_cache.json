@@ -1833,5 +1833,10 @@
     "company_name": "The Allstate Corporation",
     "sector": "Financial Services",
     "industry": "Insurance - Property & Casualty"
+  },
+  "AHR": {
+    "company_name": "American Healthcare REIT, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Healthcare Facilities"
   }
 }
