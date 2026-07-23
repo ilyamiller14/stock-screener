@@ -1838,5 +1838,15 @@
     "company_name": "American Healthcare REIT, Inc.",
     "sector": "Real Estate",
     "industry": "REIT - Healthcare Facilities"
+  },
+  "BLFS": {
+    "company_name": "BioLife Solutions, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "WST": {
+    "company_name": "West Pharmaceutical Services, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
   }
 }
