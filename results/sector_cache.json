@@ -1848,5 +1848,15 @@
     "company_name": "West Pharmaceutical Services, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies"
+  },
+  "MET": {
+    "company_name": "MetLife, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
+  },
+  "VTR": {
+    "company_name": "Ventas, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Healthcare Facilities"
   }
 }
