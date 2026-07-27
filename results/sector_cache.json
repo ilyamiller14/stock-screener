@@ -1858,5 +1858,20 @@
     "company_name": "Ventas, Inc.",
     "sector": "Real Estate",
     "industry": "REIT - Healthcare Facilities"
+  },
+  "OII": {
+    "company_name": "Oceaneering International, Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Equipment & Services"
+  },
+  "ACIW": {
+    "company_name": "ACI Worldwide, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "RVTY": {
+    "company_name": "Revvity, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
   }
 }
