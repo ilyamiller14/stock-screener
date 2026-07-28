@@ -1873,5 +1873,20 @@
     "company_name": "Revvity, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
+  },
+  "IPAR": {
+    "company_name": "Interparfums, Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products"
+  },
+  "CLBK": {
+    "company_name": "Columbia Financial, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "JNJ": {
+    "company_name": "Johnson & Johnson",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
   }
 }
