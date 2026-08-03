@@ -1888,5 +1888,40 @@
     "company_name": "Johnson & Johnson",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
+  },
+  "HAE": {
+    "company_name": "Haemonetics Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "AMGN": {
+    "company_name": "Amgen Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "SBCF": {
+    "company_name": "Seacoast Banking Corporation of Florida",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "KFY": {
+    "company_name": "Korn Ferry",
+    "sector": "Industrials",
+    "industry": "Staffing & Employment Services"
+  },
+  "AUB": {
+    "company_name": "Atlantic Union Bankshares Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "ONB": {
+    "company_name": "Old National Bancorp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "AX": {
+    "company_name": "Axos Financial, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
   }
 }
