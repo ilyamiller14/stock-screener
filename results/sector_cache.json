@@ -1923,5 +1923,10 @@
     "company_name": "Axos Financial, Inc.",
     "sector": "Financial Services",
     "industry": "Banks - Regional"
+  },
+  "WLY": {
+    "company_name": "John Wiley & Sons, Inc.",
+    "sector": "Communication Services",
+    "industry": "Publishing"
   }
 }
