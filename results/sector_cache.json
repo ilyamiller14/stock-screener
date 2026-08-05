@@ -1928,5 +1928,45 @@
     "company_name": "John Wiley & Sons, Inc.",
     "sector": "Communication Services",
     "industry": "Publishing"
+  },
+  "ASB": {
+    "company_name": "Associated Banc-Corp",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "IVZ": {
+    "company_name": "Invesco Ltd.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "ADPT": {
+    "company_name": "Adaptive Biotechnologies Corporation",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "TGT": {
+    "company_name": "Target Corporation",
+    "sector": "Consumer Defensive",
+    "industry": "Discount Stores"
+  },
+  "CVBF": {
+    "company_name": "CVB Financial Corp.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "DK": {
+    "company_name": "Delek US Holdings, Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing"
+  },
+  "CNK": {
+    "company_name": "Cinemark Holdings, Inc.",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "AFL": {
+    "company_name": "Aflac Incorporated",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
   }
 }
