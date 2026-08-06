@@ -1968,5 +1968,30 @@
     "company_name": "Aflac Incorporated",
     "sector": "Financial Services",
     "industry": "Insurance - Life"
+  },
+  "JXN": {
+    "company_name": "Jackson Financial Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Life"
+  },
+  "GE": {
+    "company_name": "GE Aerospace",
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense"
+  },
+  "FBK": {
+    "company_name": "FB Financial Corporation",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "ARQT": {
+    "company_name": "Arcutis Biotherapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "AMP": {
+    "company_name": "Ameriprise Financial, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
   }
 }
