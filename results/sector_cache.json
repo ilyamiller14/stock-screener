@@ -1993,5 +1993,20 @@
     "company_name": "Ameriprise Financial, Inc.",
     "sector": "Financial Services",
     "industry": "Asset Management"
+  },
+  "LH": {
+    "company_name": "Labcorp Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "DAL": {
+    "company_name": "Delta Air Lines, Inc.",
+    "sector": "Industrials",
+    "industry": "Airlines"
+  },
+  "TENB": {
+    "company_name": "Tenable Holdings, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
   }
 }
