@@ -2008,5 +2008,20 @@
     "company_name": "Tenable Holdings, Inc.",
     "sector": "Technology",
     "industry": "Software - Infrastructure"
+  },
+  "UBSI": {
+    "company_name": "United Bankshares, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
+  },
+  "HTO": {
+    "company_name": "H2O America",
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Water"
+  },
+  "TBBK": {
+    "company_name": "The Bancorp, Inc.",
+    "sector": "Financial Services",
+    "industry": "Banks - Regional"
   }
 }
