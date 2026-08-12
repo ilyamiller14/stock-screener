@@ -2023,5 +2023,30 @@
     "company_name": "The Bancorp, Inc.",
     "sector": "Financial Services",
     "industry": "Banks - Regional"
+  },
+  "HSIC": {
+    "company_name": "Henry Schein, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Distribution"
+  },
+  "EXPE": {
+    "company_name": "Expedia Group, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Travel Services"
+  },
+  "TPR": {
+    "company_name": "Tapestry, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Luxury Goods"
+  },
+  "CRL": {
+    "company_name": "Charles River Laboratories Inte",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "NDSN": {
+    "company_name": "Nordson Corporation",
+    "sector": "Industrials",
+    "industry": "Specialty Industrial Machinery"
   }
 }
