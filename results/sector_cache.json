@@ -2048,5 +2048,55 @@
     "company_name": "Nordson Corporation",
     "sector": "Industrials",
     "industry": "Specialty Industrial Machinery"
+  },
+  "MRK": {
+    "company_name": "Merck & Company, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "ZETA": {
+    "company_name": "Zeta Global Holdings Corp.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "FAST": {
+    "company_name": "Fastenal Company",
+    "sector": "Industrials",
+    "industry": "Industrial Distribution"
+  },
+  "RTX": {
+    "company_name": "RTX Corporation",
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense"
+  },
+  "NSIT": {
+    "company_name": "Insight Enterprises, Inc.",
+    "sector": "Technology",
+    "industry": "Electronics & Computer Distribution"
+  },
+  "GILD": {
+    "company_name": "Gilead Sciences, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "KO": {
+    "company_name": "Coca-Cola Company (The)",
+    "sector": "Consumer Defensive",
+    "industry": "Beverages - Non-Alcoholic"
+  },
+  "CVX": {
+    "company_name": "Chevron Corporation",
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated"
+  },
+  "COP": {
+    "company_name": "ConocoPhillips",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "HPQ": {
+    "company_name": "HP Inc.",
+    "sector": "Technology",
+    "industry": "Computer Hardware"
   }
 }
