@@ -2098,5 +2098,50 @@
     "company_name": "HP Inc.",
     "sector": "Technology",
     "industry": "Computer Hardware"
+  },
+  "ATRC": {
+    "company_name": "AtriCure, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "EAT": {
+    "company_name": "Brinker International, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Restaurants"
+  },
+  "DYN": {
+    "company_name": "Dyne Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "SWK": {
+    "company_name": "Stanley Black & Decker, Inc.",
+    "sector": "Industrials",
+    "industry": "Tools & Accessories"
+  },
+  "TMO": {
+    "company_name": "Thermo Fisher Scientific Inc",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "IQV": {
+    "company_name": "IQVIA Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "IMAX": {
+    "company_name": "IMAX Corporation",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "BMY": {
+    "company_name": "Bristol-Myers Squibb Company",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "WAT": {
+    "company_name": "Waters Corporation",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
   }
 }
