@@ -2143,5 +2143,30 @@
     "company_name": "Waters Corporation",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
+  },
+  "SCHW": {
+    "company_name": "The Charles Schwab Corporation",
+    "sector": "Financial Services",
+    "industry": "Capital Markets"
+  },
+  "LPG": {
+    "company_name": "Dorian LPG Ltd.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream"
+  },
+  "ACAD": {
+    "company_name": "ACADIA Pharmaceuticals Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "XNCR": {
+    "company_name": "Xencor, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "NWSA": {
+    "company_name": "News Corporation",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
   }
 }
