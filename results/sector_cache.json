@@ -2168,5 +2168,35 @@
     "company_name": "News Corporation",
     "sector": "Communication Services",
     "industry": "Entertainment"
+  },
+  "CLDX": {
+    "company_name": "Celldex Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "SLG": {
+    "company_name": "SL Green Realty Corp.",
+    "sector": "Real Estate",
+    "industry": "REIT - Office"
+  },
+  "WT": {
+    "company_name": "WisdomTree, Inc.",
+    "sector": "Financial Services",
+    "industry": "Asset Management"
+  },
+  "HQY": {
+    "company_name": "HealthEquity, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "INCY": {
+    "company_name": "Incyte Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "OMC": {
+    "company_name": "Omnicom Group Inc.",
+    "sector": "Communication Services",
+    "industry": "Advertising Agencies"
   }
 }
