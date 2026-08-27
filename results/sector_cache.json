@@ -2198,5 +2198,20 @@
     "company_name": "Omnicom Group Inc.",
     "sector": "Communication Services",
     "industry": "Advertising Agencies"
+  },
+  "COR": {
+    "company_name": "Cencora, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Distribution"
+  },
+  "NWS": {
+    "company_name": "News Corporation",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "IMNM": {
+    "company_name": "Immunome, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
