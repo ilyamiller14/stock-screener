@@ -2213,5 +2213,10 @@
     "company_name": "Immunome, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "AMPL": {
+    "company_name": "Amplitude, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
   }
 }
