@@ -2218,5 +2218,15 @@
     "company_name": "Amplitude, Inc.",
     "sector": "Technology",
     "industry": "Software - Application"
+  },
+  "J": {
+    "company_name": "Jacobs Solutions Inc.",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction"
+  },
+  "REGN": {
+    "company_name": "Regeneron Pharmaceuticals, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
