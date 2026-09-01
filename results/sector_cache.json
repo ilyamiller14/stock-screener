@@ -2228,5 +2228,40 @@
     "company_name": "Regeneron Pharmaceuticals, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "LFST": {
+    "company_name": "LifeStance Health Group, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
+  },
+  "MGNI": {
+    "company_name": "Magnite, Inc.",
+    "sector": "Communication Services",
+    "industry": "Advertising Agencies"
+  },
+  "WHD": {
+    "company_name": "Cactus, Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Equipment & Services"
+  },
+  "ITGR": {
+    "company_name": "Integer Holdings Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "FCX": {
+    "company_name": "Freeport-McMoRan Inc.",
+    "sector": "Basic Materials",
+    "industry": "Copper"
+  },
+  "OMDA": {
+    "company_name": "Omada Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Health Information Services"
+  },
+  "FDX": {
+    "company_name": "FedEx Corporation",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics"
   }
 }
