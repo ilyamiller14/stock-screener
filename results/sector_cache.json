@@ -2263,5 +2263,25 @@
     "company_name": "FedEx Corporation",
     "sector": "Industrials",
     "industry": "Integrated Freight & Logistics"
+  },
+  "BOX": {
+    "company_name": "Box, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "CRGY": {
+    "company_name": "Crescent Energy Company",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "CAH": {
+    "company_name": "Cardinal Health, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Distribution"
+  },
+  "CVI": {
+    "company_name": "CVR Energy, Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing"
   }
 }
