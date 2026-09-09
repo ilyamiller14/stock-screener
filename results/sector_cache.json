@@ -2283,5 +2283,10 @@
     "company_name": "CVR Energy, Inc.",
     "sector": "Energy",
     "industry": "Oil & Gas Refining & Marketing"
+  },
+  "CPAY": {
+    "company_name": "Corpay, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
   }
 }
