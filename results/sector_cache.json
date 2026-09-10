@@ -2288,5 +2288,35 @@
     "company_name": "Corpay, Inc.",
     "sector": "Technology",
     "industry": "Software - Infrastructure"
+  },
+  "SLDE": {
+    "company_name": "Slide Insurance Holdings, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
+  },
+  "APA": {
+    "company_name": "APA Corporation",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "SM": {
+    "company_name": "SM Energy Company",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "KNTK": {
+    "company_name": "Kinetik Holdings Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream"
+  },
+  "TALO": {
+    "company_name": "Talos Energy Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "NRIX": {
+    "company_name": "Nurix Therapeutics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
