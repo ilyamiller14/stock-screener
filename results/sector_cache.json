@@ -2318,5 +2318,15 @@
     "company_name": "Nurix Therapeutics, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "NATL": {
+    "company_name": "NCR Atleos Corporation",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "EXPD": {
+    "company_name": "Expeditors International of Washington, Inc.",
+    "sector": "Industrials",
+    "industry": "Integrated Freight & Logistics"
   }
 }
