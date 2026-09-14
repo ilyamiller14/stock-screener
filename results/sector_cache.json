@@ -2328,5 +2328,15 @@
     "company_name": "Expeditors International of Washington, Inc.",
     "sector": "Industrials",
     "industry": "Integrated Freight & Logistics"
+  },
+  "ADP": {
+    "company_name": "Automatic Data Processing, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "RDNT": {
+    "company_name": "RadNet, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
   }
 }
