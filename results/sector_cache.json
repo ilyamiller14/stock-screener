@@ -2338,5 +2338,25 @@
     "company_name": "RadNet, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
+  },
+  "BDX": {
+    "company_name": "Becton, Dickinson and Company",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "XOM": {
+    "company_name": "ExxonMobil Holdings Corporation",
+    "sector": "Energy",
+    "industry": "Oil & Gas Integrated"
+  },
+  "GPN": {
+    "company_name": "Global Payments Inc.",
+    "sector": "Industrials",
+    "industry": "Specialty Business Services"
+  },
+  "SOLV": {
+    "company_name": "Solventum Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
   }
 }
