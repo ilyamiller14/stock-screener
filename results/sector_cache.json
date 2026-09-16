@@ -2358,5 +2358,15 @@
     "company_name": "Solventum Corporation",
     "sector": "Healthcare",
     "industry": "Medical Instruments & Supplies"
+  },
+  "OXY": {
+    "company_name": "Occidental Petroleum Corporation",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
+  },
+  "DGX": {
+    "company_name": "Quest Diagnostics Incorporated",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
   }
 }
