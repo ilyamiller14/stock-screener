@@ -2368,5 +2368,15 @@
     "company_name": "Quest Diagnostics Incorporated",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
+  },
+  "CF": {
+    "company_name": "CF Industries Holdings, Inc.",
+    "sector": "Basic Materials",
+    "industry": "Agricultural Inputs"
+  },
+  "HRMY": {
+    "company_name": "Harmony Biosciences Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
