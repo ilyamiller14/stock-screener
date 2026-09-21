@@ -2378,5 +2378,15 @@
     "company_name": "Harmony Biosciences Holdings, Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "APPN": {
+    "company_name": "Appian Corporation",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "NEO": {
+    "company_name": "NeoGenomics, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
   }
 }
