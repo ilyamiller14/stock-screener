@@ -2388,5 +2388,25 @@
     "company_name": "NeoGenomics, Inc.",
     "sector": "Healthcare",
     "industry": "Diagnostics & Research"
+  },
+  "VTRS": {
+    "company_name": "Viatris Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "SWKS": {
+    "company_name": "Skyworks Solutions, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "A": {
+    "company_name": "Agilent Technologies, Inc.",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "STNG": {
+    "company_name": "Scorpio Tankers Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Midstream"
   }
 }
