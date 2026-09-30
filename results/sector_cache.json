@@ -2408,5 +2408,15 @@
     "company_name": "Scorpio Tankers Inc.",
     "sector": "Energy",
     "industry": "Oil & Gas Midstream"
+  },
+  "KEYS": {
+    "company_name": "Keysight Technologies, Inc.",
+    "sector": "Technology",
+    "industry": "Scientific & Technical Instruments"
+  },
+  "BIIB": {
+    "company_name": "Biogen Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
   }
 }
