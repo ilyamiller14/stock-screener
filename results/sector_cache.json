@@ -2418,5 +2418,15 @@
     "company_name": "Biogen Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - General"
+  },
+  "IDT": {
+    "company_name": "IDT Corporation",
+    "sector": "Communication Services",
+    "industry": "Telecom Services"
+  },
+  "LTC": {
+    "company_name": "LTC Properties, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Healthcare Facilities"
   }
 }
