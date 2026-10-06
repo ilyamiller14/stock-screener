@@ -2428,5 +2428,10 @@
     "company_name": "LTC Properties, Inc.",
     "sector": "Real Estate",
     "industry": "REIT - Healthcare Facilities"
+  },
+  "MSFT": {
+    "company_name": "Microsoft Corporation",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
   }
 }
