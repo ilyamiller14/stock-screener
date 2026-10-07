@@ -2433,5 +2433,15 @@
     "company_name": "Microsoft Corporation",
     "sector": "Technology",
     "industry": "Software - Infrastructure"
+  },
+  "ADI": {
+    "company_name": "Analog Devices, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "XERS": {
+    "company_name": "Xeris Biopharma Holdings, Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - Specialty & Generic"
   }
 }
