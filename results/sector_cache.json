@@ -2443,5 +2443,20 @@
     "company_name": "Xeris Biopharma Holdings, Inc.",
     "sector": "Healthcare",
     "industry": "Drug Manufacturers - Specialty & Generic"
+  },
+  "ABBV": {
+    "company_name": "AbbVie Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "LITE": {
+    "company_name": "Lumentum Holdings Inc.",
+    "sector": "Technology",
+    "industry": "Communication Equipment"
+  },
+  "AMD": {
+    "company_name": "Advanced Micro Devices, Inc.",
+    "sector": "Technology",
+    "industry": "Semiconductors"
   }
 }
