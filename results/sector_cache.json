@@ -2458,5 +2458,10 @@
     "company_name": "Advanced Micro Devices, Inc.",
     "sector": "Technology",
     "industry": "Semiconductors"
+  },
+  "ANET": {
+    "company_name": "Arista Networks, Inc.",
+    "sector": "Technology",
+    "industry": "Computer Hardware"
   }
 }
