@@ -2463,5 +2463,25 @@
     "company_name": "Arista Networks, Inc.",
     "sector": "Technology",
     "industry": "Computer Hardware"
+  },
+  "MMSI": {
+    "company_name": "Merit Medical Systems, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Instruments & Supplies"
+  },
+  "MA": {
+    "company_name": "Mastercard Incorporated",
+    "sector": "Financial Services",
+    "industry": "Credit Services"
+  },
+  "FRSH": {
+    "company_name": "Freshworks Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "FTRE": {
+    "company_name": "Fortrea Holdings Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
   }
 }
