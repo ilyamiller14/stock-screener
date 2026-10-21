@@ -2483,5 +2483,15 @@
     "company_name": "Fortrea Holdings Inc.",
     "sector": "Healthcare",
     "industry": "Biotechnology"
+  },
+  "MCK": {
+    "company_name": "McKesson Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Distribution"
+  },
+  "V": {
+    "company_name": "Visa Inc.",
+    "sector": "Financial Services",
+    "industry": "Credit Services"
   }
 }
