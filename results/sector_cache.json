@@ -2493,5 +2493,30 @@
     "company_name": "Visa Inc.",
     "sector": "Financial Services",
     "industry": "Credit Services"
+  },
+  "ULTA": {
+    "company_name": "Ulta Beauty, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail"
+  },
+  "PFE": {
+    "company_name": "Pfizer Inc.",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "DHR": {
+    "company_name": "Danaher Corporation",
+    "sector": "Healthcare",
+    "industry": "Diagnostics & Research"
+  },
+  "AVPT": {
+    "company_name": "AvePoint, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Infrastructure"
+  },
+  "CVLT": {
+    "company_name": "Commvault Systems, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
   }
 }
