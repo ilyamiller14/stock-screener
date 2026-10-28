@@ -2518,5 +2518,15 @@
     "company_name": "Commvault Systems, Inc.",
     "sector": "Technology",
     "industry": "Software - Application"
+  },
+  "LLY": {
+    "company_name": "Eli Lilly and Company",
+    "sector": "Healthcare",
+    "industry": "Drug Manufacturers - General"
+  },
+  "ALRM": {
+    "company_name": "Alarm.com Holdings, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
   }
 }
