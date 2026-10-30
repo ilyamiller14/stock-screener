@@ -2528,5 +2528,20 @@
     "company_name": "Alarm.com Holdings, Inc.",
     "sector": "Technology",
     "industry": "Software - Application"
+  },
+  "MO": {
+    "company_name": "Altria Group, Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Tobacco"
+  },
+  "KDP": {
+    "company_name": "Keurig Dr Pepper Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Beverages - Non-Alcoholic"
+  },
+  "EOG": {
+    "company_name": "EOG Resources, Inc.",
+    "sector": "Energy",
+    "industry": "Oil & Gas E&P"
   }
 }
