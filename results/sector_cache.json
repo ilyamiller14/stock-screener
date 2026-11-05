@@ -2563,5 +2563,10 @@
     "company_name": "Cintas Corporation",
     "sector": "Industrials",
     "industry": "Specialty Business Services"
+  },
+  "EXPO": {
+    "company_name": "Exponent, Inc.",
+    "sector": "Industrials",
+    "industry": "Engineering & Construction"
   }
 }
