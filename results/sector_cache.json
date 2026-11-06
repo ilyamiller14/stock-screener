@@ -2568,5 +2568,30 @@
     "company_name": "Exponent, Inc.",
     "sector": "Industrials",
     "industry": "Engineering & Construction"
+  },
+  "ED": {
+    "company_name": "Consolidated Edison, Inc.",
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric"
+  },
+  "ASO": {
+    "company_name": "Academy Sports and Outdoors, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail"
+  },
+  "HAS": {
+    "company_name": "Hasbro, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Leisure"
+  },
+  "SMA": {
+    "company_name": "SmartStop Self Storage REIT, Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Industrial"
+  },
+  "NWE": {
+    "company_name": "NorthWestern Energy Group, Inc.",
+    "sector": "Utilities",
+    "industry": "Utilities - Regulated Electric"
   }
 }
