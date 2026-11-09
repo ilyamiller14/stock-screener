@@ -2593,5 +2593,15 @@
     "company_name": "NorthWestern Energy Group, Inc.",
     "sector": "Utilities",
     "industry": "Utilities - Regulated Electric"
+  },
+  "VLTO": {
+    "company_name": "Veralto Corporation",
+    "sector": "Industrials",
+    "industry": "Pollution & Treatment Controls"
+  },
+  "RGR": {
+    "company_name": "Sturm, Ruger & Company, Inc.",
+    "sector": "Industrials",
+    "industry": "Aerospace & Defense"
   }
 }
