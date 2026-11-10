@@ -2603,5 +2603,15 @@
     "company_name": "Sturm, Ruger & Company, Inc.",
     "sector": "Industrials",
     "industry": "Aerospace & Defense"
+  },
+  "ZYME": {
+    "company_name": "Zymeworks Inc.",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "CHD": {
+    "company_name": "Church & Dwight Co., Inc.",
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products"
   }
 }
