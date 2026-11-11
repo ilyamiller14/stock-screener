@@ -2613,5 +2613,20 @@
     "company_name": "Church & Dwight Co., Inc.",
     "sector": "Consumer Defensive",
     "industry": "Household & Personal Products"
+  },
+  "ICE": {
+    "company_name": "Intercontinental Exchange, Inc.",
+    "sector": "Financial Services",
+    "industry": "Financial Data & Stock Exchanges"
+  },
+  "SPNT": {
+    "company_name": "SiriusPoint Ltd.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Reinsurance"
+  },
+  "MSI": {
+    "company_name": "Motorola Solutions, Inc.",
+    "sector": "Technology",
+    "industry": "Communication Equipment"
   }
 }
