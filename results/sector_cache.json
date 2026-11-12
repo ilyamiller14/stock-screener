@@ -2628,5 +2628,15 @@
     "company_name": "Motorola Solutions, Inc.",
     "sector": "Technology",
     "industry": "Communication Equipment"
+  },
+  "EW": {
+    "company_name": "Edwards Lifesciences Corporation",
+    "sector": "Healthcare",
+    "industry": "Medical Devices"
+  },
+  "PGNY": {
+    "company_name": "Progyny, Inc.",
+    "sector": "Healthcare",
+    "industry": "Healthcare Plans"
   }
 }
