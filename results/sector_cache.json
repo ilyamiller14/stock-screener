@@ -2638,5 +2638,25 @@
     "company_name": "Progyny, Inc.",
     "sector": "Healthcare",
     "industry": "Healthcare Plans"
+  },
+  "COST": {
+    "company_name": "Costco Wholesale Corporation",
+    "sector": "Consumer Defensive",
+    "industry": "Discount Stores"
+  },
+  "MAS": {
+    "company_name": "Masco Corporation",
+    "sector": "Industrials",
+    "industry": "Building Products & Equipment"
+  },
+  "CB": {
+    "company_name": "Chubb Limited",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
+  },
+  "TRV": {
+    "company_name": "The Travelers Companies, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
   }
 }
