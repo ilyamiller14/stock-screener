@@ -315,10 +315,7 @@ def send_email(
     stats: dict[str, Any],
     macro_results: dict[str, Any] | None = None,
 ) -> None:
-    """Build and send the daily email via Gmail SMTP."""
-    if not config.GMAIL_USER or not config.GMAIL_APP_PASSWORD:
-        logger.warning("Gmail credentials not set — skipping email send")
-        return
+    """Build and send the daily email via Resend API or Gmail SMTP."""
     if not config.EMAIL_RECIPIENTS:
         logger.warning("No email recipients configured — skipping")
         return
@@ -327,19 +324,62 @@ def send_email(
     n = len(top_picks)
     subject = f"Stock Screen: {run_date} | Top {n} Setups (R2000 + S&P 500)"
 
+    # 1. Primary: Resend API if configured
+    if config.RESEND_API_KEY:
+        import requests
+        sender = config.RESEND_FROM or "Stock Screener <onboarding@resend.dev>"
+        payload = {
+            "from": sender,
+            "to": config.EMAIL_RECIPIENTS,
+            "subject": subject,
+            "html": html,
+        }
+        res = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {config.RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=30,
+        )
+        if res.status_code in (200, 201):
+            logger.info("Email sent via Resend to %s: %s", config.EMAIL_RECIPIENTS, subject)
+            return
+        else:
+            logger.error("Resend API error (%d): %s", res.status_code, res.text)
+            raise RuntimeError(f"Resend API returned {res.status_code}: {res.text}")
+
+    # 2. Fallback: Gmail SMTP
+    if not config.GMAIL_USER or not config.GMAIL_APP_PASSWORD:
+        logger.warning("Neither Resend nor Gmail credentials set — skipping email send")
+        return
+
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"]    = config.GMAIL_USER
     msg["To"]      = ", ".join(config.EMAIL_RECIPIENTS)
     msg.attach(MIMEText(html, "html"))
 
-    ctx = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ctx) as server:
-        server.login(config.GMAIL_USER, config.GMAIL_APP_PASSWORD)
-        server.sendmail(config.GMAIL_USER, config.EMAIL_RECIPIENTS, msg.as_string())
+    user = config.GMAIL_USER
+    password = config.GMAIL_APP_PASSWORD
+
+    try:
+        ctx = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ctx, timeout=30) as server:
+            server.login(user, password)
+            server.sendmail(user, config.EMAIL_RECIPIENTS, msg.as_string())
+    except Exception as e:
+        logger.warning("Port 465 SSL failed (%s) — attempting Port 587 STARTTLS...", e)
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(user, password)
+            server.sendmail(user, config.EMAIL_RECIPIENTS, msg.as_string())
 
     logger.info(
-        "Email sent to %d recipient(s): %s",
+        "Email sent via Gmail SMTP to %d recipient(s): %s",
         len(config.EMAIL_RECIPIENTS),
         subject,
     )

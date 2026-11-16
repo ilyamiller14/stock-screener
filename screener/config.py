@@ -211,8 +211,10 @@ ADX_SCALE = 2.0          # adx * ADX_SCALE → raw score (capped at 100)
 DIST_52W_HIGH_SCALE = 4.0  # score = 100 - distance_pct * DIST_52W_HIGH_SCALE
 
 # ── Email settings ─────────────────────────────────────────────────────────────
-GMAIL_USER = os.environ.get("GMAIL_USER", "")
-GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
+RESEND_FROM = os.environ.get("RESEND_FROM", "").strip()
+GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").replace(" ", "").strip()
 EMAIL_RECIPIENTS = [
     r.strip()
     for r in os.environ.get("EMAIL_RECIPIENTS", "").split(",")

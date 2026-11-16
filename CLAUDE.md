@@ -32,11 +32,13 @@ GMAIL_USER=you@gmail.com GMAIL_APP_PASSWORD=xxxx EMAIL_RECIPIENTS=you@gmail.com 
 - Cloudflare Pages auto-deploys on push to `main`
 
 ## GitHub Secrets Required
-
+ 
 | Secret | Description |
 |--------|-------------|
-| `GMAIL_USER` | Gmail sender address |
-| `GMAIL_APP_PASSWORD` | App-specific password from myaccount.google.com/apppasswords |
+| `RESEND_API_KEY` | (Recommended) API key from resend.com for reliable email delivery |
+| `RESEND_FROM` | (Optional) Custom sender address (defaults to `Stock Screener <onboarding@resend.dev>`) |
+| `GMAIL_USER` | (Fallback) Gmail sender address |
+| `GMAIL_APP_PASSWORD` | (Fallback) App-specific password from myaccount.google.com/apppasswords |
 | `EMAIL_RECIPIENTS` | Comma-separated recipient emails |
 | `GITHUB_TOKEN` | Auto-provided by Actions |
 
