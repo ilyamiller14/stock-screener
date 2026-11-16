@@ -2658,5 +2658,10 @@
     "company_name": "The Travelers Companies, Inc.",
     "sector": "Financial Services",
     "industry": "Insurance - Property & Casualty"
+  },
+  "LIN": {
+    "company_name": "Linde plc",
+    "sector": "Basic Materials",
+    "industry": "Specialty Chemicals"
   }
 }
