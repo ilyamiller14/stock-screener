@@ -2663,5 +2663,20 @@
     "company_name": "Linde plc",
     "sector": "Basic Materials",
     "industry": "Specialty Chemicals"
+  },
+  "SYNA": {
+    "company_name": "Synaptics Incorporated",
+    "sector": "Technology",
+    "industry": "Semiconductors"
+  },
+  "VCEL": {
+    "company_name": "Vericel Corporation",
+    "sector": "Healthcare",
+    "industry": "Biotechnology"
+  },
+  "WWW": {
+    "company_name": "Wolverine World Wide, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Footwear & Accessories"
   }
 }
