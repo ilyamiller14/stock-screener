@@ -2678,5 +2678,25 @@
     "company_name": "Wolverine World Wide, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Footwear & Accessories"
+  },
+  "BBY": {
+    "company_name": "Best Buy Co., Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail"
+  },
+  "VIA": {
+    "company_name": "Via Transportation, Inc.",
+    "sector": "Technology",
+    "industry": "Software - Application"
+  },
+  "AEO": {
+    "company_name": "American Eagle Outfitters, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Apparel Retail"
+  },
+  "ARHS": {
+    "company_name": "Arhaus, Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Specialty Retail"
   }
 }
