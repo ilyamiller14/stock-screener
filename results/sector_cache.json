@@ -2698,5 +2698,15 @@
     "company_name": "Arhaus, Inc.",
     "sector": "Consumer Cyclical",
     "industry": "Specialty Retail"
+  },
+  "ENR": {
+    "company_name": "Energizer Holdings, Inc.",
+    "sector": "Industrials",
+    "industry": "Electrical Equipment & Parts"
+  },
+  "PLMR": {
+    "company_name": "Palomar Holdings, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
   }
 }
