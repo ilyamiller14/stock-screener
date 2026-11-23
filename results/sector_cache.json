@@ -2708,5 +2708,15 @@
     "company_name": "Palomar Holdings, Inc.",
     "sector": "Financial Services",
     "industry": "Insurance - Property & Casualty"
+  },
+  "OSW": {
+    "company_name": "OneSpaWorld Holdings Limited",
+    "sector": "Consumer Cyclical",
+    "industry": "Leisure"
+  },
+  "AJG": {
+    "company_name": "Arthur J. Gallagher & Co.",
+    "sector": "Financial Services",
+    "industry": "Insurance Brokers"
   }
 }
