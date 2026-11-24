@@ -2718,5 +2718,10 @@
     "company_name": "Arthur J. Gallagher & Co.",
     "sector": "Financial Services",
     "industry": "Insurance Brokers"
+  },
+  "GRDN": {
+    "company_name": "Guardian Pharmacy Services, Inc.",
+    "sector": "Healthcare",
+    "industry": "Medical Care Facilities"
   }
 }
