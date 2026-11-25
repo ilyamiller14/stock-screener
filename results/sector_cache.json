@@ -2723,5 +2723,35 @@
     "company_name": "Guardian Pharmacy Services, Inc.",
     "sector": "Healthcare",
     "industry": "Medical Care Facilities"
+  },
+  "PG": {
+    "company_name": "The Procter & Gamble Company",
+    "sector": "Consumer Defensive",
+    "industry": "Household & Personal Products"
+  },
+  "MRSH": {
+    "company_name": "Marsh & McLennan Companies, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance Brokers"
+  },
+  "DIS": {
+    "company_name": "The Walt Disney Company",
+    "sector": "Communication Services",
+    "industry": "Entertainment"
+  },
+  "SIGI": {
+    "company_name": "Selective Insurance Group, Inc.",
+    "sector": "Financial Services",
+    "industry": "Insurance - Property & Casualty"
+  },
+  "RSG": {
+    "company_name": "Republic Services, Inc.",
+    "sector": "Industrials",
+    "industry": "Waste Management"
+  },
+  "EXR": {
+    "company_name": "Extra Space Storage Inc.",
+    "sector": "Real Estate",
+    "industry": "REIT - Industrial"
   }
 }
